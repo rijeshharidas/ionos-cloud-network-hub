@@ -66,8 +66,8 @@
     --accent-glow: rgba(2, 132, 199, 0.12);
   }
   html[data-theme="light"] #mapBackground .leaflet-tile-pane { filter: grayscale(0.05) brightness(1.02) contrast(1.05); }
-  html[data-theme="light"] #mapBackground.overview-mode.pre-login .leaflet-tile-pane { filter: brightness(0.92); }
-  html[data-theme="light"] #mapBackground.overview-mode.pre-login { opacity: 0.6; }
+  html[data-theme="light"] #mapBackground.overview-mode.pre-login .leaflet-tile-pane { filter: brightness(0.95) contrast(1.05); }
+  html[data-theme="light"] #mapBackground.overview-mode.pre-login { opacity: 0.75; }
   html[data-theme="light"] .map-cluster-bubble { box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
   html[data-theme="light"] .toast { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
@@ -226,6 +226,34 @@
   .view-mode-group .view-mode-btn { flex: 1; }
   .vdc-label-bg { fill: var(--bg-secondary); fill-opacity: 0.7; rx: 6; }
   .k8s-badge { pointer-events: none; }
+
+  /* ── Design Mode: boost map when used as backdrop ── */
+  #mapBackground.design-backdrop { opacity: 1 !important; }
+  #mapBackground.design-backdrop .leaflet-tile-pane { filter: grayscale(0) brightness(1.3) contrast(1.2); }
+  /* ── Design Mode empty canvas overlay ── */
+  .design-empty-state {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 10;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 80px; pointer-events: none;
+  }
+  .design-empty-hint {
+    display: inline-flex; align-items: center;
+    padding: 8px 18px; border-radius: 8px;
+    background: rgba(13,17,28,0.7); border: 1px solid rgba(50,108,229,0.25);
+    color: rgba(150,180,230,0.7); font-size: 12px; font-weight: 500;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+  /* ── Draft Mode (Phase 2 — NL Architecture Designer) ── */
+  .draft-banner { position: absolute; top: 50px; left: 50%; transform: translateX(-50%); background: var(--bg-secondary); border: 1px solid var(--accent); border-radius: 8px; padding: 10px 18px; font-size: 12px; color: var(--text-secondary); z-index: 15; display: flex; gap: 12px; align-items: center; box-shadow: 0 4px 16px rgba(0,0,0,0.3); animation: slideInDown 0.3s ease-out; pointer-events: auto; }
+  .draft-badge { font-weight: 700; font-size: 11px; color: #fff; background: var(--accent); padding: 2px 8px; border-radius: 4px; letter-spacing: 0.5px; }
+  .draft-dismiss { background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 4px; padding: 3px 10px; cursor: pointer; font-size: 11px; font-family: inherit; margin-left: 8px; }
+  .draft-dismiss:hover { background: var(--bg-hover); color: var(--text-primary); }
+  .draft-actions { display: flex; gap: 8px; padding: 8px 12px; border-top: 1px solid var(--border); }
+  .draft-actions .btn-terraform { flex: 1; padding: 7px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; font-weight: 600; background: #326CE5; color: white; border: none; }
+  .draft-actions .btn-terraform:hover { background: #2a5bc7; }
+  .draft-actions .btn-discard { flex: 1; padding: 7px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+  .draft-actions .btn-discard:hover { background: var(--bg-hover); color: var(--text-primary); }
+  @keyframes slideInDown { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
   .vdc-label-text { fill: var(--text-primary); font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif; }
   .vdc-tooltip { position: absolute; background: var(--bg-secondary); border: 1px solid var(--accent); border-radius: 10px; padding: 14px 18px; font-size: 12px; z-index: 160; box-shadow: 0 6px 24px rgba(0,0,0,0.4); min-width: 260px; max-width: 420px; display: none; pointer-events: auto; font-family: 'Inter', sans-serif; line-height: 1.4; }
   .vdc-tooltip.visible { display: block; }
@@ -294,48 +322,52 @@
   }
   #mapBackground.overview-mode .leaflet-control-container { display: block; }
   #mapBackground.overview-mode .leaflet-tile-pane { filter: none; }
-  /* Pre-login: dim map so onboarding card stands out */
-  #mapBackground.overview-mode.pre-login { opacity: 0.45; }
-  #mapBackground.overview-mode.pre-login .leaflet-tile-pane { filter: brightness(0.7); }
+  /* Pre-login: subtle dim so onboarding card stands out but map stays visible */
+  #mapBackground.overview-mode.pre-login { opacity: 0.7; }
+  #mapBackground.overview-mode.pre-login .leaflet-tile-pane { filter: brightness(0.9) contrast(1.1); }
   #graphSvg.hidden-for-map { opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
 
   /* Cluster bubble markers */
   .map-cluster-bubble {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: var(--bg-secondary); border: 2px solid var(--accent);
-    border-radius: 50%; cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-    text-align: center;
+    background: rgba(20,24,36,0.92); border: 1.5px solid rgba(17,199,230,0.45);
+    border-radius: 14px; cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 20px rgba(17,199,230,0.08);
+    text-align: center; padding: 6px 4px;
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
   }
   .map-cluster-bubble:hover {
-    transform: scale(1.12);
-    box-shadow: 0 6px 24px rgba(17,199,230,0.35);
-    border-color: #fff;
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.5), 0 0 30px rgba(17,199,230,0.2);
+    border-color: rgba(17,199,230,0.8);
+    background: rgba(20,24,36,0.96);
   }
-  .map-cluster-flag { font-size: 20px; line-height: 1; }
-  .map-cluster-name { font-size: 10px; font-weight: 600; color: var(--text-primary); line-height: 1.2; margin-top: 2px; }
+  .map-cluster-flag { font-size: 16px; line-height: 1; }
+  .map-cluster-name { font-size: 11px; font-weight: 700; color: #fff; line-height: 1.2; margin-top: 3px; letter-spacing: 0.2px; }
   .map-cluster-count {
-    font-size: 9px; color: var(--text-muted);
-    background: var(--bg-primary); padding: 1px 6px; border-radius: 8px; margin-top: 2px;
+    font-size: 9px; font-weight: 600; color: var(--accent);
+    background: rgba(17,199,230,0.1); padding: 2px 8px; border-radius: 6px; margin-top: 3px;
+    border: 1px solid rgba(17,199,230,0.2);
   }
 
   /* Individual VDC markers (shown after zooming into a region) */
   .map-vdc-marker {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: var(--bg-secondary); border: 2px solid var(--accent);
-    border-radius: 50%; cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-    text-align: center;
+    background: rgba(20,24,36,0.92); border: 1.5px solid rgba(17,199,230,0.45);
+    border-radius: 14px; cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.5), 0 0 20px rgba(17,199,230,0.08);
+    text-align: center; padding: 6px 4px;
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
   }
   .map-vdc-marker:hover {
-    transform: scale(1.12);
-    box-shadow: 0 6px 24px rgba(17,199,230,0.35);
-    border-color: #fff;
+    transform: scale(1.08) translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.5), 0 0 30px rgba(17,199,230,0.2);
+    border-color: rgba(17,199,230,0.8);
   }
-  .map-vdc-marker .map-cluster-flag { font-size: 18px; }
-  .map-vdc-marker .map-cluster-name { font-size: 9px; max-width: 68px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .map-vdc-marker .map-cluster-flag { font-size: 14px; }
+  .map-vdc-marker .map-cluster-name { font-size: 10px; font-weight: 600; max-width: 72px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff; }
 
   /* Billing traffic panel on Global Map */
   .map-billing-panel {
@@ -384,30 +416,33 @@
   /* Available DC location markers — compact flag + city name, color-coded border */
   .map-available-loc {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(17,199,230,0.8);
-    background: rgba(25,28,38,0.8);
+    width: 48px; height: 40px;
+    border-radius: 10px;
+    border: 1px solid rgba(17,199,230,0.5);
+    background: rgba(20,24,36,0.85);
     opacity: 0.9;
     text-align: center;
-    box-shadow: 0 0 8px rgba(17,199,230,0.15), 0 2px 8px rgba(0,0,0,0.4);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     transition: all 0.2s;
-    cursor: pointer;
+    cursor: pointer; padding: 3px 2px;
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
   }
-  .map-available-loc:hover { opacity: 1; transform: scale(1.08); }
-  .map-available-loc.cloud-private { border-color: rgba(187,134,252,0.8); box-shadow: 0 0 8px rgba(187,134,252,0.15), 0 2px 8px rgba(0,0,0,0.4); }
-  .map-available-loc.cloud-both { border-color: rgba(160,180,255,0.8); box-shadow: 0 0 8px rgba(160,180,255,0.15), 0 2px 8px rgba(0,0,0,0.4); }
-  .map-available-flag { font-size: 16px; line-height: 1; }
-  .map-available-name { font-size: 7.5px; font-weight: 600; color: rgba(255,255,255,0.8); line-height: 1.1; margin-top: 1px; white-space: nowrap; }
+  .map-available-loc:hover { opacity: 1; transform: scale(1.08) translateY(-1px); border-color: rgba(17,199,230,0.8); }
+  .map-available-loc.cloud-private { border-color: rgba(187,134,252,0.5); }
+  .map-available-loc.cloud-private:hover { border-color: rgba(187,134,252,0.8); }
+  .map-available-loc.cloud-both { border-color: rgba(160,180,255,0.5); }
+  .map-available-loc.cloud-both:hover { border-color: rgba(160,180,255,0.8); }
+  .map-available-flag { font-size: 14px; line-height: 1; }
+  .map-available-name { font-size: 8px; font-weight: 600; color: rgba(255,255,255,0.75); line-height: 1.1; margin-top: 2px; white-space: nowrap; }
 
   /* Dimmed variant — when shown alongside active cluster bubbles */
   .map-available-loc.dimmed {
-    width: 36px; height: 36px;
-    opacity: 0.45;
+    width: 40px; height: 34px;
+    opacity: 0.4;
     border-style: dashed;
     border-width: 1px;
     box-shadow: none;
-    background: rgba(25,28,38,0.6);
+    background: rgba(20,24,36,0.6);
   }
   .map-available-loc.dimmed .map-available-flag { font-size: 13px; }
   .map-available-loc.dimmed .map-available-name { font-size: 6.5px; color: rgba(255,255,255,0.5); }
@@ -755,13 +790,26 @@
   }
   .ai-panel.open { width: 400px; min-width: 400px; border-left: 1px solid var(--border); }
   .ai-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    border-bottom: 1px solid var(--border);
     background: linear-gradient(180deg, rgba(168,85,247,0.08) 0%, transparent 100%);
     flex-shrink: 0;
   }
+  .ai-header-top { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 8px; }
   .ai-title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; }
   .ai-title svg { flex-shrink: 0; }
+  .ai-tabs { display: flex; gap: 0; padding: 0 12px; }
+  .ai-tab {
+    display: flex; align-items: center; gap: 5px; padding: 7px 16px; font-size: 12px; font-weight: 600;
+    color: var(--text-muted); background: none; border: none; border-bottom: 2px solid transparent;
+    cursor: pointer; font-family: inherit; transition: all 0.2s; white-space: nowrap;
+  }
+  .ai-tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.03); }
+  .ai-tab.active { color: #a855f7; border-bottom-color: #a855f7; }
+  .ai-tab.active svg { stroke: #a855f7; }
+  .ai-tab#aiTabDesign.active { color: #326CE5; border-bottom-color: #326CE5; }
+  .ai-tab#aiTabDesign.active svg { stroke: #326CE5; }
+  .ai-welcome-design svg { stroke: #326CE5 !important; }
   .ai-controls { display: flex; align-items: center; gap: 6px; }
   .ai-controls select {
     font-size: 11px; padding: 4px 6px; border-radius: 5px; border: 1px solid var(--border);
@@ -827,6 +875,31 @@
     cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap;
   }
   .ai-suggest-btn:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--accent); }
+  .ai-suggest-more {
+    position: relative; display: inline-flex;
+  }
+  .ai-suggest-more-btn {
+    padding: 5px 10px; border-radius: 16px; font-size: 11px; font-weight: 600;
+    border: 1px solid var(--border); background: var(--bg-tertiary); color: var(--text-muted);
+    cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .ai-suggest-more-btn:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--accent); }
+  .ai-suggest-more-btn svg { width: 12px; height: 12px; }
+  .ai-suggest-dropdown {
+    display: none; position: absolute; bottom: calc(100% + 6px); right: 0;
+    background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 10px;
+    padding: 4px; min-width: 200px; z-index: 100;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    max-height: 240px; overflow-y: auto;
+  }
+  .ai-suggest-dropdown.open { display: block; }
+  .ai-suggest-dropdown-item {
+    display: block; width: 100%; padding: 8px 12px; border: none; background: none;
+    color: var(--text-secondary); font-size: 12px; font-family: inherit;
+    text-align: left; border-radius: 6px; cursor: pointer; transition: all 0.12s;
+  }
+  .ai-suggest-dropdown-item:hover { background: var(--bg-hover); color: var(--text-primary); }
   .ai-input-area {
     padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px;
     align-items: flex-end; flex-shrink: 0;
@@ -1959,18 +2032,30 @@
 <!-- AI Assistant Panel -->
 <div class="ai-panel" id="aiPanel">
   <div class="ai-header">
-    <div class="ai-title">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.09 6.26L20 10.27l-4.91 3.82L16.18 22 12 18.27 7.82 22l1.09-7.91L4 10.27l5.91-2.01L12 2z"/></svg>
-      <span>AI Cloud Assistant</span>
+    <div class="ai-header-top">
+      <div class="ai-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.09 6.26L20 10.27l-4.91 3.82L16.18 22 12 18.27 7.82 22l1.09-7.91L4 10.27l5.91-2.01L12 2z"/></svg>
+        <span>AI Cloud Assistant</span>
+      </div>
+      <div class="ai-controls">
+        <label class="ai-docs-toggle" title="Search IONOS documentation for relevant context">
+          <input type="checkbox" id="aiDocsToggle" checked onchange="aiDocsSearchEnabled=this.checked">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+          <span>Docs</span>
+        </label>
+        <select id="aiModelSelect" onchange="aiSelectedModel=this.value" title="Select AI model"></select>
+        <button class="detail-close" onclick="closeAiPanel()" title="Close">&times;</button>
+      </div>
     </div>
-    <div class="ai-controls">
-      <label class="ai-docs-toggle" title="Search IONOS documentation for relevant context">
-        <input type="checkbox" id="aiDocsToggle" checked onchange="aiDocsSearchEnabled=this.checked">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-        <span>Docs</span>
-      </label>
-      <select id="aiModelSelect" onchange="aiSelectedModel=this.value" title="Select AI model"></select>
-      <button class="detail-close" onclick="closeAiPanel()" title="Close">&times;</button>
+    <div class="ai-tabs">
+      <button class="ai-tab active" id="aiTabAssist" onclick="switchAiTab('assist')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Assist
+      </button>
+      <button class="ai-tab" id="aiTabDesign" onclick="switchAiTab('design')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        Design
+      </button>
     </div>
   </div>
   <div class="ai-cost-banner" id="aiCostBanner">
@@ -2200,8 +2285,9 @@ const API_BASES = {
 // ============================== AI MODEL HUB ==============================
 const AI_MODELS = [
   { id: 'meta-llama/Meta-Llama-3.1-8B-Instruct', label: 'Llama 3.1 8B' },
-  { id: 'mistralai/Mistral-Small-24B-Instruct-2501', label: 'Mistral Small 24B' },
-  { id: 'meta-llama/Meta-Llama-3.3-70B-Instruct', label: 'Llama 3.3 70B' },
+  { id: 'mistralai/Mistral-Small-24B-Instruct', label: 'Mistral Small 24B' },
+  { id: 'meta-llama/Llama-3.3-70B-Instruct', label: 'Llama 3.3 70B' },
+  { id: 'meta-llama/Meta-Llama-3.1-405B-Instruct-FP8', label: 'Llama 3.1 405B' },
 ];
 let aiSelectedModel = AI_MODELS[0].id;
 let aiConversationHistory = [];
@@ -2209,9 +2295,11 @@ let aiPanelOpen = false;
 let aiAbortController = null;
 let aiLastRequestTime = 0;
 const AI_COOLDOWN_MS = 2000;       // min interval between requests
-const AI_TIMEOUT_MS = 45000;       // 45s timeout for LLM inference
+const AI_TIMEOUT_MS = 90000;       // 90s timeout for LLM inference (Terraform generation can be large)
 const AI_MAX_CONTEXT_CHARS = 12000; // truncate context if too large
 let aiDocsSearchEnabled = true;    // search IONOS docs for context
+let aiDesignMode = false;          // true = "Design" tab active, false = "Assist" tab
+let _prevAiModel = null;           // stash model selection when switching to Design tab
 let mcpSessionId = null;           // MCP session header for GitBook
 let mcpInitialized = false;        // whether MCP session is established
 
@@ -3791,7 +3879,7 @@ const NODE_TYPES = {
   alb:       { color: '#f97316', label: 'App LB',        radius: 30 },
   nlb:       { color: '#06b6d4', label: 'Network LB',    radius: 30 },
   k8s_np:    { color: '#8b5cf6', label: 'K8s NodePool',  radius: 30 },
-  kafka:     { color: '#231f20', label: 'Kafka',         radius: 30 },
+  kafka:     { color: '#e07a2f', label: 'Kafka',         radius: 30 },
   pcc:       { color: '#ec4899', label: 'Cross Connect', radius: 28 },
 };
 
@@ -4120,7 +4208,7 @@ const SIM_CONFIG = {
   charge:           { pcc: -900, lan: -600, default: -350 },
   collisionPadding: { lan: 35, default: 25 },
   xStrength:        { pcc: 0.02, lan: 0.15, lanChild: 0.12, unattached: 0.04 },
-  yPosition:        { pcc: 0.08, internet: 0.08, nat: 0.24, lan: 0.38, lb: 0.53, default: 0.68 },
+  yPosition:        { pcc: 0.08, internet: 0.08, nat: 0.24, lan: 0.38, lb: 0.53, lbChild: 0.68, default: 0.68 },
   yStrength:        0.15,
   lanAlignStrength: 0.08,
   labelPosition:    { sourceWeight: 0.7, targetWeight: 0.3, yOffset: -5 },
@@ -4131,6 +4219,12 @@ let apiToken = '';
 let currentContract = '';
 let userContracts = [];
 let _k8sManagedIds = new Map(); // resourceId → { resourceType, value } from labels API
+
+// ── Draft mode state (Phase 2 — NL → Architecture → Terraform) ──
+let _draftMode = false;
+let _draftGraphData = null;   // draft { nodes, links } for iteration
+let _realGraphData = null;    // stashed real VDC graph data while draft is active
+
 /* P3: Hoist UUID regex to module scope — avoids recompilation per call */
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -5246,29 +5340,46 @@ function showMapOverview() {
   const bounds = [];
   Object.values(LOCATION_COORDS).forEach(c => bounds.push([c[0], c[1]]));
 
-  clusters.forEach(c => {
-    const size = Math.max(64, Math.min(90, 64 + c.vdcs.length * 6));
+  // ── Collision avoidance: nudge nearby clusters apart on screen ──
+  // Project to approximate pixel distance and offset if too close
+  const nudgedCoords = clusters.map(c => [...c.coords]);
+  const MIN_DIST_DEG = 2.5; // minimum separation in degrees (≈ 150px at Europe zoom)
+  for (let i = 0; i < nudgedCoords.length; i++) {
+    for (let j = i + 1; j < nudgedCoords.length; j++) {
+      const dx = nudgedCoords[j][1] - nudgedCoords[i][1];
+      const dy = nudgedCoords[j][0] - nudgedCoords[i][0];
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < MIN_DIST_DEG && dist > 0) {
+        const push = (MIN_DIST_DEG - dist) / 2;
+        const nx = dx / dist, ny = dy / dist;
+        nudgedCoords[i][0] -= ny * push; nudgedCoords[i][1] -= nx * push;
+        nudgedCoords[j][0] += ny * push; nudgedCoords[j][1] += nx * push;
+      }
+    }
+  }
+
+  clusters.forEach((c, idx) => {
+    const w = Math.max(72, Math.min(96, 72 + c.vdcs.length * 5));
+    const h = Math.max(56, Math.min(72, 56 + c.vdcs.length * 4));
     const icon = L.divIcon({
       className: '',
-      html: `<div class="map-cluster-bubble" style="width:${size}px;height:${size}px;">
+      html: `<div class="map-cluster-bubble" style="width:${w}px;height:${h}px;">
         <span class="map-cluster-flag">${c.flag}</span>
         <span class="map-cluster-name">${c.city}</span>
         <span class="map-cluster-count">${c.vdcs.length} VDC${c.vdcs.length > 1 ? 's' : ''}</span>
       </div>`,
-      iconSize: [size, size],
-      iconAnchor: [size / 2, size / 2],
+      iconSize: [w, h],
+      iconAnchor: [w / 2, h / 2],
     });
 
-    const marker = L.marker(c.coords, { icon }).addTo(bgMap);
-    // Click cluster → zoom into region and show individual VDC markers
+    const marker = L.marker(nudgedCoords[idx], { icon }).addTo(bgMap);
     marker.on('click', () => drillIntoRegion(c));
 
-    // Bind same-style tooltip as available markers for consistency
     const cloudType = DC_CLOUD_TYPE[c.region] || 'public';
     const cloudClass = cloudType === 'private' ? 'tt-private' : cloudType === 'both' ? 'tt-both' : 'tt-public';
     const tooltipHtml = `<div class="tt-city">${c.flag} ${c.city}</div>
       <div class="tt-cloud ${cloudClass}">${cloudLabel(c.region)} · ${c.vdcs.length} VDC${c.vdcs.length > 1 ? 's' : ''}</div>`;
-    marker.bindTooltip(tooltipHtml, { className: 'map-loc-tooltip', direction: 'top', offset: [0, -size / 2 - 4] });
+    marker.bindTooltip(tooltipHtml, { className: 'map-loc-tooltip', direction: 'top', offset: [0, -h / 2 - 4] });
 
     mapMarkers.push(marker);
   });
@@ -5325,15 +5436,15 @@ function drillIntoRegion(cluster) {
         lon = cLon + spreadRadius * Math.cos(angle) * 1.5; // wider horizontally
       }
 
-      const size = 78;
+      const w = 84, h = 52;
       const icon = L.divIcon({
         className: '',
-        html: `<div class="map-vdc-marker" style="width:${size}px;height:${size}px;" onclick="selectVdcFromMap('${v.id}')">
+        html: `<div class="map-vdc-marker" style="width:${w}px;height:${h}px;" onclick="selectVdcFromMap('${v.id}')">
           <span class="map-cluster-flag">${cluster.flag}</span>
           <span class="map-cluster-name">${escapeHtml(v.name)}</span>
         </div>`,
-        iconSize: [size, size],
-        iconAnchor: [size / 2, size / 2],
+        iconSize: [w, h],
+        iconAnchor: [w / 2, h / 2],
       });
 
       const marker = L.marker([lat, lon], { icon }).addTo(bgMap);
@@ -5496,6 +5607,80 @@ function drawNode(g, d) {
         .attr('stroke-linecap', 'round');
     }
   }
+}
+
+// ── Phase 2: Render AI-generated draft topology ──
+function renderDraftTopology(draftData) {
+  // Stash real graph so we can restore on discard
+  if (!_draftMode && graphData?.nodes?.length) _realGraphData = graphData;
+  _draftMode = true;
+  _draftGraphData = draftData;
+
+  // Remove design empty state overlay if present
+  document.getElementById('designEmptyState')?.remove();
+
+  // Render using the existing pipeline
+  renderGraph(draftData);
+
+  // Apply draft visual overrides — dashed strokes, muted fills
+  const svg = d3.select('#graphSvg');
+  svg.selectAll('.node-bg')
+    .attr('stroke-dasharray', '4,3')
+    .attr('fill-opacity', 0.08)
+    .attr('stroke-opacity', 0.6);
+  svg.selectAll('.link')
+    .attr('stroke-opacity', 0.5)
+    .attr('stroke-dasharray', '6,3');
+
+  // Inject draft banner
+  document.getElementById('draftBanner')?.remove();
+  const banner = document.createElement('div');
+  banner.id = 'draftBanner';
+  banner.className = 'draft-banner';
+  banner.innerHTML = `
+    <span class="draft-badge">DRAFT</span>
+    <span>Proposed architecture — refine via chat or confirm to generate Terraform.</span>
+    <button onclick="discardDraft()" class="draft-dismiss">Discard</button>
+  `;
+  document.getElementById('mainArea')?.appendChild(banner);
+
+  // Inject action buttons in AI panel
+  document.getElementById('draftActions')?.remove();
+  const actions = document.createElement('div');
+  actions.id = 'draftActions';
+  actions.className = 'draft-actions';
+  actions.innerHTML = `
+    <button class="btn-terraform" onclick="generateTerraformFromDraft()">Generate Terraform</button>
+    <button class="btn-discard" onclick="discardDraft()">Discard Draft</button>
+  `;
+  const inputArea = document.querySelector('#aiPanel .ai-input-area');
+  if (inputArea) inputArea.parentNode.insertBefore(actions, inputArea);
+}
+
+function discardDraft() {
+  _draftMode = false;
+  _draftGraphData = null;
+  document.getElementById('draftBanner')?.remove();
+  document.getElementById('draftActions')?.remove();
+  if (_realGraphData?.nodes?.length) {
+    renderGraph(_realGraphData);
+    _realGraphData = null;
+  } else {
+    // No real topology to restore — show empty state
+    const svg = d3.select('#graphSvg');
+    svg.selectAll('*').remove();
+    document.getElementById('emptyState').style.display = '';
+    document.getElementById('toolbar').style.display = 'none';
+  }
+  addAiMessage('Draft topology discarded. You can design a new architecture or load a VDC.', 'assistant');
+}
+
+function generateTerraformFromDraft() {
+  if (!_draftMode || !_draftGraphData?.nodes?.length) {
+    addAiMessage('No draft topology to generate Terraform from.', 'assistant');
+    return;
+  }
+  sendAiMessage('Generate complete Terraform code (HCL) for the architecture we just designed. Include all resources from the draft topology — servers, LANs, databases, load balancers, gateways, and any other components. Make it production-ready with proper resource references.');
 }
 
 function renderGraph(data) {
@@ -5907,6 +6092,41 @@ function renderGraph(data) {
   });
   graphData._bfsAdj = bfsAdj;
 
+  // ── Detect LB → server parent-child relationships ──
+  // Tag servers directly connected to a load balancer so they layout as LB children
+  const lbIds = new Set(data.nodes.filter(n => n.type === 'alb' || n.type === 'nlb').map(n => n.id));
+  const lbChildIds = new Set();    // server IDs that are children of an LB
+  const lbChildParent = new Map(); // childId → lbId (for X-clustering)
+  if (lbIds.size > 0) {
+    data.links.forEach(l => {
+      const sId = typeof l.source === 'object' ? l.source.id : l.source;
+      const tId = typeof l.target === 'object' ? l.target.id : l.target;
+      const sNode = nodeByIdMap.get(sId);
+      const tNode = nodeByIdMap.get(tId);
+      // LB → server connection (server type only, not LANs/DBs/etc.)
+      if (lbIds.has(sId) && tNode?.type === 'server') { lbChildIds.add(tId); lbChildParent.set(tId, sId); }
+      if (lbIds.has(tId) && sNode?.type === 'server') { lbChildIds.add(sId); lbChildParent.set(sId, tId); }
+    });
+  }
+  // Spread LB children evenly around the LB's X position
+  if (lbChildIds.size > 0) {
+    const lbChildren = new Map(); // lbId → [childIds]
+    lbChildParent.forEach((lbId, childId) => {
+      if (!lbChildren.has(lbId)) lbChildren.set(lbId, []);
+      lbChildren.get(lbId).push(childId);
+    });
+    lbChildren.forEach((children, lbId) => {
+      const lbX = nodeClusterX.get(lbId) || (width / 2);
+      const spread = Math.min(children.length * 80, width * 0.3);
+      children.forEach((childId, idx) => {
+        const offset = children.length > 1
+          ? -spread / 2 + (idx / (children.length - 1)) * spread
+          : 0;
+        nodeClusterX.set(childId, lbX + offset);
+      });
+    });
+  }
+
   // Pre-initialize positions for key node types so simulation starts from sensible layout
   data.nodes.forEach(d => {
     if (d.type === 'internet' || d.type === 'pcc') {
@@ -5921,6 +6141,9 @@ function renderGraph(data) {
     } else if (d.type === 'alb' || d.type === 'nlb') {
       d.y = height * SIM_CONFIG.yPosition.lb;
       d.x = nodeClusterX.get(d.id) || width / 2;
+    } else if (lbChildIds.has(d.id)) {
+      d.y = height * SIM_CONFIG.yPosition.lbChild;
+      d.x = nodeClusterX.get(d.id) || width / 2;
     }
   });
 
@@ -5928,29 +6151,37 @@ function renderGraph(data) {
   if (simulation) { simulation.stop(); simulation.on('tick', null).on('end', null); simulation = null; }
   _heatmapTickCount = 0;
   _boundaryTickCount = 0;
+  const isDraft = _draftMode;
+  // Draft mode: increase spacing so nodes don't overlap on the map backdrop
+  const draftSpacing = isDraft ? 1.4 : 1;
   simulation = d3.forceSimulation(data.nodes)
     .force('link', d3.forceLink(data.links).id(d => d.id).distance(d => {
       const s = typeof d.source === 'object' ? d.source : nodeByIdMap.get(d.source);
       const t = typeof d.target === 'object' ? d.target : nodeByIdMap.get(d.target);
-      return (s?.type === 'lan' || t?.type === 'lan') ? SIM_CONFIG.linkDistance.lan : SIM_CONFIG.linkDistance.default;
+      const base = (s?.type === 'lan' || t?.type === 'lan') ? SIM_CONFIG.linkDistance.lan : SIM_CONFIG.linkDistance.default;
+      return base * draftSpacing;
     }))
     .force('charge', d3.forceManyBody().strength(d => {
-      if (d.type === 'pcc') return SIM_CONFIG.charge.pcc;
-      if (d.type === 'lan') return SIM_CONFIG.charge.lan;
-      return SIM_CONFIG.charge.default;
+      // Stronger repulsion in draft mode for more breathing room
+      const scale = isDraft ? 1.5 : 1;
+      if (d.type === 'pcc') return SIM_CONFIG.charge.pcc * scale;
+      if (d.type === 'lan') return SIM_CONFIG.charge.lan * scale;
+      return SIM_CONFIG.charge.default * scale;
     }))
     .force('center', d3.forceCenter(width / 2, height / 2))
     .force('collision', d3.forceCollide().radius(d => {
-      if (d.type === 'lan') return (NODE_TYPES[d.type]?.radius || 40) + SIM_CONFIG.collisionPadding.lan;
-      return (NODE_TYPES[d.type]?.radius || 28) + SIM_CONFIG.collisionPadding.default;
+      const extra = isDraft ? 15 : 0;
+      if (d.type === 'lan') return (NODE_TYPES[d.type]?.radius || 40) + SIM_CONFIG.collisionPadding.lan + extra;
+      return (NODE_TYPES[d.type]?.radius || 28) + SIM_CONFIG.collisionPadding.default + extra;
     }))
     .force('x', d3.forceX(d => {
       if (nodeClusterX.has(d.id)) return nodeClusterX.get(d.id);
       return width / 2;
     }).strength(d => {
-      if (d.type === 'internet') return 0.08;  // Gently center Internet horizontally
+      if (d.type === 'internet') return 0.08;
       if (d.type === 'pcc') return SIM_CONFIG.xStrength.pcc;
       if (d.type === 'lan') return SIM_CONFIG.xStrength.lan;
+      if (lbChildIds.has(d.id)) return 0.18; // strong pull to cluster under parent LB
       if (nodeClusterX.has(d.id)) return SIM_CONFIG.xStrength.lanChild;
       return SIM_CONFIG.xStrength.unattached;
     }))
@@ -5960,13 +6191,14 @@ function renderGraph(data) {
       if (d.type === 'nat') return height * SIM_CONFIG.yPosition.nat;
       if (d.type === 'lan') return height * SIM_CONFIG.yPosition.lan;
       if (d.type === 'alb' || d.type === 'nlb') return height * SIM_CONFIG.yPosition.lb;
+      if (lbChildIds.has(d.id)) return height * SIM_CONFIG.yPosition.lbChild;
       return height * SIM_CONFIG.yPosition.default;
     }).strength(d => {
-      // Internet, PCC & NAT need stronger pull to stay in their tier
       if (d.type === 'internet' || d.type === 'pcc') return 0.4;
       if (d.type === 'nat') return 0.3;
       if (d.type === 'lan') return 0.35;
-      if (d.type === 'alb' || d.type === 'nlb') return 0.25;
+      if (d.type === 'alb' || d.type === 'nlb') return 0.3;
+      if (lbChildIds.has(d.id)) return 0.25;
       return SIM_CONFIG.yStrength;
     }))
     .force('lanAlign', (function() {
@@ -8643,6 +8875,9 @@ function disconnect() {
   _billingByServer = new Map();
   _billingByVdc = new Map();
   _k8sManagedIds = new Map();
+  _draftMode = false; _draftGraphData = null; _realGraphData = null;
+  document.getElementById('draftBanner')?.remove();
+  document.getElementById('draftActions')?.remove();
   _idleScanResults = null;
   _idleScanRunning = false;
 
@@ -8755,6 +8990,10 @@ async function loadVDC() {
   _idleScanRunning = false;
   _billingByServer = new Map();
   _billingByVdc = new Map();
+  // Clear draft mode if active
+  _draftMode = false; _draftGraphData = null; _realGraphData = null;
+  document.getElementById('draftBanner')?.remove();
+  document.getElementById('draftActions')?.remove();
 
   // Cancel any in-flight requests from previous VDC load
   if (currentAbortController) currentAbortController.abort();
@@ -8934,6 +9173,9 @@ function setViewMode(mode) {
     const bp = document.getElementById('mapBillingPanel');
     if (bp) bp.classList.add('hidden');
   }
+
+  // Re-evaluate Design tab state if it's active (unblock/block based on new view)
+  if (aiDesignMode) switchAiTab('design');
 }
 
 const collapsedVdcs = new Set();
@@ -11398,12 +11640,137 @@ function toggleAiPanel() {
   }
 }
 
+/** Returns 'single', 'map', or 'location' based on active view mode button */
+function getViewMode() {
+  if (document.getElementById('viewModeSingle')?.classList.contains('active')) return 'single';
+  if (document.getElementById('viewModeLocation')?.classList.contains('active')) return 'location';
+  return 'map';
+}
+
 function openAiPanel() {
   if (!aiPanelOpen) toggleAiPanel();
 }
 
 function closeAiPanel() {
   if (aiPanelOpen) toggleAiPanel();
+}
+
+/** Switch between Assist and Design tabs in the AI panel */
+function switchAiTab(tab) {
+  const isDesign = (tab === 'design');
+  aiDesignMode = isDesign;
+  document.getElementById('aiTabAssist')?.classList.toggle('active', !isDesign);
+  document.getElementById('aiTabDesign')?.classList.toggle('active', isDesign);
+  // Clear conversation when switching tabs (different context)
+  aiConversationHistory = [];
+
+  const viewMode = getViewMode();
+  const designBlocked = isDesign && viewMode !== 'single';
+
+  const msgs = document.getElementById('aiMessages');
+  if (msgs) {
+    if (designBlocked) {
+      const viewLabel = viewMode === 'map' ? 'Global Map' : 'By Location';
+      msgs.innerHTML = `<div class="ai-welcome ai-welcome-design">
+           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#326CE5" stroke-width="1.5" opacity="0.4"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+           <div><strong>Architecture Designer</strong><br><br>Design mode requires the <strong>Single VDC</strong> view to render topologies on the canvas.<br><br>You are currently in <strong>${viewLabel}</strong> view. Switch to <strong>Single VDC</strong> in the sidebar, or load a VDC first, then return to the Design tab.</div>
+         </div>`;
+    } else if (isDesign) {
+      msgs.innerHTML = `<div class="ai-welcome ai-welcome-design">
+           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#326CE5" stroke-width="1.5"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+           <div><strong>Architecture Designer</strong><br>Describe the infrastructure you need in plain English. The AI will generate a visual topology on the canvas that you can iterate on, then export as Terraform.<br><br><span style="color:var(--text-muted);font-size:12px;">Example: "Design a 3-tier web app with ALB, 2 web servers, 2 app servers, PostgreSQL, and a NAT gateway in Frankfurt"</span></div>
+         </div>`;
+    } else {
+      msgs.innerHTML = `<div class="ai-welcome">
+           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="1.5" stroke-linecap="round"><path d="M12 2l2.09 6.26L20 10.27l-4.91 3.82L16.18 22 12 18.27 7.82 22l1.09-7.91L4 10.27l5.91-2.01L12 2z"/></svg>
+           <div>Ask about your cloud infrastructure — topology, security posture, billing, traffic, or flow log analysis.<br>The AI receives a context summary of all loaded data.</div>
+         </div>`;
+    }
+  }
+
+  // Update placeholder and suggestions; disable input when design is blocked
+  const input = document.getElementById('aiInput');
+  const sendBtn = document.getElementById('aiSendBtn');
+  if (designBlocked) {
+    if (input) { input.placeholder = 'Switch to Single VDC view to use Design mode...'; input.disabled = true; }
+    if (sendBtn) sendBtn.disabled = true;
+    const sugContainer = document.getElementById('aiSuggestions');
+    if (sugContainer) sugContainer.innerHTML = '';
+  } else {
+    if (input) {
+      input.placeholder = isDesign ? 'Describe the infrastructure you want to build...' : 'Ask about your infrastructure...';
+      input.disabled = false;
+    }
+    if (sendBtn) sendBtn.disabled = false;
+    updateAiSuggestions();
+  }
+
+  // ── Canvas: show blank canvas in Design mode, restore in Assist ──
+  document.getElementById('designEmptyState')?.remove(); // always clean up
+  const mapBg = document.getElementById('mapBackground');
+  if (isDesign && !designBlocked) {
+    // Stash real graph if not already stashed and show empty canvas
+    if (!_realGraphData && graphData?.nodes?.length > 0) _realGraphData = graphData;
+    const svg = d3.select('#graphSvg');
+    svg.selectAll('*').remove();
+    document.getElementById('toolbar').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'none';
+    // Show map background centered on Frankfurt (de/fra) as design backdrop
+    if (mapBg) {
+      mapBg.dataset.prevOpacity = mapBg.style.opacity || '';
+      if (!bgMap) initMapBackground();
+      mapBg.classList.add('visible', 'design-backdrop');
+      if (bgMap) {
+        const fraCoords = LOCATION_COORDS['de/fra'] || [50.1109, 8.6821, 10];
+        bgMap.invalidateSize({ animate: false });
+        bgMap.setView([fraCoords[0], fraCoords[1]], 7, { animate: false });
+      }
+    }
+    // Inject a lightweight design-mode hint overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'designEmptyState';
+    overlay.className = 'design-empty-state';
+    overlay.innerHTML = `
+      <div class="design-empty-hint">Describe your architecture in the AI panel to get started</div>
+    `;
+    document.getElementById('mainArea')?.appendChild(overlay);
+  } else if (!isDesign) {
+    // Restore map to previous state
+    if (mapBg) {
+      mapBg.classList.remove('design-backdrop');
+      if (mapBg.dataset.prevOpacity !== undefined) {
+        mapBg.style.opacity = mapBg.dataset.prevOpacity;
+        if (!mapBg.dataset.prevOpacity || mapBg.dataset.prevOpacity === '0') mapBg.classList.remove('visible');
+        delete mapBg.dataset.prevOpacity;
+      }
+    }
+    // Restore real topology (or discard draft)
+    if (_draftMode) discardDraft();
+    else if (_realGraphData?.nodes?.length > 0) {
+      renderGraph(_realGraphData);
+      _realGraphData = null;
+    }
+    // Re-center map on the loaded VDC location
+    const loc = currentDC?.properties?.location;
+    if (loc) updateMapBackground(loc);
+  }
+
+  // ── Model: default to 70B in Design mode for better JSON quality ──
+  const modelSelect = document.getElementById('aiModelSelect');
+  if (isDesign) {
+    _prevAiModel = aiSelectedModel; // stash previous model
+    const model70B = AI_MODELS.find(m => m.id.includes('Llama-3.3-70B'));
+    if (model70B) {
+      aiSelectedModel = model70B.id;
+      if (modelSelect) modelSelect.value = model70B.id;
+    }
+  } else if (_prevAiModel) {
+    aiSelectedModel = _prevAiModel;
+    if (modelSelect) modelSelect.value = _prevAiModel;
+    _prevAiModel = null;
+  }
+
+  if (input) input.focus();
 }
 
 /** Close the AI panel instantly (skip CSS transition) — use before map navigation
@@ -11433,49 +11800,211 @@ function showAiEdgeTab(withPulse = false) {
   }
 }
 
+// ── Phase 2: Parse AI-generated topology JSON from response ──
+function parseAiTopology(responseText) {
+  try {
+    // Strategy 1: ```json { "_ai_graph": ... } ```
+    const jsonMatch = responseText.match(/```json\s*\n?([\s\S]*?)\n?```/);
+    if (jsonMatch) {
+      const parsed = JSON.parse(jsonMatch[1]);
+      const graph = parsed._ai_graph || (parsed.nodes ? parsed : null);
+      if (graph?.nodes?.length) return graph;
+    }
+    // Strategy 2: raw {"_ai_graph": ...} in text
+    const rawMatch = responseText.match(/\{\s*"_ai_graph"\s*:\s*\{[\s\S]*?"nodes"\s*:\s*\[[\s\S]*?\]\s*,\s*"links"\s*:\s*\[[\s\S]*?\]\s*\}\s*\}/);
+    if (rawMatch) {
+      const parsed = JSON.parse(rawMatch[0]);
+      if (parsed._ai_graph?.nodes?.length) return parsed._ai_graph;
+    }
+  } catch (e) {
+    console.warn('[VDC-Viz] Failed to parse AI topology JSON:', e.message);
+  }
+  return null;
+}
+
+// ── Phase 2: Convert AI topology JSON to renderGraph-compatible format ──
+function buildDraftGraphData(aiTopo) {
+  if (!aiTopo?.nodes || !Array.isArray(aiTopo.nodes)) return null;
+
+  const nodeMap = new Map();
+  const nodes = [];
+  const links = [];
+
+  // Build nodes
+  aiTopo.nodes.forEach(n => {
+    const type = (n.type && NODE_TYPES[n.type]) ? n.type : 'server';
+    const id = n.id || `draft-${type}-${Math.random().toString(36).substring(2, 7)}`;
+    if (nodeMap.has(id)) return;
+    const node = { id, type, name: n.name || type, data: n.data || {}, _draft: true };
+    nodes.push(node);
+    nodeMap.set(id, node);
+  });
+
+  // Auto-add Internet node if any LAN is public
+  let hasInternet = nodeMap.has('draft-internet');
+  nodes.forEach(n => {
+    if (n.type === 'lan' && n.data.isPublic && !hasInternet) {
+      const inet = { id: 'draft-internet', type: 'internet', name: 'Internet', data: {}, _draft: true };
+      nodes.push(inet);
+      nodeMap.set(inet.id, inet);
+      hasInternet = true;
+    }
+  });
+
+  // Build links
+  (aiTopo.links || []).forEach(l => {
+    const srcId = typeof l.source === 'string' ? l.source : l.source?.id;
+    const tgtId = typeof l.target === 'string' ? l.target : l.target?.id;
+    if (!srcId || !tgtId) return;
+    if (!nodeMap.has(srcId) || !nodeMap.has(tgtId)) {
+      console.warn(`[VDC-Viz] Draft link references missing node: ${srcId} → ${tgtId}`);
+      return;
+    }
+    const linkType = (l.linkType && LINK_TYPES[l.linkType]) ? l.linkType : 'nic';
+    links.push({ source: srcId, target: tgtId, label: l.label || '', linkType });
+  });
+
+  // Auto-link public LANs to Internet
+  if (hasInternet) {
+    nodes.forEach(n => {
+      if (n.type === 'lan' && n.data.isPublic) {
+        const alreadyLinked = links.some(l =>
+          (l.source === 'draft-internet' && l.target === n.id) ||
+          (l.source === n.id && l.target === 'draft-internet'));
+        if (!alreadyLinked) {
+          links.push({ source: 'draft-internet', target: n.id, label: '', linkType: 'public' });
+        }
+      }
+    });
+  }
+
+  // ── Orphan node cleanup: remove LANs with no connections, auto-connect orphan resources ──
+  const connectedIds = new Set();
+  links.forEach(l => { connectedIds.add(l.source); connectedIds.add(l.target); });
+  // Find the first private LAN (fallback for orphan resources)
+  const firstPrivateLan = nodes.find(n => n.type === 'lan' && !n.data.isPublic && connectedIds.has(n.id));
+  const firstAnyLan = nodes.find(n => n.type === 'lan' && connectedIds.has(n.id));
+  const fallbackLan = firstPrivateLan || firstAnyLan;
+  // Remove orphan LANs (LANs with zero links); auto-connect orphan non-LANs to a LAN
+  const orphanLans = [];
+  const orphanResources = [];
+  nodes.forEach(n => {
+    if (!connectedIds.has(n.id)) {
+      if (n.type === 'lan') orphanLans.push(n);
+      else if (n.type !== 'internet') orphanResources.push(n);
+    }
+  });
+  if (orphanLans.length > 0) {
+    console.warn(`[VDC-Viz] Removing ${orphanLans.length} orphan LAN(s):`, orphanLans.map(n => n.name));
+    const orphanIds = new Set(orphanLans.map(n => n.id));
+    for (let i = nodes.length - 1; i >= 0; i--) {
+      if (orphanIds.has(nodes[i].id)) { nodeMap.delete(nodes[i].id); nodes.splice(i, 1); }
+    }
+  }
+  if (orphanResources.length > 0 && fallbackLan) {
+    console.warn(`[VDC-Viz] Auto-connecting ${orphanResources.length} orphan resource(s) to ${fallbackLan.name}`);
+    orphanResources.forEach(n => {
+      const lt = (n.type === 'nat') ? 'gateway' : 'nic';
+      links.push({ source: n.id, target: fallbackLan.id, label: '', linkType: lt });
+    });
+  }
+
+  console.log(`[VDC-Viz] Draft topology built: ${nodes.length} nodes, ${links.length} links`);
+  return { nodes, links };
+}
+
 function updateAiSuggestions() {
   const container = document.getElementById('aiSuggestions');
   if (!container) return;
   container.innerHTML = '';
 
   const suggestions = [];
-  const hasTopology = graphData?.nodes?.length > 0;
-  const hasFlowLogs = flAllRecords.length > 0;
-  const hasBilling = _billingByServer.size > 0 || _billingByVdc.size > 0;
-  const hasDatabases = graphData?.nodes?.some(n => ['postgres', 'mongodb', 'mysql', 'mariadb', 'kafka'].includes(n.type));
 
-  // Always available when topology is loaded
-  if (hasTopology) {
-    suggestions.push({ label: 'Summarize infrastructure', prompt: 'Give me a concise overview of my cloud infrastructure — servers, networks, databases, and any notable observations.' });
-    suggestions.push({ label: 'Security assessment', prompt: 'Assess the security posture of my infrastructure. Check firewall coverage, flow log monitoring, security groups, and highlight any gaps or concerns.' });
+  // ── Design tab: architecture-specific suggestions ──
+  if (aiDesignMode) {
+    const designSuggestions = [
+      { label: '3-tier web app', prompt: 'Design a 3-tier web application architecture with an Application Load Balancer, 2 web servers, 2 application servers, a PostgreSQL database, and a NAT gateway for outbound traffic.' },
+      { label: 'K8s cluster', prompt: 'Design a Kubernetes cluster setup with a node pool, a private LAN, a NAT gateway for outbound internet access, and a PostgreSQL database for the application backend.' },
+      { label: 'Microservices', prompt: 'Design a microservices architecture with an NLB for internal traffic, multiple service servers, a MongoDB database, NFS for shared storage, and a NAT gateway.' },
+      { label: 'Simple website', prompt: 'Design a simple website hosting setup with a public LAN, a web server, and a managed MariaDB database on a private LAN.' },
+      { label: 'VPN gateway', prompt: 'Design a site-to-site VPN setup with an IPSec gateway, a private LAN connecting 2 backend servers, and a NAT gateway for outbound internet.' },
+      { label: 'CI/CD pipeline', prompt: 'Design a CI/CD infrastructure with a Jenkins server, 2 build agent VMs, an NFS share for artifacts, a private container registry server, and a NAT gateway.' },
+      { label: 'HA database cluster', prompt: 'Design a highly available database setup with a PostgreSQL primary and replica on separate servers, connected via a private replication LAN, plus a monitoring server.' },
+      { label: 'Dev/staging/prod', prompt: 'Design a multi-environment setup with separate LANs for dev, staging, and production. Each environment has a web server and a database, with a shared NAT gateway.' },
+      { label: 'Data analytics', prompt: 'Design a data analytics platform with a Kafka cluster for streaming, 2 processing servers, a MongoDB database for storage, NFS for data lake, and a NAT gateway.' },
+      { label: 'WordPress hosting', prompt: 'Design a WordPress hosting setup with an ALB, 2 web servers running WordPress, a managed MariaDB database, NFS for shared media, and a NAT gateway.' },
+    ];
+    // First 4 show as chips, rest appear in "More" dropdown
+    suggestions.push(...designSuggestions);
+  } else {
+    // ── Assist tab: analysis/export suggestions ──
+    const hasTopology = graphData?.nodes?.length > 0;
+    const hasFlowLogs = flAllRecords.length > 0;
+    const hasBilling = _billingByServer.size > 0 || _billingByVdc.size > 0;
+    const hasDatabases = graphData?.nodes?.some(n => ['postgres', 'mongodb', 'mysql', 'mariadb', 'kafka'].includes(n.type));
+
+    if (hasTopology) {
+      suggestions.push({ label: 'Summarize infrastructure', prompt: 'Give me a concise overview of my cloud infrastructure — servers, networks, databases, and any notable observations.' });
+      suggestions.push({ label: 'Security assessment', prompt: 'Assess the security posture of my infrastructure. Check firewall coverage, flow log monitoring, security groups, and highlight any gaps or concerns.' });
+    }
+
+    if (hasFlowLogs) {
+      suggestions.push({ label: 'Traffic patterns', prompt: 'Analyze the traffic patterns in my flow logs. Identify the top talkers, busiest ports, and any unusual activity.' });
+      suggestions.push({ label: 'Rejected flows', prompt: 'Analyze the rejected flows. Are there patterns suggesting attacks, misconfigurations, or missing firewall rules?' });
+    }
+
+    if (_idleScanResults && _idleScanResults.candidates.length > 0) {
+      suggestions.push({ label: 'Cost savings', prompt: 'I have idle VMs detected by the telemetry scan. Review my infrastructure for cost optimization opportunities — which VMs should I deallocate, and what potential savings are there?' });
+    } else if (hasBilling) {
+      suggestions.push({ label: 'Cost optimization', prompt: 'Review my data transfer and billing data. Which servers consume the most bandwidth? Are there cost optimization opportunities?' });
+    }
+
+    if (hasDatabases) {
+      suggestions.push({ label: 'Database overview', prompt: 'Summarize my database services — types, versions, instance counts, and any recommendations for updates or improvements.' });
+    }
+
+    if (hasTopology) {
+      suggestions.push({ label: 'Export as Terraform', prompt: 'Generate complete Terraform code (HCL) for my current VDC infrastructure. Include every resource visible in the topology — servers, LANs, NICs, load balancers, databases, NAT gateways, VPNs, Kubernetes, and any other services. Make it production-ready with proper resource references and locals.' });
+    }
   }
 
-  // Flow log suggestions
-  if (hasFlowLogs) {
-    suggestions.push({ label: 'Traffic patterns', prompt: 'Analyze the traffic patterns in my flow logs. Identify the top talkers, busiest ports, and any unusual activity.' });
-    suggestions.push({ label: 'Rejected flows', prompt: 'Analyze the rejected flows. Are there patterns suggesting attacks, misconfigurations, or missing firewall rules?' });
-  }
+  // Design mode: show first 4 as chips + "More" dropdown for the rest
+  // Assist mode: show up to 5 chips (no dropdown)
+  const visibleCount = aiDesignMode ? 4 : 5;
+  const visible = suggestions.slice(0, visibleCount);
+  const overflow = aiDesignMode ? suggestions.slice(visibleCount) : [];
 
-  // Billing / cost suggestions
-  if (_idleScanResults && _idleScanResults.candidates.length > 0) {
-    suggestions.push({ label: 'Cost savings', prompt: 'I have idle VMs detected by the telemetry scan. Review my infrastructure for cost optimization opportunities — which VMs should I deallocate, and what potential savings are there?' });
-  } else if (hasBilling) {
-    suggestions.push({ label: 'Cost optimization', prompt: 'Review my data transfer and billing data. Which servers consume the most bandwidth? Are there cost optimization opportunities?' });
-  }
-
-  // Database suggestions
-  if (hasDatabases) {
-    suggestions.push({ label: 'Database overview', prompt: 'Summarize my database services — types, versions, instance counts, and any recommendations for updates or improvements.' });
-  }
-
-  // Limit to 4 suggestions max
-  suggestions.slice(0, 4).forEach(s => {
+  visible.forEach(s => {
     const btn = document.createElement('button');
     btn.className = 'ai-suggest-btn';
     btn.textContent = s.label;
     btn.onclick = () => sendAiMessage(s.prompt);
     container.appendChild(btn);
   });
+
+  if (overflow.length > 0) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'ai-suggest-more';
+    const moreBtn = document.createElement('button');
+    moreBtn.className = 'ai-suggest-more-btn';
+    moreBtn.innerHTML = `More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+    const dropdown = document.createElement('div');
+    dropdown.className = 'ai-suggest-dropdown';
+    overflow.forEach(s => {
+      const item = document.createElement('button');
+      item.className = 'ai-suggest-dropdown-item';
+      item.textContent = s.label;
+      item.onclick = () => { dropdown.classList.remove('open'); sendAiMessage(s.prompt); };
+      dropdown.appendChild(item);
+    });
+    moreBtn.onclick = (e) => { e.stopPropagation(); dropdown.classList.toggle('open'); };
+    // Close dropdown on outside click
+    const closeDropdown = (e) => { if (!wrapper.contains(e.target)) { dropdown.classList.remove('open'); document.removeEventListener('click', closeDropdown); } };
+    moreBtn.addEventListener('click', () => document.addEventListener('click', closeDropdown));
+    wrapper.appendChild(moreBtn);
+    wrapper.appendChild(dropdown);
+    container.appendChild(wrapper);
+  }
 }
 
 function dismissAiCostBanner() {
@@ -11649,6 +12178,25 @@ function buildAiSystemPrompt(contextStr) {
   if (hasFlowLogs) prompt += ' You can analyze network flow logs for traffic patterns, security threats, and anomalies. When mentioning IPs, include their resource names if known.';
   if (hasBilling) prompt += ' You have access to contract-wide billing and data transfer metrics across all VDCs. Provide cost-aware recommendations and identify high-traffic resources.';
   if (ctx.includes('[IONOS Documentation Reference]')) prompt += ' You also have excerpts from the official IONOS Cloud documentation. Use these to provide accurate how-to guidance, API references, and service details. Cite the documentation when relevant.';
+
+  if (aiDesignMode) {
+    // ── Design mode: architecture-first system prompt ──
+    prompt = 'You are an IONOS Cloud architecture designer. Your PRIMARY job is to design infrastructure topologies and return them as JSON so they can be visualized. EVERY response MUST contain a ```json block with an _ai_graph object. Do NOT generate Terraform HCL — only JSON topology.\n\n';
+    prompt += 'RESPONSE FORMAT — you MUST follow this exactly:\n(1) A brief natural language explanation of the proposed architecture (2-3 short paragraphs).\n(2) A JSON topology block — THIS IS MANDATORY, never skip it:\n```json\n{"_ai_graph":{"nodes":[...],"links":[...]}}\n```\n\n';
+    prompt += 'NODE SCHEMA: {"id":"draft-xxx","type":"<type>","name":"Display Name","data":{...properties...}}\nLINK SCHEMA: {"source":"node-id","target":"node-id","label":"optional","linkType":"<type>"}\n';
+    prompt += 'Allowed node types: internet, lan, server, cube, postgres, mongodb, mysql, mariadb, nfs, vpn_wg, vpn_ipsec, nat, alb, nlb, k8s_np, kafka, pcc.\n';
+    prompt += 'Allowed link types: nic, cross-connect, managed, gateway, public.\n\n';
+    prompt += 'CRITICAL CONNECTIVITY RULES:\n- EVERY node must have at least one link — no orphan/disconnected nodes.\n- Every server/cube connects to at least one LAN via a "nic" link.\n- Every LAN connects to at least one server, database, NAT, LB, or K8s node — never create empty LANs.\n- Databases connect to a private LAN via "nic".\n- NAT gateways connect to a LAN via "gateway".\n- ALB/NLB connect to a LAN via "nic".\n- Public LANs must have an "internet" node (id: "draft-internet") linked via "public".\n- Use sensible defaults — LANs with 10.x.x.x CIDRs, servers with 2-8 cores and 4-32GB RAM.\n\n';
+    prompt += 'CRITICAL ITERATION RULE: When the user requests ANY change (add, remove, modify, resize, rename resources), you MUST respond with the COMPLETE updated ```json {"_ai_graph": ...}``` block containing ALL nodes and ALL links — not just the changed ones. If you omit the JSON block, the canvas will NOT update. Every response in this mode MUST contain a ```json block.\n';
+    prompt += 'IMPORTANT: Do NOT generate Terraform code. Only output the _ai_graph JSON. The user can generate Terraform later from the visual topology.';
+  } else {
+    // ── Assist mode: Terraform generation instructions (Phase 1) ──
+    if (hasTopology) prompt += '\n\nTERRAFORM CODE GENERATION: When asked to generate Terraform code, produce HCL using the ionos-cloud/ionoscloud provider wrapped in ```hcl fences. IMPORTANT — keep it concise to avoid timeouts: use compact formatting (no blank lines between attributes), omit comments unless essential, use locals{} for datacenter_id/location, and use variable{} for sensitive data. Include only resources present in the context: ionoscloud_datacenter, ionoscloud_lan, ionoscloud_server (inline volume{}/nic{}), ionoscloud_natgateway, ionoscloud_applicationloadbalancer/ionoscloud_networkloadbalancer, ionoscloud_pg_cluster/ionoscloud_mongo_cluster/ionoscloud_mariadb_cluster (with connections{}), ionoscloud_k8s_cluster + ionoscloud_k8s_node_pool, ionoscloud_nfs_cluster, ionoscloud_kafka_cluster, ionoscloud_vpn_wireguard_gateway/ionoscloud_vpn_ipsec_gateway, ionoscloud_private_cross_connect, ionoscloud_ipblock. If the VDC has many servers (>6), generate Terraform for the first 6 in detail and add a comment "# Repeat pattern for remaining N servers" to stay within token limits. Reference resources via resource.type.name.id.';
+
+    // ── Architecture design instructions (fallback for Assist tab) ──
+    prompt += '\n\nARCHITECTURE DESIGN: When asked to design, architect, or build NEW infrastructure (not describe existing), respond with: (1) A natural language explanation of the proposed architecture — design rationale, tiers, security, scalability — in 2-3 paragraphs. (2) A JSON topology block embedded as: ```json\n{"_ai_graph":{"nodes":[...],"links":[...]}}\n``` Node schema: {"id":"draft-xxx","type":"<type>","name":"Display Name","data":{...properties...}}. Link schema: {"source":"node-id","target":"node-id","label":"optional","linkType":"<type>"}. Allowed node types: internet, lan, server, cube, postgres, mongodb, mysql, mariadb, nfs, vpn_wg, vpn_ipsec, nat, alb, nlb, k8s_np, kafka, pcc. Allowed link types: nic, cross-connect, managed, gateway, public. Use sensible defaults — LANs with 10.x.x.x CIDRs, servers with 2-8 cores and 4-32GB RAM, databases with version and instance count. CRITICAL CONNECTIVITY RULES: (a) EVERY node must have at least one link — no orphan/disconnected nodes. (b) Every server/cube MUST connect to at least one LAN via a "nic" link. (c) Every LAN MUST connect to at least one server, database, NAT, LB, or K8s node — never create empty LANs. (d) Databases connect to a private LAN via "nic". (e) NAT gateways connect to a LAN via "gateway". (f) ALB/NLB connect to a LAN via "nic". (g) Public LANs must have an "internet" node linked via "public". (h) A typical 3-tier architecture uses ONE public LAN for web tier + internet, ONE private LAN connecting web servers to app servers and load balancers, and ONE private LAN for app-to-database traffic. Do NOT create separate LANs unless they connect different resource groups. When the user iterates (adds/removes/changes resources), re-emit the FULL updated _ai_graph JSON with ALL nodes and links, not just the diff.';
+  }
+
   prompt += '\n\nCurrent infrastructure context:\n' + ctx;
   return prompt;
 }
@@ -11929,9 +12477,15 @@ async function sendAiMessage(presetPrompt) {
     return;
   }
 
-  // Check if any data is loaded
-  if (graphData.nodes.length === 0 && flAllRecords.length === 0) {
-    addAiMessage('No data loaded yet. Please connect to a data center first.', 'error');
+  // Block Design mode on non-single-VDC views
+  if (aiDesignMode && getViewMode() !== 'single') {
+    addAiMessage('Design mode is only available in <strong>Single VDC</strong> view. Please switch views in the sidebar first.', 'error');
+    return;
+  }
+
+  // Check if any data is loaded (skip in design mode — doesn't need existing topology)
+  if (!aiDesignMode && graphData.nodes.length === 0 && flAllRecords.length === 0) {
+    addAiMessage('No data loaded yet. Please connect to a data center first, or switch to the <strong>Design</strong> tab to create a new architecture.', 'error');
     return;
   }
 
@@ -11987,33 +12541,74 @@ async function sendAiMessage(presetPrompt) {
     };
     if (useProxy()) headers['X-Token'] = apiToken;
 
+    // ── Build messages array ──
+    const msgArray = [
+      { role: 'system', content: systemPrompt },
+      ...aiConversationHistory,
+    ];
+
+    // In Design mode with an active draft, inject the current topology so the model
+    // can iterate on it. Also wrap the user message with a reminder to re-emit JSON.
+    let finalUserMsg = userMsg;
+    if (aiDesignMode && _draftMode && _draftGraphData) {
+      const currentTopo = {
+        _ai_graph: {
+          nodes: _draftGraphData.nodes.map(n => ({ id: n.id, type: n.type, name: n.name, data: n.data || {} })),
+          links: _draftGraphData.links.map(l => ({ source: typeof l.source === 'object' ? l.source.id : l.source, target: typeof l.target === 'object' ? l.target.id : l.target, label: l.label || '', linkType: l.linkType })),
+        }
+      };
+      finalUserMsg = `The current draft topology is:\n\`\`\`json\n${JSON.stringify(currentTopo)}\n\`\`\`\n\nUser request: ${userMsg}\n\nIMPORTANT: Apply the requested changes to the topology above and respond with (1) a brief explanation of what changed, then (2) the COMPLETE updated \`\`\`json {"_ai_graph": ...}\`\`\` with ALL nodes and links. Do NOT omit unchanged nodes/links.`;
+    }
+
+    msgArray.push({ role: 'user', content: finalUserMsg });
+
     const resp = await fetch(fetchUrl, {
       method: 'POST',
       headers,
       signal: aiAbortController.signal,
       body: JSON.stringify({
         model: aiSelectedModel,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          ...aiConversationHistory,
-          { role: 'user', content: userMsg },
-        ],
+        messages: msgArray,
         temperature: 0.3,
-        max_tokens: 4096,
+        max_tokens: (aiDesignMode || /terraform|architect|design.*infra/i.test(userMsg)) ? 8192 : 4096,
       }),
     });
 
     if (!resp.ok) {
       const errText = await resp.text();
       if (resp.status === 429) throw new Error('Rate limited — please wait and try again.');
+      if (resp.status === 504) throw new Error('AI Model Hub timed out. Try a smaller request (e.g., "Generate Terraform for just the servers and LANs"), or try a different model.');
       throw new Error(`${resp.status}: ${errText.substring(0, 200)}`);
     }
 
     const data = await resp.json();
     const reply = data.choices?.[0]?.message?.content || 'No response received.';
-
     if (typing) typing.remove();
-    addAiMessage(reply, 'assistant');
+
+    // ── Phase 2: Check for embedded topology JSON ──
+    const aiTopo = parseAiTopology(reply);
+    if (aiTopo) {
+      // Extract text explanation (everything before the ```json block)
+      const textPart = reply.replace(/```json[\s\S]*?```/g, '').trim();
+      if (textPart) addAiMessage(textPart, 'assistant');
+      const draftData = buildDraftGraphData(aiTopo);
+      if (draftData) {
+        renderDraftTopology(draftData);
+        addAiMessage('**Draft topology rendered on canvas.** Review the layout and ask me to refine it, or click **Generate Terraform** when ready.', 'assistant');
+      } else {
+        addAiMessage(reply, 'assistant');
+      }
+    } else {
+      addAiMessage(reply, 'assistant');
+      // ── Phase 1: Check for Terraform code block — offer download ──
+      if (/resource\s+"ionoscloud_/.test(reply)) {
+        const dlBtn = document.createElement('div');
+        dlBtn.style.cssText = 'padding: 6px 12px; margin: -4px 0 8px 48px;';
+        dlBtn.innerHTML = '<button onclick="downloadTerraformFromResponse(aiConversationHistory[aiConversationHistory.length-1]?.content || \'\')" style="background: var(--accent); color: white; border: none; border-radius: 6px; padding: 6px 14px; font-size: 12px; cursor: pointer; font-family: inherit;">Download .tf</button>';
+        document.getElementById('aiMessages')?.appendChild(dlBtn);
+        document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
+      }
+    }
 
     // Track conversation for multi-turn context (keep last 6 turns)
     aiConversationHistory.push({ role: 'user', content: userMsg });
@@ -12036,8 +12631,40 @@ async function sendAiMessage(presetPrompt) {
   }
 }
 
+// ── Terraform download helper (Phase 1) ──
+function downloadTerraformFromResponse(responseText) {
+  let tfCode = responseText;
+  // Try extracting from ```hcl fences first, then generic ``` fences
+  const hclMatch = responseText.match(/```hcl\s*\n([\s\S]*?)```/);
+  if (hclMatch) {
+    tfCode = hclMatch[1];
+  } else {
+    const codeMatch = responseText.match(/```\s*\n([\s\S]*?)```/);
+    if (codeMatch) tfCode = codeMatch[1];
+  }
+  tfCode = tfCode.trim();
+  if (!/resource\s+"ionoscloud_/m.test(tfCode)) {
+    toast('No valid Terraform resource declarations found in response.', 'error');
+    return;
+  }
+  const vdcName = (currentDC?.properties?.name || 'topology').replace(/[^a-zA-Z0-9_-]/g, '-').toLowerCase();
+  const filename = `ionos-${vdcName}-${new Date().toISOString().substring(0, 10)}.tf`;
+  const blob = new Blob([tfCode], { type: 'text/plain; charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  toast(`Downloaded ${filename}`, 'success');
+}
+
 function clearAiConversation() {
   aiConversationHistory = [];
+  _draftMode = false; _draftGraphData = null; _realGraphData = null;
+  document.getElementById('draftBanner')?.remove();
+  document.getElementById('draftActions')?.remove();
   const container = document.getElementById('aiMessages');
   if (container) {
     container.innerHTML = '<div class="ai-welcome"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="1.5" stroke-linecap="round"><path d="M12 2l2.09 6.26L20 10.27l-4.91 3.82L16.18 22 12 18.27 7.82 22l1.09-7.91L4 10.27l5.91-2.01L12 2z"/></svg><div>Ask about your cloud infrastructure — topology, security posture, billing, traffic, or flow log analysis.<br>The AI receives a context summary of all loaded data.</div></div>';

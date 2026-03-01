@@ -39,11 +39,26 @@
 
 Ask your infrastructure anything. The built-in AI Cloud Assistant connects to the **IONOS AI Model Hub** and understands your full cloud context — topology, servers, LANs, databases, security posture, billing, and flow logs. It adapts its analysis based on what's loaded: connect a VDC for infrastructure Q&A, load flow logs for traffic analysis, or use billing data for cost insights.
 
+The assistant has two modes, accessible via tabs in the AI panel:
+
+**Assist** — Analyze your existing infrastructure:
+
 - **Security assessment** — identify servers without firewalls, unprotected NICs, missing security groups
 - **Cost optimization** — on-demand idle VM scan using real-time telemetry to find stopped-but-billed VMs and running servers with near-zero traffic
 - **Traffic analysis** — top talkers, rejected flows, suspicious port scanning, protocol breakdown
 - **Infrastructure overview** — resource inventory, compute capacity, database health, network layout
 - **IONOS Documentation search** — toggle the Docs button to search the official IONOS Cloud documentation (via MCP) and receive answers grounded in up-to-date product docs
+- **Terraform export** — generate production-ready HCL for your entire VDC topology
+
+**Design** — Build new architectures from scratch:
+
+- Describe infrastructure in natural language (*"Design a 3-tier web app with ALB, 2 web servers, PostgreSQL, and a NAT gateway"*)
+- The AI generates a visual topology rendered as a **draft** on the canvas over an interactive map backdrop centered on Frankfurt
+- Iterate via chat (*"Add a NAT gateway"*, *"Make servers 8 cores"*, *"Add a MongoDB database"*)
+- 10 architecture templates available as quick-start suggestions (3-tier web app, K8s cluster, Microservices, VPN gateway, CI/CD pipeline, and more)
+- Auto-switches to Llama 3.3 70B for better JSON generation quality
+- Load balancers render as parent nodes with connected servers fanned out below
+- When satisfied, generate Terraform to provision your design
 
 Choose from **Llama 3.1 8B**, **Mistral Small 24B**, or **Llama 3.3 70B** via the IONOS AI Model Hub. Press `A` to open.
 

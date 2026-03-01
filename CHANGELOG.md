@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.0] - 2026-03-01
+
+### Added (1.12.0)
+
+- **AI Design Mode (Dual-Tab UI)** — The AI Cloud Assistant now has two tabs: **Assist** (existing analysis/export functionality) and **Design** (new architecture designer). The Design tab provides a dedicated mode for building infrastructure topologies from natural language, with its own conversation, system prompt, suggestions, and welcome message. Switching between tabs preserves each tab's state independently.
+- **Design Mode Map Backdrop** — Entering Design mode displays an interactive Leaflet map centered on Frankfurt (de/fra) at zoom level 7 as the canvas backdrop, with boosted brightness and contrast (`design-backdrop` CSS class). The map is visible behind the topology as architectures are designed, giving geographic context to the infrastructure being planned.
+- **Design Mode Empty State** — A subtle hint pill ("Describe your architecture in the AI panel to get started") appears at the top of the empty design canvas over the map backdrop, replacing the previous onboarding empty state.
+- **Design Mode Auto-Model Switch** — Automatically switches to Llama 3.3 70B when entering Design mode (better JSON generation quality) and restores the previous model when switching back to Assist.
+- **Design Mode View Restriction** — Design mode is only available in Single VDC view. Switching to Global Map or By Location view shows a clear message explaining the restriction and disables input. Re-evaluates automatically when the view mode changes.
+- **Design Suggestions Dropdown** — 10 architecture templates available: 4 shown as quick-access chips (3-tier web app, K8s cluster, Microservices, Simple website) plus 6 more in a "More" dropdown (VPN gateway, CI/CD pipeline, HA database cluster, Dev/staging/prod, Data analytics, WordPress hosting). The dropdown opens upward with frosted-glass styling and closes on outside click.
+- **Dedicated Design System Prompt** — Design mode uses a completely separate system prompt that mandates `_ai_graph` JSON output (never Terraform HCL), includes node/link schema documentation, connectivity rules, and a CRITICAL ITERATION RULE requiring full JSON re-emission on every modification request.
+- **Draft Topology Injection for Iteration** — When iterating on an existing draft design, the current `_draftGraphData` is serialized as JSON and prepended to the user's message, giving the AI model full visibility of the current state to apply modifications accurately.
+- **Orphan Node Validation** — `buildDraftGraphData()` now detects and auto-removes empty/disconnected LANs and auto-connects orphan resources (servers, databases, etc.) to the nearest private LAN, preventing broken topologies from AI output.
+- **Load Balancer Parent-Child Layout** — Servers directly connected to an ALB or NLB are detected and positioned as children below the load balancer tier. LB children are evenly spread horizontally around their parent LB's X position with dedicated Y-tier positioning (`lbChild` at 0.68) and stronger X-clustering force (0.18).
+- **Draft Mode Spacing** — Draft topologies use increased link distances (1.4x), stronger charge repulsion (1.5x), and extra collision padding (+15px) compared to real topologies, ensuring nodes have breathing room on the map backdrop.
+- **Kafka Node Color Fix** — Changed Kafka cluster node color from `#231f20` (near-black, invisible on dark theme) to `#e07a2f` (orange, matching Apache Kafka branding).
+
+### Changed (1.12.0)
+
+- **Pre-login Map Prominence** — Map backdrop during the login/onboarding screen is now more visible: dark theme opacity increased from 0.45 to 0.70 with brightness 0.9 (was 0.7); light theme opacity increased from 0.60 to 0.75 with brightness 0.95 (was 0.92).
+- **Global Map Cluster Redesign** — Cluster markers changed from circles to rounded rectangles with frosted glass effect (`backdrop-filter: blur(6px)`), softer borders, and updated sizing. Same aesthetic applied to VDC drill-down markers and available location markers.
+- **Map Cluster Collision Avoidance** — Nearby clusters (e.g., Frankfurt/Berlin) are automatically nudged apart by a minimum distance of 2.5 degrees to prevent overlapping markers.
+- Load balancer Y-force strength increased from 0.25 to 0.30 for stronger tier positioning.
+
+### Fixed (1.12.0)
+
+- **TypeError on Design tab switch** — `emptyState.querySelector('h2')` returned null because the onboarding element uses different selectors. Fixed by creating a separate `#designEmptyState` overlay div.
+- **AI returning Terraform instead of JSON in Design mode** — The model sometimes followed the Terraform code path when design instructions were mixed with Terraform instructions. Fixed by using a completely separate system prompt in Design mode.
+- **AI not updating topology on iteration** — When asked to modify a draft (e.g., "update VMs to 2 cores"), the model returned text descriptions without re-emitting JSON. Fixed by injecting current draft topology into the message and strengthening the iteration rule.
+- **Design tab stuck in blocked state after view switch** — Design tab restriction wasn't re-evaluated when view mode changed. Fixed by calling `switchAiTab('design')` at the end of `setViewMode()`.
+
 ## [1.11.0] - 2026-02-28
 
 ### Added (1.11.0)
@@ -12,6 +43,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Kubernetes Managed Resource Badges** — Resources that belong to a Managed Kubernetes node pool (servers, LANs, NAT gateways, PCCs) are automatically identified via the IONOS Labels API (`/cloudapi/v6/labels?depth=2&filter.key=managedexternally`) and marked with an official K8s helm wheel badge (blue heptagon + white 7-spoke wheel) at the bottom-right of the node. K8s-managed status is also shown in the hover tooltip (`⎈ K8s` tag), the detail side panel (blue "⎈ K8s Managed" badge), and the AI assistant context.
 - **VDC Name Tooltip** — Hovering over the VDC boundary name label shows an interactive tooltip with UUID (click-to-copy), location, description, state, creation date, and resource count summary. Tooltip supports mouse-over interaction with delayed hide.
 - **AI Context: Resource UUIDs** — The AI Cloud Assistant now includes UUIDs for VDCs, servers, LANs, databases, and infrastructure nodes in its context, enabling it to answer questions like "what is the UUID of this VDC?"
+- **Terraform Export (Phase 1)** — Ask the AI assistant to "Export as Terraform" and it generates complete, production-ready HCL using the `ionos-cloud/ionoscloud` Terraform provider. Covers all resource types: datacenters, servers, LANs, NICs, NAT gateways, load balancers, databases (PostgreSQL, MongoDB, MySQL, MariaDB), Kubernetes clusters, NFS, Kafka, VPN gateways, and cross connects. One-click `.tf` file download from the AI response.
+- **NL Architecture Designer (Phase 2)** — Describe desired infrastructure in natural language ("Design a 3-tier web app with ALB, 2 servers, and PostgreSQL"). The AI generates a structured architecture proposal that renders as a **draft topology** on the canvas — visually distinct with dashed borders and a "DRAFT" banner. Iterate via chat ("Add a NAT gateway", "Make servers 8 cores"). When satisfied, click "Generate Terraform" to produce the HCL. Draft mode is cleanly separated from real infrastructure — discard anytime to restore.
 
 ### Changed (1.11.0)
 
