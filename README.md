@@ -57,172 +57,30 @@ The assistant has two modes, accessible via tabs:
 
 ### Visualization
 
-<table>
-<tr>
-<td width="33%">
-
-🗺️ **Global Map View**<br>
-Interactive map of all IONOS DC locations, color-coded by cloud type. Active regions show as cluster bubbles with VDC counts — click to drill down. `G`
-
-</td>
-<td width="33%">
-
-🔗 **Managed Services**<br>
-Databases (PostgreSQL, MongoDB, MySQL, MariaDB), VPN gateways, NFS, load balancers, K8s clusters, and Kafka rendered on the topology with LAN connections. K8s resources get a helm wheel badge.
-
-</td>
-<td width="33%">
-
-🌐 **Cross-Connect View**<br>
-All VDCs in a metro region on one canvas with Private Cross Connect links visible between data centers. Same-metro VDCs are grouped automatically.
-
-</td>
-</tr>
-<tr>
-<td>
-
-🖥️ **Compute View**<br>
-VM type, CPU cores, RAM, and CPU family for every server. Color-coded by type: cyan (dedicated-core), purple (vCPU), orange (Cube), rose (GPU). `C`
-
-</td>
-<td>
-
-📡 **IP & DNS View**<br>
-IP labels on every NIC with reverse DNS and forward DNS records. Public IP blocks, DNS zones, and CDN distributions in the sidebar. `I`
-
-</td>
-<td>
-
-🛡️ **Highlights**<br>
-Filter by firewall, flow logs, security groups, IPv6, IP failover, cross connect, NIC multi-queue, or idle VMs. Matching nodes glow, the rest fades. `H`
-
-</td>
-</tr>
-</table>
+| | | |
+|:--|:--|:--|
+| 🗺️ **Global Map View** — Interactive map of all IONOS DC locations, color-coded by cloud type. Active regions show as cluster bubbles — click to drill down. `G` | 🔗 **Managed Services** — Databases, VPN gateways, NFS, load balancers, K8s clusters, and Kafka on the topology with LAN connections. K8s resources get a helm badge. | 🌐 **Cross-Connect View** — All VDCs in a metro region on one canvas with Private Cross Connect links visible. Same-metro VDCs grouped automatically. |
+| 🖥️ **Compute View** — VM type, cores, RAM, CPU family for every server. Color-coded: cyan (dedicated), purple (vCPU), orange (Cube), rose (GPU). `C` | 📡 **IP & DNS View** — IP labels on every NIC with reverse DNS and forward DNS. Public IP blocks, DNS zones, and CDN distributions in the sidebar. `I` | 🛡️ **Highlights** — Filter by firewall, flow logs, security groups, IPv6, failover, cross connect, multi-queue, or idle VMs. Matches glow, rest fades. `H` |
 
 ### Analysis & Monitoring
 
-<table>
-<tr>
-<td width="33%">
-
-📜 **Flow Log Explorer**<br>
-Drag-and-drop flow log files to analyze traffic. Filter by IP, port, protocol, action. Click any row to trace the path on the topology. CSV export. `W`
-
-</td>
-<td width="33%">
-
-🔥 **Traffic Heatmap**<br>
-Color-coded halos around nodes — toggle between volume (bytes), security (rejected ratio), and billing (data transfer) modes. Cool blue to hot red. `X` / `B`
-
-</td>
-<td width="33%">
-
-💰 **Idle VM Scanner**<br>
-Queries real-time Prometheus telemetry to find stopped-but-billed VMs and servers with near-zero traffic. Results feed into the AI assistant for cost recommendations.
-
-</td>
-</tr>
-<tr>
-<td>
-
-🛡️ **Security Posture**<br>
-At-a-glance VDC security summary with progress bars: firewall coverage, flow logs, security groups, private LANs, IPv6 adoption. Click any metric to highlight matching nodes. `S`
-
-</td>
-<td>
-
-📊 **Live Metrics**<br>
-1-hour network throughput and packet count charts for any selected server. Data from the IONOS Telemetry API, refreshed on each selection.
-
-</td>
-<td>
-
-📈 **Data Transfer**<br>
-Per-VDC and per-server transfer data from the Billing API. 30-day daily chart in server details, region-wise breakdown on the global map.
-
-</td>
-</tr>
-</table>
+| | | |
+|:--|:--|:--|
+| 📜 **Flow Log Explorer** — Drag-and-drop flow log files to analyze traffic. Filter by IP, port, protocol, action. Click any row to trace the path on the topology. `W` | 🔥 **Traffic Heatmap** — Color-coded halos — toggle volume (bytes), security (rejected ratio), or billing (transfer) modes. Cool blue to hot red. `X` / `B` | 💰 **Idle VM Scanner** — Queries Prometheus telemetry to find stopped-but-billed VMs and near-zero traffic servers. Results feed into the AI for cost tips. |
+| 🛡️ **Security Posture** — VDC security summary with progress bars: firewall, flow logs, security groups, private LANs, IPv6. Click any metric to highlight nodes. `S` | 📊 **Live Metrics** — 1-hour throughput and packet charts for any selected server. Data from the IONOS Telemetry API, refreshed per selection. | 📈 **Data Transfer** — Per-VDC and per-server transfer from the Billing API. 30-day daily chart in details, region breakdown on the global map. |
 
 ### AI & Export
 
-<table>
-<tr>
-<td width="33%">
-
-🤖 **AI Assist**<br>
-Ask about security, costs, traffic, or resources — the AI sees your full topology. Generate Terraform, toggle Docs to search IONOS documentation via MCP.
-
-</td>
-<td width="33%">
-
-✏️ **AI Design**<br>
-Describe an architecture in plain English and get a visual draft topology on the canvas. Iterate via chat, then export as Terraform. Quick-start templates for common patterns.
-
-</td>
-<td width="33%">
-
-📤 **Export**<br>
-PNG, SVG, JSON, CSV, XLSX (three-sheet workbook), and PDF report with topology diagram and resource inventory — all from one dropdown.
-
-</td>
-</tr>
-</table>
+| | | |
+|:--|:--|:--|
+| 🤖 **AI Assist** — Ask about security, costs, traffic, or resources — the AI sees your full topology. Generate Terraform, toggle Docs for IONOS documentation via MCP. | ✏️ **AI Design** — Describe an architecture in plain English, get a visual draft on the canvas. Iterate via chat, export as Terraform. Quick-start templates included. | 📤 **Export** — PNG, SVG, JSON, CSV, XLSX workbook, and PDF report with topology diagram and resource inventory — all from one dropdown. |
 
 ### Customization
 
-<table>
-<tr>
-<td width="25%">
-
-🌗 **Themes**<br>
-Dark and light mode with automatic system-preference detection. Map tiles and UI adapt seamlessly.
-
-</td>
-<td width="25%">
-
-🌐 **i18n**<br>
-English, German, Spanish, and French. Switch from the sidebar flag dropdown — all labels update instantly.
-
-</td>
-<td width="25%">
-
-⭐ **Favorites**<br>
-Pin frequently used VDCs to the top of the dropdown for quick access.
-
-</td>
-<td width="25%">
-
-🏢 **Multi-Contract**<br>
-Reseller accounts get a contract switcher, each with its own data centers and resources.
-
-</td>
-</tr>
-<tr>
-<td>
-
-🔍 **Canvas Search**<br>
-Type-ahead search with instant highlighting on the canvas. Matching nodes glow, the rest dims. `Ctrl+F`
-
-</td>
-<td>
-
-📋 **Resource Table**<br>
-Full-screen sortable table of all resources with type filter pills and CSV export. `T`
-
-</td>
-<td>
-
-📞 **Support Contacts**<br>
-Phone and email for 9 countries, shown as markers on the global map.
-
-</td>
-<td>
-
-</td>
-</tr>
-</table>
+| | | | |
+|:--|:--|:--|:--|
+| 🌗 **Themes** — Dark and light mode with system-preference detection. Map tiles and UI adapt seamlessly. | 🌐 **i18n** — English, German, Spanish, French. Switch from the sidebar flag dropdown. | ⭐ **Favorites** — Pin frequently used VDCs to the top of the dropdown for quick access. | 🏢 **Multi-Contract** — Reseller accounts get a contract switcher with separate data centers. |
+| 🔍 **Canvas Search** — Type-ahead search with instant highlighting. Matching nodes glow, rest dims. `Ctrl+F` | 📋 **Resource Table** — Full-screen sortable table with type filter pills and CSV export. `T` | 📞 **Support Contacts** — Phone and email for 9 countries as markers on the global map. | |
 
 ## Quick Start
 
