@@ -62,19 +62,19 @@ The assistant has two modes, accessible via tabs:
 <td width="33%">
 
 🗺️ **Global Map View**<br>
-Interactive geographic map of all IONOS data center locations, color-coded by cloud type (Public, Private, or both). After connecting, active regions appear as animated cluster bubbles showing VDC counts — click any region to drill down into its data centers. Press `G` to return to the global view at any time.
+Interactive map of all IONOS DC locations, color-coded by cloud type. Active regions show as cluster bubbles with VDC counts — click to drill down. `G`
 
 </td>
 <td width="33%">
 
 🔗 **Managed Services**<br>
-All managed resources — databases (PostgreSQL, MongoDB, MySQL, MariaDB), VPN gateways, NFS shares, load balancers, Kubernetes clusters, and Kafka — are rendered directly on the topology graph, connected to their respective LANs. Kubernetes-managed resources are visually distinguished with a helm wheel badge for easy identification.
+Databases (PostgreSQL, MongoDB, MySQL, MariaDB), VPN gateways, NFS, load balancers, K8s clusters, and Kafka rendered on the topology with LAN connections. K8s resources get a helm wheel badge.
 
 </td>
 <td width="33%">
 
 🌐 **Cross-Connect View**<br>
-Load all VDCs within a metro region onto a single unified canvas to visualize Private Cross Connect links spanning multiple data centers. VDCs sharing the same metro location are automatically grouped, making it easy to see how your infrastructure is interconnected across facilities.
+All VDCs in a metro region on one canvas with Private Cross Connect links visible between data centers. Same-metro VDCs are grouped automatically.
 
 </td>
 </tr>
@@ -82,19 +82,19 @@ Load all VDCs within a metro region onto a single unified canvas to visualize Pr
 <td>
 
 🖥️ **Compute View**<br>
-Toggle an overlay showing compute specifications for every server — VM type, CPU cores, RAM, and CPU family. Each server type is color-coded for quick scanning: cyan for dedicated-core, purple for vCPU, orange for Cube, and rose for GPU instances. Press `C` to toggle.
+VM type, CPU cores, RAM, and CPU family for every server. Color-coded by type: cyan (dedicated-core), purple (vCPU), orange (Cube), rose (GPU). `C`
 
 </td>
 <td>
 
 📡 **IP & DNS View**<br>
-Toggle IP address labels on every NIC, enriched with reverse DNS hostnames and forward DNS records where available. The sidebar displays public IP blocks, DNS zones, and CDN distributions tied to your infrastructure. Press `I` to toggle.
+IP labels on every NIC with reverse DNS and forward DNS records. Public IP blocks, DNS zones, and CDN distributions in the sidebar. `I`
 
 </td>
 <td>
 
 🛡️ **Highlights**<br>
-Apply visual filters to the topology based on specific attributes: firewall status, flow log coverage, security groups, IPv6, IP failover, cross connect, NIC multi-queue, and idle VMs. Matching nodes glow brightly while non-matching resources fade into the background. Press `H` to open.
+Filter by firewall, flow logs, security groups, IPv6, IP failover, cross connect, NIC multi-queue, or idle VMs. Matching nodes glow, the rest fades. `H`
 
 </td>
 </tr>
@@ -107,19 +107,19 @@ Apply visual filters to the topology based on specific attributes: firewall stat
 <td width="33%">
 
 📜 **Flow Log Explorer**<br>
-Drag and drop IONOS flow log files onto the canvas to analyze traffic records in a full-featured table. Filter by source/destination IP, port, protocol, and accept/reject action. Click any row to visually trace the traffic path on the topology. Export filtered results as CSV. Press `W` to open.
+Drag-and-drop flow log files to analyze traffic. Filter by IP, port, protocol, action. Click any row to trace the path on the topology. CSV export. `W`
 
 </td>
 <td width="33%">
 
 🔥 **Traffic Heatmap**<br>
-Overlay color-coded halos around nodes to visualize traffic patterns at a glance. Switch between three modes: volume (total bytes), security (rejected packet ratio), and billing (data transfer cost). Colors range from cool blue (low) to hot red (high). Press `X` for flow log heatmap, `B` for data transfer.
+Color-coded halos around nodes — toggle between volume (bytes), security (rejected ratio), and billing (data transfer) modes. Cool blue to hot red. `X` / `B`
 
 </td>
 <td width="33%">
 
 💰 **Idle VM Scanner**<br>
-Run an on-demand scan that queries real-time Prometheus telemetry for every server in the current VDC. Identifies stopped-but-billed VMs and running servers with near-zero network traffic — potential cost savings. Results are automatically fed into the AI assistant for optimization recommendations.
+Queries real-time Prometheus telemetry to find stopped-but-billed VMs and servers with near-zero traffic. Results feed into the AI assistant for cost recommendations.
 
 </td>
 </tr>
@@ -127,19 +127,19 @@ Run an on-demand scan that queries real-time Prometheus telemetry for every serv
 <td>
 
 🛡️ **Security Posture**<br>
-Get an at-a-glance security summary of your entire VDC with color-coded progress bars covering firewall coverage, flow log monitoring, security group usage, private LAN adoption, and IPv6 readiness. Click any metric bar to instantly highlight the matching (or non-compliant) nodes on the topology. Press `S` to open.
+At-a-glance VDC security summary with progress bars: firewall coverage, flow logs, security groups, private LANs, IPv6 adoption. Click any metric to highlight matching nodes. `S`
 
 </td>
 <td>
 
 📊 **Live Metrics**<br>
-Select any server to view real-time 1-hour time-series charts for network throughput (bytes/sec) and packet counts directly in the detail panel. Data is streamed from the IONOS Telemetry API and refreshes on each server selection, giving you instant visibility into current network activity.
+1-hour network throughput and packet count charts for any selected server. Data from the IONOS Telemetry API, refreshed on each selection.
 
 </td>
 <td>
 
 📈 **Data Transfer**<br>
-View per-VDC and per-server network transfer data pulled from the IONOS Billing API. Server detail panels include a 30-day daily transfer chart, while the global map displays a region-wise breakdown of data transfer across your entire infrastructure. A dedicated heatmap mode (`B`) colors nodes by transfer volume.
+Per-VDC and per-server transfer data from the Billing API. 30-day daily chart in server details, region-wise breakdown on the global map.
 
 </td>
 </tr>
@@ -152,19 +152,19 @@ View per-VDC and per-server network transfer data pulled from the IONOS Billing 
 <td width="33%">
 
 🤖 **AI Assist**<br>
-Ask natural-language questions about your infrastructure — security posture, cost optimization, traffic patterns, resource inventory, and more. The AI understands your full topology context and can generate production-ready Terraform code. Toggle the Docs button to ground responses in official IONOS Cloud documentation via MCP.
+Ask about security, costs, traffic, or resources — the AI sees your full topology. Generate Terraform, toggle Docs to search IONOS documentation via MCP.
 
 </td>
 <td width="33%">
 
 ✏️ **AI Design**<br>
-Describe the architecture you need in plain English, and the AI generates a visual draft topology rendered on the canvas over an interactive map. Iterate on the design through follow-up messages — add resources, change configurations, restructure components — then export the final result as Terraform. Quick-start templates included for common patterns.
+Describe an architecture in plain English and get a visual draft topology on the canvas. Iterate via chat, then export as Terraform. Quick-start templates for common patterns.
 
 </td>
 <td width="33%">
 
 📤 **Export**<br>
-Export your topology in multiple formats from a single dropdown: PNG and SVG for visual diagrams, JSON and CSV for raw data, an XLSX workbook with three sheets (Resources, Connections, Summary), and a comprehensive PDF report combining the topology diagram with a full resource inventory table.
+PNG, SVG, JSON, CSV, XLSX (three-sheet workbook), and PDF report with topology diagram and resource inventory — all from one dropdown.
 
 </td>
 </tr>
@@ -177,25 +177,25 @@ Export your topology in multiple formats from a single dropdown: PNG and SVG for
 <td width="25%">
 
 🌗 **Themes**<br>
-Switch between dark and light mode with automatic system-preference detection. Map tiles, topology colors, and all UI elements adapt seamlessly to your chosen theme.
+Dark and light mode with automatic system-preference detection. Map tiles and UI adapt seamlessly.
 
 </td>
 <td width="25%">
 
 🌐 **i18n**<br>
-Full UI localization in English, German, Spanish, and French. Switch languages from the sidebar flag dropdown — all labels, tooltips, and messages update instantly.
+English, German, Spanish, and French. Switch from the sidebar flag dropdown — all labels update instantly.
 
 </td>
 <td width="25%">
 
 ⭐ **Favorites**<br>
-Pin your most frequently accessed VDCs to the top of the dropdown selector with the star button, so you can jump to them instantly without scrolling through long lists.
+Pin frequently used VDCs to the top of the dropdown for quick access.
 
 </td>
 <td width="25%">
 
 🏢 **Multi-Contract**<br>
-Reseller and multi-contract accounts see a contract dropdown to switch between contracts on the fly, each with its own set of data centers and resources.
+Reseller accounts get a contract switcher, each with its own data centers and resources.
 
 </td>
 </tr>
@@ -203,19 +203,19 @@ Reseller and multi-contract accounts see a contract dropdown to switch between c
 <td>
 
 🔍 **Canvas Search**<br>
-Type-ahead search across all resources on the topology with instant highlighting. Matching nodes are brought into focus while the rest dims, making it easy to locate specific servers, LANs, or services. Press `Ctrl+F` to focus.
+Type-ahead search with instant highlighting on the canvas. Matching nodes glow, the rest dims. `Ctrl+F`
 
 </td>
 <td>
 
 📋 **Resource Table**<br>
-Open a full-screen searchable, sortable table listing every resource in the current VDC. Filter by resource type using quick-filter pills, sort any column, and export the entire table as CSV for reporting or analysis. Press `T` to open.
+Full-screen sortable table of all resources with type filter pills and CSV export. `T`
 
 </td>
 <td>
 
 📞 **Support Contacts**<br>
-IONOS support and sales phone numbers and email addresses for 9 countries, overlaid as interactive markers on the global map. Click any marker to see local contact details for that region.
+Phone and email for 9 countries, shown as markers on the global map.
 
 </td>
 <td>
