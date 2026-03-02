@@ -8985,11 +8985,11 @@ async function loadVDC() {
   closeDetail();
   closeHighlightsOverlay();
 
-  // Clear stale idle VM scan data and billing data from previous VDC
+  // Clear stale idle VM scan data from previous VDC
+  // Note: billing data (_billingByServer, _billingByVdc) is NOT cleared here —
+  // it is fetched once at connect-time for ALL datacenters and remains valid across VDC switches.
   _idleScanResults = null;
   _idleScanRunning = false;
-  _billingByServer = new Map();
-  _billingByVdc = new Map();
   // Clear draft mode if active
   _draftMode = false; _draftGraphData = null; _realGraphData = null;
   document.getElementById('draftBanner')?.remove();
