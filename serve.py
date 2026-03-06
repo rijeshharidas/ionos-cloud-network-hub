@@ -64,6 +64,14 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
         else:
             super().do_GET()
 
+    def end_headers(self) -> None:
+        """Add no-cache headers for static files to prevent stale content."""
+        if not self.path.startswith("/proxy"):
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
+        super().end_headers()
+
     def do_POST(self) -> None:
         """Route POST requests to the proxy or MCP docs endpoint."""
         parsed = urllib.parse.urlparse(self.path)

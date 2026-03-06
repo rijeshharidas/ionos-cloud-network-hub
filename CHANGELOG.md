@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.0] - 2026-03-06
+
+### Added (1.14.0)
+
+- **Object Storage Overlay** — New "Object Storage" button on the global map toggles an overlay showing IONOS Cloud S3-compatible object storage endpoints. Markers are color-coded by bucket type (green for User-owned, indigo for Contract-owned) with hover tooltips displaying endpoint URL, website URL, and BSI IT Grundschutz compliance status.
+- **Bucket Type Filter** — Summary panel includes selectable "User-owned" / "Contract-owned" toggle buttons. Switching filters updates the map markers and endpoint counts in real time. User-owned is the default view.
+- **Flex Button Bar** — The three global map overlay buttons (Object Storage, DC Network, Contact) are now wrapped in a flexbox container with uniform 8px gaps, replacing fragile absolute-positioned `right` offsets.
+
+### Changed (1.14.0)
+
+- **Uniform VDC Cluster Bubbles** — All VDC cluster markers on the global map are now a fixed 82×62px regardless of VDC count, replacing the previous variable sizing (72–96px) that caused inconsistent appearance.
+- **VDC Cluster Z-Index** — Active VDC cluster markers now render above dimmed available-location markers (`zIndexOffset: 500`) so they are never obscured.
+- **Available Location Markers** — Dimmed DC markers made more visible: opacity 0.4→0.6, size 40×34→44×38px, font-size 6.5→7px, text alpha 0.5→0.6, subtle box-shadow restored, hover opacity 0.8→0.9.
+- **Global Map Framing** — Switched from `fitBounds` to `setView([46, -20], 3.25)` with fractional zoom (`zoomSnap: 0.25`) and sidebar-aware `panBy` offset for tighter US–Europe framing.
+- **Overlay Mutual Exclusion** — All three overlay modes (Object Storage, DC Network, Contact) now fully dismiss each other when activated, clearing markers, summary panels, and active button states.
+- **S3 Tooltip Width** — S3 endpoint tooltips use a wider container (320px) to prevent long endpoint URLs from overflowing.
+- **S3 Marker Nudging** — Co-located S3 endpoints (e.g., Berlin and Frankfurt) are automatically nudged apart by a minimum of 2.5 degrees to prevent marker overlap.
+
+### Fixed (1.14.0)
+
+- **No-Cache Headers** — Added `Cache-Control: no-cache, no-store, must-revalidate` headers to `serve.py` for non-proxy responses, preventing stale content during development.
+- **Contact Button Not Clearing Overlays** — Clicking "Contact" now properly dismisses active DC Network and Object Storage overlays before showing support contacts.
+
 ## [1.13.0] - 2026-03-06
 
 ### Added (1.13.0)

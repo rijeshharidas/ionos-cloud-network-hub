@@ -468,16 +468,16 @@
 
   /* Dimmed variant — when shown alongside active cluster bubbles */
   .map-available-loc.dimmed {
-    width: 40px; height: 34px;
-    opacity: 0.4;
+    width: 44px; height: 38px;
+    opacity: 0.6;
     border-style: dashed;
     border-width: 1px;
-    box-shadow: none;
-    background: rgba(20,24,36,0.6);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    background: rgba(20,24,36,0.7);
   }
   .map-available-loc.dimmed .map-available-flag { font-size: 13px; }
-  .map-available-loc.dimmed .map-available-name { font-size: 6.5px; color: rgba(255,255,255,0.5); }
-  .map-available-loc.dimmed:hover { opacity: 0.8; transform: scale(1.1); }
+  .map-available-loc.dimmed .map-available-name { font-size: 7px; color: rgba(255,255,255,0.6); }
+  .map-available-loc.dimmed:hover { opacity: 0.9; transform: scale(1.1); }
 
   /* Tooltip for DC location markers */
   .map-loc-tooltip {
@@ -488,6 +488,7 @@
     font-size: 11px !important; line-height: 1.4 !important;
     max-width: 220px !important;
   }
+  .map-loc-tooltip.s3-tooltip { max-width: 320px !important; padding: 10px 14px !important; }
   .map-loc-tooltip .leaflet-tooltip-arrow { display: none; }
   .map-loc-tooltip .tt-city { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
   .map-loc-tooltip .tt-cloud { font-size: 10px; font-weight: 600; margin-bottom: 3px; }
@@ -518,19 +519,25 @@
   .map-back-btn:hover { background: var(--bg-tertiary); border-color: var(--accent); }
   .map-back-btn.visible { display: flex; }
 
+  /* ── Map overlay button bar ── */
+  .map-overlay-btns {
+    position: absolute; bottom: 18px; right: 18px; z-index: 10;
+    display: none; align-items: center; gap: 8px;
+  }
+  .map-overlay-btns.visible { display: flex; }
+
   /* ── Backbone overlay ── */
   .map-backbone-btn {
-    position: absolute; bottom: 18px; right: 110px; z-index: 10;
     background: var(--accent); border: 2px solid rgba(255,255,255,0.15);
     border-radius: 12px; padding: 6px 12px; cursor: pointer;
-    display: none; align-items: center; gap: 6px; white-space: nowrap;
+    display: flex; align-items: center; gap: 6px; white-space: nowrap;
     box-shadow: 0 4px 20px rgba(0,0,0,0.5); transition: all 0.2s;
     color: #fff; font-size: 11px; font-weight: 600; font-family: inherit;
     letter-spacing: 0.2px;
   }
   .map-backbone-btn:hover { filter: brightness(1.15); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,0,0,0.6); }
   .map-backbone-btn.active { background: #6366f1; border-color: rgba(255,255,255,0.25); }
-  .map-backbone-btn.visible { display: flex; }
+  /* .map-backbone-btn.visible — now controlled by parent container */
 
   .backbone-node-marker {
     display: flex; flex-direction: column; align-items: center; gap: 2px;
@@ -563,19 +570,90 @@
   .backbone-summary-panel .bs-label { color: var(--text-muted); }
   .backbone-summary-panel .bs-value { font-weight: 600; color: var(--text-primary); }
 
-  /* Support contacts toggle button on global map */
-  .map-support-btn {
-    position: absolute; bottom: 18px; right: 18px; z-index: 10;
+  /* ── Object Storage overlay ── */
+  .map-s3-btn {
     background: var(--accent); border: 2px solid rgba(255,255,255,0.15);
     border-radius: 12px; padding: 6px 12px; cursor: pointer;
-    display: none; align-items: center; gap: 6px;
+    display: flex; align-items: center; gap: 6px; white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5); transition: all 0.2s;
+    color: #fff; font-size: 11px; font-weight: 600; font-family: inherit;
+    letter-spacing: 0.2px;
+  }
+  .map-s3-btn:hover { filter: brightness(1.15); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,0,0,0.6); }
+  .map-s3-btn.active { background: #6366f1; border-color: rgba(255,255,255,0.25); }
+  /* .map-s3-btn.visible — now controlled by parent container */
+
+  .s3-node-marker {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    pointer-events: auto; cursor: pointer;
+  }
+  .s3-node-marker .s3n-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; border: 2px solid;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    transition: transform 0.15s;
+  }
+  .s3-node-marker:hover .s3n-icon { transform: scale(1.15); }
+  .s3-node-marker .s3n-label {
+    font-size: 9px; font-weight: 700; font-family: var(--font); color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9), 0 0 6px rgba(0,0,0,0.6);
+    white-space: nowrap;
+  }
+  html[data-theme="light"] .s3-node-marker .s3n-label { color: #1e293b; text-shadow: 0 0 4px rgba(255,255,255,0.9); }
+
+  /* Bucket type colors */
+  .s3-node-marker.s3-user .s3n-icon { background: rgba(5,150,105,0.2); border-color: #10b981; color: #6ee7b7; }
+  .s3-node-marker.s3-contract .s3n-icon { background: rgba(99,102,241,0.2); border-color: #818cf8; color: #a5b4fc; }
+
+  .s3-node-tooltip {
+    min-width: 220px; max-width: 300px; font-size: 10px; line-height: 1.5; overflow: hidden;
+  }
+  .s3-node-tooltip .s3t-title { font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .s3-node-tooltip .s3t-row { display: flex; justify-content: space-between; gap: 8px; flex-wrap: nowrap; }
+  .s3-node-tooltip .s3t-label { color: #8899aa; white-space: nowrap; flex-shrink: 0; }
+  .s3-node-tooltip .s3t-value { color: #ddd; font-weight: 600; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; font-size: 9px; }
+  .s3-node-tooltip .s3t-badge { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 700; }
+  .s3-node-tooltip .s3t-badge.bsi-ok { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+  .s3-node-tooltip .s3t-badge.bsi-pending { background: rgba(245,158,11,0.2); color: #fcd34d; }
+  .s3-node-tooltip .s3t-sep { height: 1px; background: rgba(255,255,255,0.08); margin: 4px 0; }
+
+  .s3-summary-panel {
+    position: absolute; top: 18px; right: 18px; z-index: 10;
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 16px; display: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3); font-size: 11px; color: var(--text-secondary);
+    font-family: var(--font); line-height: 1.6; max-width: 240px;
+  }
+  .s3-summary-panel.visible { display: block; }
+  .s3-summary-panel .s3s-title { font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+  .s3-summary-panel .s3s-row { display: flex; justify-content: space-between; gap: 12px; }
+  .s3-summary-panel .s3s-label { color: var(--text-muted); }
+  .s3-summary-panel .s3s-value { font-weight: 600; color: var(--text-primary); }
+  .s3-summary-panel .s3s-legend { margin-top: 8px; border-top: 1px solid var(--border); padding-top: 6px; font-size: 10px; color: var(--text-muted); display: flex; gap: 4px; }
+  .s3-summary-panel .s3s-legend-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 6px; cursor: pointer;
+    border: 1.5px solid var(--border); background: transparent;
+    font-size: 10px; font-weight: 600; font-family: var(--font);
+    color: var(--text-muted); transition: all 0.2s;
+  }
+  .s3-summary-panel .s3s-legend-btn:hover { border-color: var(--text-secondary); color: var(--text-secondary); }
+  .s3-summary-panel .s3s-legend-btn.active-user { border-color: #10b981; color: #10b981; background: rgba(16,185,129,0.1); }
+  .s3-summary-panel .s3s-legend-btn.active-contract { border-color: #818cf8; color: #818cf8; background: rgba(129,140,248,0.1); }
+
+  /* Support contacts toggle button on global map */
+  .map-support-btn {
+    background: var(--accent); border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 12px; padding: 6px 12px; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.5); transition: all 0.2s;
     color: #fff; font-size: 11px; font-weight: 600; font-family: inherit;
     letter-spacing: 0.2px;
   }
   .map-support-btn:hover { filter: brightness(1.15); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,0,0,0.6); }
   .map-support-btn.active { background: var(--success); border-color: rgba(255,255,255,0.2); }
-  .map-support-btn.visible { display: flex; }
+  /* .map-support-btn.visible — now controlled by parent container */
 
   /* Contact popup on map markers */
   .contact-popup { font-family: var(--font); font-size: 11px; line-height: 1.5; min-width: 200px; }
@@ -1766,10 +1844,30 @@
 <div class="main-area" id="mainArea">
   <div id="mapBackground"></div>
   <button class="map-back-btn" id="mapBackBtn" onclick="showMapOverview()" data-i18n="map.allRegions">&#x2190; All Regions</button>
-  <button class="map-backbone-btn" id="mapBackboneBtn" onclick="toggleBackboneOverlay()" title="IONOS Global Network Infrastructure" aria-label="Show IONOS global network infrastructure on map" aria-pressed="false">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/><path d="M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
-    DC Network
-  </button>
+  <div class="map-overlay-btns" id="mapOverlayBtns">
+    <button class="map-s3-btn" id="mapS3Btn" onclick="toggleS3Overlay()" title="IONOS Cloud Object Storage Locations" aria-label="Show IONOS Cloud Object Storage endpoints on map" aria-pressed="false">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+      Object Storage
+    </button>
+    <button class="map-backbone-btn" id="mapBackboneBtn" onclick="toggleBackboneOverlay()" title="IONOS Global Network Infrastructure" aria-label="Show IONOS global network infrastructure on map" aria-pressed="false">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/><path d="M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+      DC Network
+    </button>
+    <button class="map-support-btn" id="mapSupportBtn" onclick="toggleSupportContacts()" title="IONOS Support & Sales Contacts" aria-label="Show IONOS support and sales contacts on map" aria-pressed="false">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.05 5A5 5 0 0 1 19 8.95M15.05 1A9 9 0 0 1 23 8.94m-1 7.98v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.11 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      Contact
+    </button>
+  </div>
+  <div class="s3-summary-panel" id="s3SummaryPanel">
+    <div class="s3s-title">IONOS Cloud Object Storage</div>
+    <div class="s3s-row"><span class="s3s-label">Protocol</span><span class="s3s-value">S3-compatible</span></div>
+    <div class="s3s-row"><span class="s3s-label">Locations</span><span class="s3s-value" id="s3LocCount">3</span></div>
+    <div class="s3s-row"><span class="s3s-label">Endpoints</span><span class="s3s-value" id="s3EpCount">3</span></div>
+    <div class="s3s-legend">
+      <button class="s3s-legend-btn active-user" id="s3FilterUser" onclick="setS3Filter('user-owned')"><span style="color:#10b981;">●</span> User-owned</button>
+      <button class="s3s-legend-btn" id="s3FilterContract" onclick="setS3Filter('contract-owned')"><span style="color:#818cf8;">●</span> Contract-owned</button>
+    </div>
+  </div>
   <div class="backbone-summary-panel" id="backboneSummaryPanel">
     <div class="bs-title">IONOS Network (AS-8560)</div>
     <div class="bs-row"><span class="bs-label">Edge capacity</span><span class="bs-value">4,000 Gbps</span></div>
@@ -1779,10 +1877,6 @@
       <span style="color:#059669;">●</span> 2N+1 metro &nbsp; <span style="color:#64748b;">●</span> 2N metro
     </div>
   </div>
-  <button class="map-support-btn" id="mapSupportBtn" onclick="toggleSupportContacts()" title="IONOS Support & Sales Contacts" aria-label="Show IONOS support and sales contacts on map" aria-pressed="false">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.05 5A5 5 0 0 1 19 8.95M15.05 1A9 9 0 0 1 23 8.94m-1 7.98v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.11 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-    Contact
-  </button>
   <div class="map-billing-panel hidden" id="mapBillingPanel"></div>
   <button class="sidebar-expand" id="sidebarExpand" onclick="toggleSidebar()" title="Show sidebar">&#x25B6;</button>
   <div class="canvas-search" id="searchSection" style="display:none;">
@@ -2468,6 +2562,17 @@ const IONOS_BACKBONE = {
   },
   summary: { edgeCapacity: '4000 Gbps', asn: 'AS-8560', peeringSessions: '3500+' },
 };
+
+// ── IONOS Cloud Object Storage Endpoints ──
+// S3-compatible object storage across multiple DC locations
+const IONOS_OBJECT_STORAGE = [
+  { region: 'de/fra',  label: 'Frankfurt',   bucket: 'user-owned',     bsi: 'compliant', endpoint: 's3.eu-central-1.ionoscloud.com',  website: 's3-website-de-central.profitbricks.com' },
+  { region: 'de/txl',  label: 'Berlin',      bucket: 'user-owned',     bsi: 'compliant', endpoint: 's3.eu-central-2.ionoscloud.com',  website: 's3-website-eu-central-2.ionoscloud.com' },
+  { region: 'es/vit',  label: 'Logroño',     bucket: 'user-owned',     bsi: 'compliant', endpoint: 's3.eu-south-2.ionoscloud.com',    website: 's3-website-eu-south-2.ionoscloud.com' },
+  { region: 'de/fra',  label: 'Frankfurt/2', bucket: 'contract-owned', bsi: 'pending',   endpoint: 's3.eu-central-4.ionoscloud.com',  website: 's3-website.eu-central-4.ionoscloud.com' },
+  { region: 'de/txl',  label: 'Berlin/2',    bucket: 'contract-owned', bsi: 'pending',   endpoint: 's3.eu-central-3.ionoscloud.com',  website: 's3-website.eu-central-3.ionoscloud.com' },
+  { region: 'us/mci',  label: 'Lenexa',      bucket: 'contract-owned', bsi: 'pending',   endpoint: 's3.us-central-1.ionoscloud.com',  website: 's3-website.us-central-1.ionoscloud.com' },
+];
 
 // IONOS Support & Sales contact info per country (for map overlay)
 const IONOS_CONTACTS = [
@@ -5200,6 +5305,7 @@ function initMapBackground() {
     zoomControl: false, attributionControl: false,
     dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
     boxZoom: false, keyboard: false, touchZoom: false,
+    zoomSnap: 0.25, zoomDelta: 0.25,
   });
   bgTileLayer = L.tileLayer(getMapTileUrl(), {
     subdomains: 'abcd', maxZoom: 19,
@@ -5271,6 +5377,26 @@ function showSupportContacts() {
   document.getElementById('mapBillingPanel')?.classList.add('hidden');
   document.getElementById('mapBackBtn')?.classList.remove('visible');
   mapDrillRegion = null;
+
+  // Dismiss other overlays (backbone, S3)
+  if (backboneVisible) {
+    backboneMarkers.forEach(m => { m.unbindTooltip(); bgMap.removeLayer(m); });
+    backboneMarkers = [];
+    backboneVisible = false;
+    if (_backboneClickTimeout) { clearTimeout(_backboneClickTimeout); _backboneClickTimeout = null; }
+    bgMap.off('click', _onMapClickWhileBackbone);
+    document.getElementById('mapBackboneBtn')?.classList.remove('active');
+    document.getElementById('backboneSummaryPanel')?.classList.remove('visible');
+  }
+  if (s3Visible) {
+    s3Markers.forEach(m => { m.unbindTooltip(); bgMap.removeLayer(m); });
+    s3Markers = [];
+    s3Visible = false;
+    if (_s3ClickTimeout) { clearTimeout(_s3ClickTimeout); _s3ClickTimeout = null; }
+    bgMap.off('click', _onMapClickWhileS3);
+    document.getElementById('mapS3Btn')?.classList.remove('active');
+    document.getElementById('s3SummaryPanel')?.classList.remove('visible');
+  }
 
   // Add a contact marker for each country
   IONOS_CONTACTS.forEach(c => {
@@ -5387,6 +5513,16 @@ function showBackboneOverlay() {
     supportContactsVisible = false;
     const sBtn = document.getElementById('mapSupportBtn');
     if (sBtn) { sBtn.classList.remove('active'); sBtn.setAttribute('aria-pressed', 'false'); }
+  }
+  // Dismiss S3 overlay if active
+  if (s3Visible) {
+    s3Markers.forEach(m => { m.unbindTooltip(); bgMap.removeLayer(m); });
+    s3Markers = [];
+    s3Visible = false;
+    if (_s3ClickTimeout) { clearTimeout(_s3ClickTimeout); _s3ClickTimeout = null; }
+    bgMap.off('click', _onMapClickWhileS3);
+    document.getElementById('mapS3Btn')?.classList.remove('active');
+    document.getElementById('s3SummaryPanel')?.classList.remove('visible');
   }
 
   // Show summary panel
@@ -5512,6 +5648,185 @@ function hideBackboneOverlay() {
   backboneMarkers = [];
 
   // Restore normal global map view
+  showMapOverview();
+}
+
+// ── Object Storage Overlay ──
+let s3Visible = false;
+let s3Markers = [];
+let _s3ClickTimeout = null;
+let _s3ActiveFilter = 'user-owned'; // default filter
+
+function _onMapClickWhileS3(e) {
+  if (e.originalEvent && e.originalEvent.target && e.originalEvent.target.closest('.s3-node-marker')) return;
+  hideS3Overlay();
+}
+
+/* Group S3 endpoints by base region for single-marker-per-location display */
+function _getS3ByFilter(filter) {
+  return IONOS_OBJECT_STORAGE.filter(s => s.bucket === filter);
+}
+
+function _placeS3Markers(filter) {
+  // Clear previous markers
+  s3Markers.forEach(m => { m.unbindTooltip(); if (bgMap) bgMap.removeLayer(m); });
+  s3Markers = [];
+
+  const filtered = _getS3ByFilter(filter);
+  const bucketClass = filter === 'user-owned' ? 's3-user' : 's3-contract';
+  const bucketIcon = filter === 'user-owned' ? '🪣' : '📦';
+  const bucketLabel = filter === 'user-owned' ? 'User-owned' : 'Contract-owned';
+
+  // Update summary counts
+  const locCount = document.getElementById('s3LocCount');
+  const epCount = document.getElementById('s3EpCount');
+  if (locCount) locCount.textContent = filtered.length;
+  if (epCount) epCount.textContent = filtered.length;
+
+  // Build coordinates with nudging for close markers
+  const coordsList = filtered.map(s3 => {
+    const coords = LOCATION_COORDS[s3.region];
+    if (!coords) return null;
+    return [coords[0], coords[1]];
+  });
+  // Nudge markers that are too close together
+  const minDist = 2.5; // degrees apart minimum
+  for (let i = 0; i < coordsList.length; i++) {
+    if (!coordsList[i]) continue;
+    for (let j = i + 1; j < coordsList.length; j++) {
+      if (!coordsList[j]) continue;
+      const dy = coordsList[i][0] - coordsList[j][0];
+      const dx = coordsList[i][1] - coordsList[j][1];
+      const dist = Math.sqrt(dy * dy + dx * dx);
+      if (dist < minDist && dist > 0) {
+        const push = (minDist - dist) / 2;
+        const nx = dx / dist, ny = dy / dist;
+        coordsList[i][0] += ny * push; coordsList[i][1] += nx * push;
+        coordsList[j][0] -= ny * push; coordsList[j][1] -= nx * push;
+      }
+    }
+  }
+
+  filtered.forEach((s3, idx) => {
+    if (!coordsList[idx]) return;
+    const lat = coordsList[idx][0];
+    const lng = coordsList[idx][1];
+    // Clean label — remove /2 suffix used for offset
+    const displayLabel = s3.label.replace(/\/\d+$/, '');
+
+    const sz = 42;
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="s3-node-marker ${bucketClass}">
+        <div class="s3n-icon">${bucketIcon}</div>
+        <span class="s3n-label">${displayLabel}</span>
+      </div>`,
+      iconSize: [sz, sz],
+      iconAnchor: [sz / 2, sz / 2],
+    });
+
+    const marker = L.marker([lat, lng], { icon, zIndexOffset: 600 }).addTo(bgMap);
+
+    const bsiBadge = s3.bsi === 'compliant'
+      ? '<span class="s3t-badge bsi-ok">BSI Compliant</span>'
+      : '<span class="s3t-badge bsi-pending">BSI Pending</span>';
+    const tooltipHtml = `<div class="s3-node-tooltip">
+      <div class="s3t-title">${displayLabel}</div>
+      <div class="s3t-row"><span class="s3t-label">Type</span><span class="s3t-value">${bucketLabel}</span></div>
+      <div class="s3t-row"><span class="s3t-label">BSI IT Grundschutz</span>${bsiBadge}</div>
+      <div class="s3t-sep"></div>
+      <div class="s3t-row"><span class="s3t-label">API</span><span class="s3t-value">${s3.endpoint}</span></div>
+      <div class="s3t-row"><span class="s3t-label">Website</span><span class="s3t-value">${s3.website}</span></div>
+    </div>`;
+    marker.bindTooltip(tooltipHtml, {
+      className: 'map-loc-tooltip s3-tooltip',
+      direction: 'top',
+      offset: [0, -sz / 2 - 6],
+      sticky: false,
+    });
+
+    s3Markers.push(marker);
+  });
+}
+
+function setS3Filter(filter) {
+  _s3ActiveFilter = filter;
+  // Update legend button states
+  const btnU = document.getElementById('s3FilterUser');
+  const btnC = document.getElementById('s3FilterContract');
+  if (btnU) { btnU.className = 's3s-legend-btn' + (filter === 'user-owned' ? ' active-user' : ''); }
+  if (btnC) { btnC.className = 's3s-legend-btn' + (filter === 'contract-owned' ? ' active-contract' : ''); }
+  if (s3Visible && bgMap) _placeS3Markers(filter);
+}
+
+function toggleS3Overlay() {
+  if (s3Visible) { hideS3Overlay(); return; }
+  if (!bgMap) { toast(t('toast.noDisplay'), 'warning'); return; }
+  s3Visible = true;
+  _s3ActiveFilter = 'user-owned'; // reset to default
+  const btn = document.getElementById('mapS3Btn');
+  if (btn) { btn.classList.add('active'); btn.setAttribute('aria-pressed', 'true'); }
+
+  // Clear existing VDC markers, available location markers — clean slate (same as backbone)
+  clearMapMarkers();
+  clearAvailableLocationMarkers();
+  document.getElementById('mapBillingPanel')?.classList.add('hidden');
+  document.getElementById('mapBackBtn')?.classList.remove('visible');
+  mapDrillRegion = null;
+
+  // Dismiss other overlays
+  if (backboneVisible) {
+    backboneMarkers.forEach(m => { m.unbindTooltip(); bgMap.removeLayer(m); });
+    backboneMarkers = [];
+    backboneVisible = false;
+    if (_backboneClickTimeout) { clearTimeout(_backboneClickTimeout); _backboneClickTimeout = null; }
+    bgMap.off('click', _onMapClickWhileBackbone);
+    document.getElementById('mapBackboneBtn')?.classList.remove('active');
+    document.getElementById('backboneSummaryPanel')?.classList.remove('visible');
+  }
+  if (supportContactsVisible) {
+    supportContactMarkers.forEach(m => bgMap.removeLayer(m));
+    supportContactMarkers = [];
+    supportContactsVisible = false;
+    document.getElementById('mapSupportBtn')?.classList.remove('active');
+  }
+
+  // Reset legend buttons to default (user-owned)
+  const btnU = document.getElementById('s3FilterUser');
+  const btnC = document.getElementById('s3FilterContract');
+  if (btnU) btnU.className = 's3s-legend-btn active-user';
+  if (btnC) btnC.className = 's3s-legend-btn';
+
+  // Show summary panel
+  document.getElementById('s3SummaryPanel')?.classList.add('visible');
+
+  // Place markers for default filter
+  _placeS3Markers(_s3ActiveFilter);
+
+  // Dismiss on background click
+  if (_s3ClickTimeout) clearTimeout(_s3ClickTimeout);
+  bgMap.off('click', _onMapClickWhileS3);
+  _s3ClickTimeout = setTimeout(() => {
+    bgMap.on('click', _onMapClickWhileS3);
+    _s3ClickTimeout = null;
+  }, 200);
+}
+
+function hideS3Overlay() {
+  s3Visible = false;
+  const btn = document.getElementById('mapS3Btn');
+  if (btn) { btn.classList.remove('active'); btn.setAttribute('aria-pressed', 'false'); }
+  document.getElementById('s3SummaryPanel')?.classList.remove('visible');
+
+  if (_s3ClickTimeout) { clearTimeout(_s3ClickTimeout); _s3ClickTimeout = null; }
+  if (bgMap) bgMap.off('click', _onMapClickWhileS3);
+
+  s3Markers.forEach(m => { m.unbindTooltip(); if (bgMap) bgMap.removeLayer(m); });
+  s3Markers = [];
+
+  // Restore billing panel
+  document.getElementById('mapBillingPanel')?.classList.remove('hidden');
+
   showMapOverview();
 }
 
@@ -5691,7 +6006,7 @@ function showAvailableLocations(activeRegions) {
     const cloudType = DC_CLOUD_TYPE[region] || 'public';
     const typeClass = cloudType === 'private' ? 'cloud-private' : cloudType === 'both' ? 'cloud-both' : '';
     const dimClass = hasActive ? ' dimmed' : '';
-    const sz = hasActive ? 36 : 48;
+    const sz = hasActive ? 42 : 48;
     const icon = L.divIcon({
       className: '',
       html: `<div class="map-available-loc ${typeClass}${dimClass}">
@@ -5740,9 +6055,8 @@ function showMapOverview() {
   clearMapMarkers();
   mapDrillRegion = null;
   document.getElementById('mapBackBtn').classList.remove('visible');
-  // Show support contacts + backbone buttons on global map
-  document.getElementById('mapSupportBtn')?.classList.add('visible');
-  document.getElementById('mapBackboneBtn')?.classList.add('visible');
+  // Show overlay button bar on global map
+  document.getElementById('mapOverlayBtns')?.classList.add('visible');
   // Clear any active support overlay
   if (supportContactsVisible) {
     supportContactMarkers.forEach(m => bgMap.removeLayer(m));
@@ -5759,6 +6073,16 @@ function showMapOverview() {
     bgMap.off('click', _onMapClickWhileBackbone);
     document.getElementById('mapBackboneBtn')?.classList.remove('active');
     document.getElementById('backboneSummaryPanel')?.classList.remove('visible');
+  }
+  // Clear any active S3 overlay (direct cleanup, no recursion)
+  if (s3Visible) {
+    s3Markers.forEach(m => { m.unbindTooltip(); bgMap.removeLayer(m); });
+    s3Markers = [];
+    s3Visible = false;
+    if (_s3ClickTimeout) { clearTimeout(_s3ClickTimeout); _s3ClickTimeout = null; }
+    bgMap.off('click', _onMapClickWhileS3);
+    document.getElementById('mapS3Btn')?.classList.remove('active');
+    document.getElementById('s3SummaryPanel')?.classList.remove('visible');
   }
   closeDetail();
   closeHighlightsOverlay();
@@ -5793,9 +6117,12 @@ function showMapOverview() {
   if (clusters.length === 0 && Object.keys(LOCATION_COORDS).length > 0) {
     const allCoords = Object.values(LOCATION_COORDS).map(c => [c[0], c[1]]);
     bgMap.invalidateSize({ animate: false });
-    bgMap.fitBounds(allCoords, { padding: [60, 60], maxZoom: 5, animate: false });
-    bgMap.setMaxBounds([[15, -140], [72, 45]]);
-    bgMap.setMinZoom(2);
+    const sb0 = document.querySelector('.sidebar');
+    const sbOff0 = sb0 && sb0.offsetWidth > 0 ? sb0.offsetWidth * 0.5 : 0;
+    bgMap.setView([46, -20], 3.25, { animate: false });
+    if (sbOff0 > 0) bgMap.panBy([-sbOff0, 0], { animate: false });
+    bgMap.setMaxBounds([[22, -130], [62, 42]]);
+    bgMap.setMinZoom(3);
     return;
   }
 
@@ -5822,8 +6149,8 @@ function showMapOverview() {
   }
 
   clusters.forEach((c, idx) => {
-    const w = Math.max(72, Math.min(96, 72 + c.vdcs.length * 5));
-    const h = Math.max(56, Math.min(72, 56 + c.vdcs.length * 4));
+    const w = 82;
+    const h = 62;
     const icon = L.divIcon({
       className: '',
       html: `<div class="map-cluster-bubble" style="width:${w}px;height:${h}px;">
@@ -5835,7 +6162,7 @@ function showMapOverview() {
       iconAnchor: [w / 2, h / 2],
     });
 
-    const marker = L.marker(nudgedCoords[idx], { icon }).addTo(bgMap);
+    const marker = L.marker(nudgedCoords[idx], { icon, zIndexOffset: 500 }).addTo(bgMap);
     marker.on('click', () => drillIntoRegion(c));
 
     const cloudType = DC_CLOUD_TYPE[c.region] || 'public';
@@ -5851,15 +6178,20 @@ function showMapOverview() {
   // (critical when AI/detail panels have changed the available width)
   bgMap.invalidateSize({ animate: false });
 
-  // Fit map to show all locations (active clusters + available DCs)
+  // Center map on US–Europe DC corridor, offset for sidebar
+  bgMap.invalidateSize({ animate: false });
   if (bounds.length === 1) {
     bgMap.setView(bounds[0], 8, { animate: false });
-  } else if (bounds.length > 1) {
-    bgMap.fitBounds(bounds, { padding: [60, 60], maxZoom: 5, animate: false });
+  } else {
+    // Offset center rightward to compensate for sidebar covering the left side
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarPx = sidebar && sidebar.offsetWidth > 0 ? sidebar.offsetWidth * 0.5 : 0;
+    bgMap.setView([46, -20], 3.25, { animate: false });
+    if (sidebarPx > 0) bgMap.panBy([-sidebarPx, 0], { animate: false });
   }
   // Constrain to Europe + North America
-  bgMap.setMaxBounds([[15, -140], [72, 45]]);
-  bgMap.setMinZoom(2);
+  bgMap.setMaxBounds([[22, -130], [62, 42]]);
+  bgMap.setMinZoom(3);
 
   // Show billing panel with region-level summary
   updateMapBillingPanel();
@@ -5869,11 +6201,11 @@ function drillIntoRegion(cluster) {
   if (!bgMap) return;
   mapDrillRegion = cluster.region;
 
-  // Hide support + backbone buttons when drilling into a region
-  document.getElementById('mapSupportBtn')?.classList.remove('visible');
-  document.getElementById('mapBackboneBtn')?.classList.remove('visible');
-  // Dismiss backbone overlay if active
+  // Hide overlay button bar when drilling into a region
+  document.getElementById('mapOverlayBtns')?.classList.remove('visible');
+  // Dismiss overlays if active
   if (backboneVisible) hideBackboneOverlay();
+  if (s3Visible) hideS3Overlay();
 
   // Clear cluster markers and available location markers
   clearMapMarkers();
@@ -5977,9 +6309,12 @@ function hideMapOverview() {
     supportContactMarkers = [];
     supportContactsVisible = false;
   }
-  document.getElementById('mapSupportBtn')?.classList.remove('visible', 'active');
-  document.getElementById('mapBackboneBtn')?.classList.remove('visible', 'active');
+  document.getElementById('mapOverlayBtns')?.classList.remove('visible');
+  document.getElementById('mapSupportBtn')?.classList.remove('active');
+  document.getElementById('mapBackboneBtn')?.classList.remove('active');
+  document.getElementById('mapS3Btn')?.classList.remove('active');
   if (backboneVisible) hideBackboneOverlay();
+  if (s3Visible) hideS3Overlay();
   mapDrillRegion = null;
   document.getElementById('mapBackBtn').classList.remove('visible');
   bgMap.closePopup();
@@ -10097,15 +10432,15 @@ document.getElementById('tokenInput').addEventListener('keydown', (e) => {
   showAvailableLocations([]);
   bgMap.invalidateSize({ animate: false });
   const allCoords = Object.values(LOCATION_COORDS).map(c => [c[0], c[1]]);
-  if (allCoords.length > 0) {
-    bgMap.fitBounds(allCoords, { padding: [60, 60], maxZoom: 5, animate: false });
-  }
-  bgMap.setMaxBounds([[15, -140], [72, 45]]);
-  bgMap.setMinZoom(2);
+  const sbPre = document.querySelector('.sidebar');
+  const sbOffPre = sbPre && sbPre.offsetWidth > 0 ? sbPre.offsetWidth * 0.5 : 0;
+  bgMap.setView([46, -20], 3.25, { animate: false });
+  if (sbOffPre > 0) bgMap.panBy([-sbOffPre, 0], { animate: false });
+  bgMap.setMaxBounds([[22, -130], [62, 42]]);
+  bgMap.setMinZoom(3);
 
-  // Show support contacts + backbone buttons on pre-login map too
-  document.getElementById('mapSupportBtn')?.classList.add('visible');
-  document.getElementById('mapBackboneBtn')?.classList.add('visible');
+  // Show overlay button bar on pre-login map too
+  document.getElementById('mapOverlayBtns')?.classList.add('visible');
 })();
 
 // ============================== FEATURE CAROUSEL ==============================

@@ -59,7 +59,7 @@ The assistant has two modes, accessible via tabs:
 
 | | | |
 |:--|:--|:--|
-| 🗺️ **Global Map View** — Interactive map of all IONOS DC locations, color-coded by cloud type. Active regions show as cluster bubbles — click to drill down. Toggle the DC Network backbone overlay (AS-8560). `G` | 🔗 **Managed Services** — Databases, VPN gateways, NFS, load balancers, K8s clusters, and Kafka on the topology with LAN connections. K8s resources get a helm badge. | 🌐 **Cross-Connect View** — All VDCs in a metro region on one canvas with PCC cross-connect lines, AZ color-coding, and hover tooltips showing billable transfer data. |
+| 🗺️ **Global Map View** — Interactive map of all IONOS DC locations with fractional zoom. Toggle DC Network backbone (AS-8560), Object Storage endpoints (S3, filterable by bucket type), or Support Contacts overlays. `G` | 🔗 **Managed Services** — Databases, VPN gateways, NFS, load balancers, K8s clusters, and Kafka on the topology with LAN connections. K8s resources get a helm badge. | 🌐 **Cross-Connect View** — All VDCs in a metro region on one canvas with PCC cross-connect lines, AZ color-coding, and hover tooltips showing billable transfer data. |
 | 🖥️ **Compute View** — VM type, cores, RAM, CPU family for every server. Color-coded: cyan (dedicated), purple (vCPU), orange (Cube), rose (GPU). `C` | 📡 **IP & DNS View** — IP labels on every NIC with reverse DNS and forward DNS. Public IP blocks, DNS zones, and CDN distributions in the sidebar. `I` | 🛡️ **Highlights** — Filter by firewall, flow logs, security groups, IPv6, failover, cross connect, multi-queue, or idle VMs. Matches glow, rest fades. `H` |
 
 ### Analysis & Monitoring
