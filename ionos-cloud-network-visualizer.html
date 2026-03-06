@@ -368,6 +368,37 @@
   }
   .map-vdc-marker .map-cluster-flag { font-size: 14px; }
   .map-vdc-marker .map-cluster-name { font-size: 10px; font-weight: 600; max-width: 72px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff; }
+  .map-vdc-marker .vdc-az-badge {
+    font-size: 8px; font-weight: 700; letter-spacing: 0.3px; color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.1); border-radius: 4px; padding: 1px 4px; margin-top: 1px;
+  }
+  .map-vdc-marker[data-az="1"] { border-color: rgba(16,185,129,0.6); }
+  .map-vdc-marker[data-az="1"]:hover { border-color: rgba(16,185,129,0.9); box-shadow: 0 6px 24px rgba(0,0,0,0.5), 0 0 30px rgba(16,185,129,0.2); }
+  .map-vdc-marker[data-az="1"] .vdc-az-badge { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+  .map-vdc-marker[data-az="2"] { border-color: rgba(245,158,11,0.6); }
+  .map-vdc-marker[data-az="2"]:hover { border-color: rgba(245,158,11,0.9); box-shadow: 0 6px 24px rgba(0,0,0,0.5), 0 0 30px rgba(245,158,11,0.2); }
+  .map-vdc-marker[data-az="2"] .vdc-az-badge { background: rgba(245,158,11,0.2); color: #fcd34d; }
+  .map-vdc-marker[data-az="3"] { border-color: rgba(168,85,247,0.6); }
+  .map-vdc-marker[data-az="3"]:hover { border-color: rgba(168,85,247,0.9); box-shadow: 0 6px 24px rgba(0,0,0,0.5), 0 0 30px rgba(168,85,247,0.2); }
+  .map-vdc-marker[data-az="3"] .vdc-az-badge { background: rgba(168,85,247,0.2); color: #c4b5fd; }
+
+  .map-vdc-tooltip {
+    position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+    background: rgba(10,14,26,0.95); border: 1px solid rgba(17,199,230,0.35);
+    border-radius: 10px; padding: 8px 10px; min-width: 160px; max-width: 220px;
+    pointer-events: none; opacity: 0; transition: opacity 0.2s;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+    font-size: 10px; color: #ccc; line-height: 1.5; white-space: nowrap;
+  }
+  .map-vdc-marker:hover .map-vdc-tooltip { opacity: 1; }
+  .map-vdc-tooltip .mvt-name { font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 4px; white-space: normal; }
+  .map-vdc-tooltip .mvt-row { display: flex; justify-content: space-between; gap: 8px; }
+  .map-vdc-tooltip .mvt-label { color: #8899aa; }
+  .map-vdc-tooltip .mvt-value { color: #ddd; font-weight: 600; }
+  .map-vdc-tooltip .mvt-sep { height: 1px; background: rgba(255,255,255,0.08); margin: 4px 0; }
+
+  .pcc-line-tooltip { background: rgba(10,14,26,0.92) !important; border: 1px solid rgba(236,72,153,0.5) !important; color: #f9a8d4 !important; font-size: 10px !important; font-weight: 600 !important; border-radius: 6px !important; padding: 3px 8px !important; }
 
   /* Billing traffic panel on Global Map */
   .map-billing-panel {
@@ -486,6 +517,51 @@
   }
   .map-back-btn:hover { background: var(--bg-tertiary); border-color: var(--accent); }
   .map-back-btn.visible { display: flex; }
+
+  /* ── Backbone overlay ── */
+  .map-backbone-btn {
+    position: absolute; bottom: 18px; right: 110px; z-index: 10;
+    background: var(--accent); border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 12px; padding: 6px 12px; cursor: pointer;
+    display: none; align-items: center; gap: 6px; white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5); transition: all 0.2s;
+    color: #fff; font-size: 11px; font-weight: 600; font-family: inherit;
+    letter-spacing: 0.2px;
+  }
+  .map-backbone-btn:hover { filter: brightness(1.15); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,0,0,0.6); }
+  .map-backbone-btn.active { background: #6366f1; border-color: rgba(255,255,255,0.25); }
+  .map-backbone-btn.visible { display: flex; }
+
+  .backbone-node-marker {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    pointer-events: auto; cursor: pointer;
+  }
+  .backbone-node-marker .bnm-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: rgba(99,102,241,0.2); border: 3px solid #6366f1;
+    box-shadow: 0 0 10px rgba(99,102,241,0.4);
+    transition: transform 0.15s;
+  }
+  .backbone-node-marker:hover .bnm-dot { transform: scale(1.3); }
+  .backbone-node-marker .bnm-label {
+    font-size: 10px; font-weight: 700; font-family: var(--font); color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9), 0 0 6px rgba(0,0,0,0.6);
+    white-space: nowrap;
+  }
+  html[data-theme="light"] .backbone-node-marker .bnm-label { color: #1e293b; text-shadow: 0 0 4px rgba(255,255,255,0.9); }
+
+  .backbone-summary-panel {
+    position: absolute; top: 18px; right: 18px; z-index: 10;
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 16px; display: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3); font-size: 11px; color: var(--text-secondary);
+    font-family: var(--font); line-height: 1.6; max-width: 220px;
+  }
+  .backbone-summary-panel.visible { display: block; }
+  .backbone-summary-panel .bs-title { font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+  .backbone-summary-panel .bs-row { display: flex; justify-content: space-between; gap: 12px; }
+  .backbone-summary-panel .bs-label { color: var(--text-muted); }
+  .backbone-summary-panel .bs-value { font-weight: 600; color: var(--text-primary); }
 
   /* Support contacts toggle button on global map */
   .map-support-btn {
@@ -910,13 +986,30 @@
     outline: none; line-height: 1.4;
   }
   .ai-input-area textarea:focus { border-color: var(--accent); }
-  .ai-input-area button {
+  .ai-input-area button:not(.ai-mic-btn) {
     padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; border: none;
     background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; cursor: pointer;
     font-family: inherit; transition: opacity 0.15s; flex-shrink: 0;
   }
-  .ai-input-area button:hover { opacity: 0.85; }
-  .ai-input-area button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .ai-input-area button:not(.ai-mic-btn):hover { opacity: 0.85; }
+  .ai-input-area button:not(.ai-mic-btn):disabled { opacity: 0.4; cursor: not-allowed; }
+  /* Voice input mic button */
+  .ai-mic-btn {
+    width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--bg-tertiary); color: var(--text-muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .ai-mic-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .ai-mic-btn.listening {
+    background: rgba(239, 68, 68, 0.12); border-color: #ef4444; color: #ef4444;
+    animation: mic-pulse 1.2s ease-in-out infinite;
+  }
+  .ai-mic-btn.unsupported { display: none; }
+  @keyframes mic-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3); }
+    50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  }
   .ai-welcome { text-align: center; padding: 32px 20px; color: var(--text-muted); font-size: 12px; line-height: 1.6; }
   .ai-welcome svg { margin-bottom: 12px; opacity: 0.5; }
 
@@ -1673,6 +1766,19 @@
 <div class="main-area" id="mainArea">
   <div id="mapBackground"></div>
   <button class="map-back-btn" id="mapBackBtn" onclick="showMapOverview()" data-i18n="map.allRegions">&#x2190; All Regions</button>
+  <button class="map-backbone-btn" id="mapBackboneBtn" onclick="toggleBackboneOverlay()" title="IONOS Global Network Infrastructure" aria-label="Show IONOS global network infrastructure on map" aria-pressed="false">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/><path d="M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+    DC Network
+  </button>
+  <div class="backbone-summary-panel" id="backboneSummaryPanel">
+    <div class="bs-title">IONOS Network (AS-8560)</div>
+    <div class="bs-row"><span class="bs-label">Edge capacity</span><span class="bs-value">4,000 Gbps</span></div>
+    <div class="bs-row"><span class="bs-label">Peering sessions</span><span class="bs-value">3,500+</span></div>
+    <div class="bs-row"><span class="bs-label">DC locations</span><span class="bs-value bs-dc-count">11</span></div>
+    <div style="margin-top:6px;border-top:1px solid var(--border);padding-top:6px;font-size:10px;color:var(--text-muted);">
+      <span style="color:#059669;">●</span> 2N+1 metro &nbsp; <span style="color:#64748b;">●</span> 2N metro
+    </div>
+  </div>
   <button class="map-support-btn" id="mapSupportBtn" onclick="toggleSupportContacts()" title="IONOS Support & Sales Contacts" aria-label="Show IONOS support and sales contacts on map" aria-pressed="false">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.05 5A5 5 0 0 1 19 8.95M15.05 1A9 9 0 0 1 23 8.94m-1 7.98v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.11 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
     Contact
@@ -1823,7 +1929,7 @@
           <div class="feature-slide">
             <div class="feature-slide-icon">📊</div>
             <div class="feature-slide-content">
-              <div class="feature-slide-title">Billing & Data Transfer</div>
+              <div class="feature-slide-title">Billing & Data Transfer (Billable)</div>
               <div class="feature-slide-desc">Per-VDC and per-server transfer metrics, 30-day trends, and cost-aware heatmaps from the IONOS Billing API.</div>
             </div>
           </div>
@@ -1972,7 +2078,7 @@
         </button>
       </div>
     </div>
-    <button onclick="setHeatmapMode('billing'); if(!heatmapActive) toggleHeatmap(); else applyHeatmap();" id="billingHeatmapBtn" aria-label="Data Transfer Heatmap" data-tip="Data Transfer Heatmap (B)" data-i18n-tip="shortcuts.billingHeatmap">
+    <button onclick="setHeatmapMode('billing'); if(!heatmapActive) toggleHeatmap(); else applyHeatmap();" id="billingHeatmapBtn" aria-label="Data Transfer Heatmap (Billable)" data-tip="Data Transfer Heatmap (Billable) (B)" data-i18n-tip="shortcuts.billingHeatmap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
     </button>
     <span class="toolbar-divider"></span>
@@ -2072,6 +2178,7 @@
   <div class="ai-suggestions" id="aiSuggestions"></div>
   <div class="ai-input-area">
     <textarea id="aiInput" rows="2" placeholder="Ask about your infrastructure..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiMessage();}"></textarea>
+    <button id="aiMicBtn" class="ai-mic-btn" onclick="toggleVoiceInput()" title="Voice input"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
     <button id="aiSendBtn" onclick="sendAiMessage()">Send</button>
   </div>
 </div>
@@ -2120,7 +2227,7 @@
       <tr><th>S</th><td data-i18n="shortcuts.security">Security posture</td></tr>
       <tr><th>W</th><td data-i18n="shortcuts.flowlogs">Flow Log Explorer</td></tr>
       <tr><th>X</th><td data-i18n="shortcuts.heatmap">Traffic Heatmap</td></tr>
-      <tr><th>B</th><td data-i18n="shortcuts.billingHeatmap">Data Transfer Heatmap</td></tr>
+      <tr><th>B</th><td data-i18n="shortcuts.billingHeatmap">Data Transfer Heatmap (Billable)</td></tr>
       <tr><th>A</th><td data-i18n="shortcuts.aiAssistant">AI Cloud Assistant</td></tr>
       <tr><th>?</th><td data-i18n="shortcuts.help">Show this help</td></tr>
     </table>
@@ -2309,7 +2416,7 @@ const LOCATION_CITIES = {
   'us/las': 'Las Vegas', 'us/ewr': 'Newark', 'us/mci': 'Lenexa',
   'gb/lhr': 'London', 'gb/bhx': 'Worcester',
   'es/vit': 'Logrono', 'fr/par': 'Paris',
-  'fr/nlb': 'Niederlauterbach',
+  'fr/nlb': 'Niederlauterbach', 'de/ka': 'Karlsruhe',
 };
 
 // Coordinates [lat, lon] and zoom level for each IONOS region
@@ -2324,6 +2431,7 @@ const LOCATION_COORDS = {
   'es/vit': [42.4627, -2.4500, 10],   // Logrono
   'fr/par': [48.8566, 2.3522, 10],    // Paris
   'fr/nlb': [48.9706, 8.0825, 10],    // Niederlauterbach (Private Cloud only)
+  'de/ka':  [49.0069, 8.4037, 10],    // Karlsruhe
 };
 
 // Cloud type classification per DC location
@@ -2338,6 +2446,27 @@ const DC_CLOUD_TYPE = {
   'es/vit': 'both',
   'fr/par': 'public',
   'fr/nlb': 'private',
+  'de/ka':  'public',
+};
+
+// ── IONOS Backbone Infrastructure ──
+// Source: IONOS external network data (AS-8560, 4000 Gbps edge capacity)
+// Each DC entry: capacity string, locationRedundancy, metroRedundancy
+const IONOS_BACKBONE = {
+  nodes: {
+    'de/fra':  { capacity: '2×100 Gbps', locRedundancy: '2N', metroRedundancy: '2N+1', label: 'Frankfurt/1' },
+    'de/fra2': { capacity: '4×100 Gbps', locRedundancy: '2N', metroRedundancy: '2N+1', label: 'Frankfurt/2', lat: 50.08, lng: 8.78 },
+    'de/txl':  { capacity: '2×100 Gbps', locRedundancy: '2N', metroRedundancy: '2N+1', label: 'Berlin' },
+    'de/ka':   { capacity: '2×100 Gbps', locRedundancy: '2N', metroRedundancy: '2N+1', label: 'Karlsruhe' },
+    'gb/lhr':  { capacity: '2×100 Gbps', locRedundancy: '2N', metroRedundancy: '2N+1', label: 'London' },
+    'gb/bhx':  { capacity: '2×100 Gbps', locRedundancy: '2N', metroRedundancy: '2N',   label: 'Worcester' },
+    'es/vit':  { capacity: '2×100 Gbps', locRedundancy: '2N', metroRedundancy: '2N+1', label: 'Logroño' },
+    'fr/par':  { capacity: '2×100 Gbps', locRedundancy: '2N', metroRedundancy: '2N+1', label: 'Paris' },
+    'us/las':  { capacity: '2×10 Gbps',  locRedundancy: '2N', metroRedundancy: '2N',   label: 'Las Vegas' },
+    'us/ewr':  { capacity: '2×100 Gbps', locRedundancy: '2N', metroRedundancy: '2N+1', label: 'Newark' },
+    'us/mci':  { capacity: '2×100 Gbps', locRedundancy: '2N', metroRedundancy: '2N+1', label: 'Lenexa' },
+  },
+  summary: { edgeCapacity: '4000 Gbps', asn: 'AS-8560', peeringSessions: '3500+' },
 };
 
 // IONOS Support & Sales contact info per country (for map overlay)
@@ -2442,7 +2571,7 @@ const TRANSLATIONS = {
     'shortcuts.help': 'Show this help',
     'shortcuts.flowlogs': 'Flow Log Explorer',
     'shortcuts.heatmap': 'Traffic Heatmap',
-    'shortcuts.billingHeatmap': 'Data Transfer Heatmap',
+    'shortcuts.billingHeatmap': 'Data Transfer Heatmap (Billable)',
     // Flow Log Explorer
     'toolbar.flowlogs': 'Flow Log Explorer (W)',
     'toolbar.flowlogsMenu': 'Flow Logs',
@@ -2537,7 +2666,7 @@ const TRANSLATIONS = {
     // Detail
     'detail.connectedResources': 'Connected Resources',
     'detail.networkMetrics': 'Network Metrics',
-    'detail.billingTraffic': 'Data Transfer (30d)',
+    'detail.billingTraffic': 'Data Transfer (Billable, current period)',
     'detail.noBillingData': 'No data transfer data available',
     'detail.nics': 'Network Interfaces (NICs)',
     'detail.securityRules': 'Security Group Rules',
@@ -2669,7 +2798,7 @@ const TRANSLATIONS = {
     'shortcuts.help': 'Hilfe anzeigen',
     'shortcuts.flowlogs': 'Flow-Log-Explorer',
     'shortcuts.heatmap': 'Verkehrs-Heatmap',
-    'shortcuts.billingHeatmap': 'Datentransfer-Heatmap',
+    'shortcuts.billingHeatmap': 'Datentransfer-Heatmap (abrechenbar)',
     // Flow Log Explorer
     'toolbar.flowlogs': 'Flow-Log-Explorer (W)',
     'toolbar.flowlogsMenu': 'Flow-Logs',
@@ -2759,7 +2888,7 @@ const TRANSLATIONS = {
     'toast.pdfNotLoaded': 'PDF-Bibliothek nicht geladen',
     'detail.connectedResources': 'Verbundene Ressourcen',
     'detail.networkMetrics': 'Netzwerk-Metriken',
-    'detail.billingTraffic': 'Datentransfer (30T)',
+    'detail.billingTraffic': 'Datentransfer (abrechenbar, akt. Zeitraum)',
     'detail.noBillingData': 'Keine Datentransfer-Daten verf\u00fcgbar',
     'detail.nics': 'Netzwerk-Interfaces (NICs)',
     'detail.securityRules': 'Sicherheitsgruppen-Regeln',
@@ -2887,7 +3016,7 @@ const TRANSLATIONS = {
     'shortcuts.help': 'Mostrar esta ayuda',
     'shortcuts.flowlogs': 'Explorador de Flow Logs',
     'shortcuts.heatmap': 'Mapa de calor de tráfico',
-    'shortcuts.billingHeatmap': 'Mapa de calor de transferencia',
+    'shortcuts.billingHeatmap': 'Mapa de calor de transferencia (facturable)',
     // Flow Log Explorer
     'toolbar.flowlogs': 'Explorador de Flow Logs (W)',
     'toolbar.flowlogsMenu': 'Flow Logs',
@@ -2977,7 +3106,7 @@ const TRANSLATIONS = {
     'toast.pdfNotLoaded': 'Biblioteca PDF no cargada',
     'detail.connectedResources': 'Recursos conectados',
     'detail.networkMetrics': 'M\u00e9tricas de red',
-    'detail.billingTraffic': 'Transferencia de datos (30d)',
+    'detail.billingTraffic': 'Transferencia de datos (facturable, período actual)',
     'detail.noBillingData': 'No hay datos de transferencia disponibles',
     'detail.nics': 'Interfaces de red (NICs)',
     'detail.securityRules': 'Reglas de grupo de seguridad',
@@ -3105,7 +3234,7 @@ const TRANSLATIONS = {
     'shortcuts.help': 'Afficher cette aide',
     'shortcuts.flowlogs': 'Explorateur de Flow Logs',
     'shortcuts.heatmap': 'Carte thermique du trafic',
-    'shortcuts.billingHeatmap': 'Carte thermique de transfert',
+    'shortcuts.billingHeatmap': 'Carte thermique de transfert (facturable)',
     // Flow Log Explorer
     'toolbar.flowlogs': 'Explorateur de Flow Logs (W)',
     'toolbar.flowlogsMenu': 'Flow Logs',
@@ -3195,7 +3324,7 @@ const TRANSLATIONS = {
     'toast.pdfNotLoaded': 'Biblioth\u00e8que PDF non charg\u00e9e',
     'detail.connectedResources': 'Ressources connect\u00e9es',
     'detail.networkMetrics': 'M\u00e9triques r\u00e9seau',
-    'detail.billingTraffic': 'Transfert de donn\u00e9es (30j)',
+    'detail.billingTraffic': 'Transfert de données (facturable, période en cours)',
     'detail.noBillingData': 'Aucune donn\u00e9e de transfert disponible',
     'detail.nics': 'Interfaces r\u00e9seau (NICs)',
     'detail.securityRules': 'R\u00e8gles de groupe de s\u00e9curit\u00e9',
@@ -4374,19 +4503,24 @@ function formatLocationName(apiName) {
 }
 
 // Dynamically update LOCATION_CITIES from the /locations API
+// Also stores the set of user-accessible location IDs for backbone filtering
+let _userLocationIds = new Set(); // raw IDs from API, e.g. "de/fra", "de/fra/2", "gb/lhr"
+
 async function loadDynamicLocations() {
   try {
     const data = await fetchLocations();
     if (!data || !data.items) return;
 
+    _userLocationIds = new Set();
     let newRegions = [];
     data.items.forEach(loc => {
       const id = loc.id; // e.g. "de/fra", "de/txl", "de/fra/2"
       if (!id) return;
+      _userLocationIds.add(id);
       const region = locationRegion(id);
+      // Add city name if we don't already have one for this region
       const rawName = loc.properties?.name || '';
       const name = formatLocationName(rawName);
-      // Add city name if we don't already have one for this region
       if (!LOCATION_CITIES[region] && name) {
         LOCATION_CITIES[region] = name;
       }
@@ -4534,6 +4668,48 @@ async function fetchBillingTraffic() {
 async function fetchBillingUtilization() {
   if (!currentContract) return null;
   return safeFetch(`${API_BASES.billing}/${currentContract}/utilization?type=traffic`);
+}
+
+// PCC (Private Cross Connect) state
+let _pccList = []; // array of { id, name, description, peers: [{ datacenterId, datacenterName, location }] }
+
+async function loadPCCData() {
+  try {
+    const resp = await safeFetch(`${API_BASES.cloud}/pccs?depth=3`);
+    const items = resp?.items || [];
+    _pccList = items.map(pcc => {
+      // Peers can be in entities.peers.items (API v6) or properties.peers
+      const entityPeers = pcc.entities?.peers?.items || [];
+      const propPeers = pcc.properties?.peers || [];
+      const peers = entityPeers.length > 0
+        ? entityPeers.map(p => ({
+            datacenterId: p.id,
+            datacenterName: p.properties?.name || '',
+            location: p.properties?.location || '',
+          }))
+        : propPeers.map(p => ({
+            datacenterId: p.datacenterId || p.id,
+            datacenterName: p.datacenterName || p.name || '',
+            location: p.location || '',
+          }));
+      return {
+        id: pcc.id,
+        name: pcc.properties?.name || '',
+        description: pcc.properties?.description || '',
+        peers,
+      };
+    });
+    console.log(`[VDC-Viz] PCCs: ${_pccList.length} cross-connect(s), linking ${_pccList.reduce((s, p) => s + p.peers.length, 0)} VDC peers`);
+    // Debug: log each PCC and its peers
+    _pccList.forEach(pcc => {
+      console.log(`  PCC "${pcc.name || pcc.id}": ${pcc.peers.length} peer(s)`, pcc.peers.map(p => p.datacenterId));
+    });
+    // If user already drilled into a region, redraw PCC lines now
+    if (_lastVdcPositions && _lastVdcPositions.size > 0) {
+      console.log('[VDC-Viz] PCC data arrived late — redrawing lines');
+      drawPCCLines(_lastVdcPositions);
+    }
+  } catch (e) { console.warn('[VDC-Viz] PCC fetch failed:', e.message); _pccList = []; }
 }
 
 // ============================== GRAPH BUILDER ==============================
@@ -5181,6 +5357,164 @@ function hideSupportContacts() {
   showMapOverview();
 }
 
+// ---- IONOS Backbone Overlay (dedicated map view, like Support Contacts) ----
+let backboneVisible = false;
+let backboneMarkers = [];
+let _backboneClickTimeout = null;
+
+function toggleBackboneOverlay() {
+  if (backboneVisible) hideBackboneOverlay();
+  else showBackboneOverlay();
+}
+
+function showBackboneOverlay() {
+  if (!bgMap) { toast(t('toast.noDisplay'), 'warning'); return; }
+  backboneVisible = true;
+  const btn = document.getElementById('mapBackboneBtn');
+  if (btn) { btn.classList.add('active'); btn.setAttribute('aria-pressed', 'true'); }
+
+  // Clear existing VDC markers, available location markers, billing panel — clean slate
+  clearMapMarkers();
+  clearAvailableLocationMarkers();
+  document.getElementById('mapBillingPanel')?.classList.add('hidden');
+  document.getElementById('mapBackBtn')?.classList.remove('visible');
+  mapDrillRegion = null;
+
+  // Dismiss support contacts if active
+  if (supportContactsVisible) {
+    supportContactMarkers.forEach(m => bgMap.removeLayer(m));
+    supportContactMarkers = [];
+    supportContactsVisible = false;
+    const sBtn = document.getElementById('mapSupportBtn');
+    if (sBtn) { sBtn.classList.remove('active'); sBtn.setAttribute('aria-pressed', 'false'); }
+  }
+
+  // Show summary panel
+  const summaryPanel = document.getElementById('backboneSummaryPanel');
+  summaryPanel?.classList.add('visible');
+
+  const bb = IONOS_BACKBONE;
+
+  // After login, only show DCs the user has access to from /locations.
+  // Pre-login (no user locations loaded yet) → show all DCs.
+  const isConnected = _userLocationIds.size > 0;
+  const visibleNodes = new Set();
+  if (isConnected) {
+    Object.keys(bb.nodes).forEach(bbId => {
+      if (_userLocationIds.has(bbId)) { visibleNodes.add(bbId); return; }
+      const slashForm = bbId.replace(/(\d+)$/, '/$1');
+      if (slashForm !== bbId && _userLocationIds.has(slashForm)) { visibleNodes.add(bbId); return; }
+      for (const uid of _userLocationIds) {
+        if (uid.startsWith(bbId + '/') || uid === bbId) { visibleNodes.add(bbId); return; }
+      }
+    });
+  } else {
+    Object.keys(bb.nodes).forEach(id => visibleNodes.add(id));
+  }
+
+  // Update DC count in summary panel
+  const dcCountEl = summaryPanel?.querySelector('.bs-dc-count');
+  if (dcCountEl) dcCountEl.textContent = visibleNodes.size;
+
+  // Helper: get lat/lng for a backbone node
+  function nodeCoords(id) {
+    const n = bb.nodes[id];
+    if (n && n.lat !== undefined) return [n.lat, n.lng];
+    const c = LOCATION_COORDS[id];
+    return c ? [c[0], c[1]] : null;
+  }
+
+  // Collect visible node entries and apply collision avoidance
+  const visibleEntries = [];
+  Object.entries(bb.nodes).forEach(([id, node]) => {
+    if (!visibleNodes.has(id)) return;
+    const coords = nodeCoords(id);
+    if (!coords) return;
+    visibleEntries.push({ id, node, coords: [...coords] });
+  });
+
+  // Nudge nearby markers apart (same approach as VDC cluster nudging)
+  const MIN_SEP = 1.2; // degrees — enough to avoid label overlap at Europe zoom
+  for (let i = 0; i < visibleEntries.length; i++) {
+    for (let j = i + 1; j < visibleEntries.length; j++) {
+      const a = visibleEntries[i].coords, b = visibleEntries[j].coords;
+      const dx = b[1] - a[1], dy = b[0] - a[0];
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < MIN_SEP && dist > 0) {
+        const push = (MIN_SEP - dist) / 2;
+        const nx = dx / dist, ny = dy / dist;
+        a[0] -= ny * push; a[1] -= nx * push;
+        b[0] += ny * push; b[1] += nx * push;
+      }
+    }
+  }
+
+  const boundsCoords = [];
+  visibleEntries.forEach(({ id, node, coords }) => {
+    boundsCoords.push(coords);
+
+    const isPlus1 = node.metroRedundancy === '2N+1';
+    const dotColor = isPlus1 ? '#059669' : '#6366f1';
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="backbone-node-marker">
+        <div class="bnm-dot" style="border-color:${dotColor};"></div>
+        <div class="bnm-label">${node.label}</div>
+      </div>`,
+      iconSize: [80, 32],
+      iconAnchor: [40, 16],
+    });
+
+    const marker = L.marker(coords, { icon, interactive: true }).addTo(bgMap);
+    const tooltipHtml = `<div style="font-weight:700;margin-bottom:3px;">${node.label}</div>
+      <div style="margin-bottom:2px;">Capacity: <strong>${node.capacity}</strong></div>
+      <div>Location: ${node.locRedundancy} &nbsp;|&nbsp; Metro: <span style="color:${isPlus1 ? '#059669' : '#64748b'};font-weight:700;">${node.metroRedundancy}</span></div>`;
+    marker.bindTooltip(tooltipHtml, { className: 'map-loc-tooltip', direction: 'top', offset: [0, -20] });
+    backboneMarkers.push(marker);
+  });
+
+  // Fit map to backbone nodes
+  bgMap.invalidateSize({ animate: false });
+  if (boundsCoords.length > 1) {
+    bgMap.fitBounds(boundsCoords, { padding: [60, 60], maxZoom: 5, animate: true });
+  } else if (boundsCoords.length === 1) {
+    bgMap.setView(boundsCoords[0], 6, { animate: true });
+  }
+
+  // Clicking map background dismisses backbone view (like support contacts)
+  if (_backboneClickTimeout) clearTimeout(_backboneClickTimeout);
+  bgMap.off('click', _onMapClickWhileBackbone);
+  _backboneClickTimeout = setTimeout(() => {
+    bgMap.on('click', _onMapClickWhileBackbone);
+    _backboneClickTimeout = null;
+  }, 200);
+}
+
+function _onMapClickWhileBackbone() {
+  if (!backboneVisible) return;
+  hideBackboneOverlay();
+}
+
+function hideBackboneOverlay() {
+  backboneVisible = false;
+  const btn = document.getElementById('mapBackboneBtn');
+  if (btn) { btn.classList.remove('active'); btn.setAttribute('aria-pressed', 'false'); }
+  document.getElementById('backboneSummaryPanel')?.classList.remove('visible');
+
+  // Clean up click listener
+  if (_backboneClickTimeout) { clearTimeout(_backboneClickTimeout); _backboneClickTimeout = null; }
+  if (bgMap) bgMap.off('click', _onMapClickWhileBackbone);
+
+  // Remove polylines
+
+  // Remove backbone markers
+  backboneMarkers.forEach(m => { m.unbindTooltip(); if (bgMap) bgMap.removeLayer(m); });
+  backboneMarkers = [];
+
+  // Restore normal global map view
+  showMapOverview();
+}
+
 // ---- Global Map Overview ----
 let mapMarkers = [];
 let mapDrillRegion = null;  // tracks which region we're zoomed into
@@ -5213,10 +5547,128 @@ function buildRegionClusters() {
 }
 
 let availableLocationMarkers = [];
+let pccLineOverlays = []; // Leaflet polylines for PCC connections
 
 function clearMapMarkers() {
   mapMarkers.forEach(m => bgMap.removeLayer(m));
   mapMarkers = [];
+  clearPCCLines();
+}
+
+// ── PCC lines as SVG overlay on top of map ──
+let _pccSvgEl = null;
+let _pccLineData = []; // [{latA, lngA, latB, lngB, name}]
+let _lastVdcPositions = null;
+
+function clearPCCLines() {
+  if (_pccSvgEl) { _pccSvgEl.remove(); _pccSvgEl = null; }
+  _pccLineData = [];
+  _lastVdcPositions = null;
+  if (bgMap) bgMap.off('move zoom viewreset', _updatePCCSvg);
+}
+
+// Build an orthogonal (stepped) path between two box centers
+// Goes: up from A → across horizontally → down to B
+function _pccPath(ax, ay, bx, by, halfW, halfH) {
+  const offset = 30; // how far above the boxes the horizontal segment runs
+  const topY = Math.min(ay, by) - halfH;
+  const midY = topY - offset;
+  return `M ${ax} ${ay - halfH} L ${ax} ${midY} L ${bx} ${midY} L ${bx} ${by - halfH}`;
+}
+
+function _updatePCCSvg() {
+  if (!_pccSvgEl || !bgMap || _pccLineData.length === 0) return;
+  const container = bgMap.getContainer();
+  _pccSvgEl.setAttribute('width', container.clientWidth);
+  _pccSvgEl.setAttribute('height', container.clientHeight);
+  const halfW = 48, halfH = 28;
+  _pccSvgEl.querySelectorAll('path.pcc-line').forEach((el, i) => {
+    const d = _pccLineData[i];
+    if (!d) return;
+    const pA = bgMap.latLngToContainerPoint([d.latA, d.lngA]);
+    const pB = bgMap.latLngToContainerPoint([d.latB, d.lngB]);
+    el.setAttribute('d', _pccPath(pA.x, pA.y, pB.x, pB.y, halfW, halfH));
+  });
+  _pccSvgEl.querySelectorAll('text').forEach((el, i) => {
+    const d = _pccLineData[i];
+    if (!d) return;
+    const pA = bgMap.latLngToContainerPoint([d.latA, d.lngA]);
+    const pB = bgMap.latLngToContainerPoint([d.latB, d.lngB]);
+    const midY = Math.min(pA.y, pB.y) - halfH - 30;
+    el.setAttribute('x', (pA.x + pB.x) / 2);
+    el.setAttribute('y', midY - 5);
+  });
+}
+
+function drawPCCLines(vdcPositions) {
+  _lastVdcPositions = vdcPositions;
+  clearPCCLines();
+  _lastVdcPositions = vdcPositions; // re-set after clear
+  if (!bgMap || _pccList.length === 0 || vdcPositions.size === 0) return;
+
+  // Collect line segments
+  _pccList.forEach(pcc => {
+    if (pcc.peers.length < 2) return;
+    const peerDcIds = pcc.peers.map(p => p.datacenterId);
+    for (let a = 0; a < peerDcIds.length; a++) {
+      for (let b = a + 1; b < peerDcIds.length; b++) {
+        const posA = vdcPositions.get(peerDcIds[a]);
+        const posB = vdcPositions.get(peerDcIds[b]);
+        if (!posA || !posB) continue;
+        _pccLineData.push({
+          latA: posA[0], lngA: posA[1],
+          latB: posB[0], lngB: posB[1],
+          name: pcc.name || pcc.id.slice(0, 8),
+        });
+      }
+    }
+  });
+
+  if (_pccLineData.length === 0) return;
+
+  // Create SVG overlay
+  const container = bgMap.getContainer();
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:650;pointer-events:none;';
+  svg.setAttribute('width', container.clientWidth);
+  svg.setAttribute('height', container.clientHeight);
+
+  const halfW = 48, halfH = 28;
+  _pccLineData.forEach(d => {
+    const pA = bgMap.latLngToContainerPoint([d.latA, d.lngA]);
+    const pB = bgMap.latLngToContainerPoint([d.latB, d.lngB]);
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.classList.add('pcc-line');
+    path.setAttribute('d', _pccPath(pA.x, pA.y, pB.x, pB.y, halfW, halfH));
+    path.setAttribute('stroke', '#a78bfa');
+    path.setAttribute('stroke-width', '2');
+    path.setAttribute('stroke-dasharray', '6 4');
+    path.setAttribute('stroke-opacity', '0.75');
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('fill', 'none');
+    svg.appendChild(path);
+
+    // Label on the horizontal segment (above)
+    const midY = Math.min(pA.y, pB.y) - halfH - 30;
+    const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    txt.setAttribute('x', (pA.x + pB.x) / 2);
+    txt.setAttribute('y', midY - 5);
+    txt.setAttribute('text-anchor', 'middle');
+    txt.setAttribute('fill', '#c4b5fd');
+    txt.setAttribute('font-size', '10');
+    txt.setAttribute('font-weight', '600');
+    txt.setAttribute('font-family', 'system-ui, sans-serif');
+    txt.textContent = `PCC: ${d.name}`;
+    svg.appendChild(txt);
+  });
+
+  container.appendChild(svg);
+  _pccSvgEl = svg;
+
+  // Keep lines in sync with map pan/zoom
+  bgMap.on('move zoom viewreset', _updatePCCSvg);
+  console.log(`[VDC-Viz] drawPCCLines: drew ${_pccLineData.length} SVG line(s)`);
 }
 
 function clearAvailableLocationMarkers() {
@@ -5288,14 +5740,25 @@ function showMapOverview() {
   clearMapMarkers();
   mapDrillRegion = null;
   document.getElementById('mapBackBtn').classList.remove('visible');
-  // Show support contacts button on global map
+  // Show support contacts + backbone buttons on global map
   document.getElementById('mapSupportBtn')?.classList.add('visible');
+  document.getElementById('mapBackboneBtn')?.classList.add('visible');
   // Clear any active support overlay
   if (supportContactsVisible) {
     supportContactMarkers.forEach(m => bgMap.removeLayer(m));
     supportContactMarkers = [];
     supportContactsVisible = false;
     document.getElementById('mapSupportBtn')?.classList.remove('active');
+  }
+  // Clear any active backbone overlay (direct cleanup, no recursion)
+  if (backboneVisible) {
+    backboneMarkers.forEach(m => { m.unbindTooltip(); bgMap.removeLayer(m); });
+    backboneMarkers = [];
+    backboneVisible = false;
+    if (_backboneClickTimeout) { clearTimeout(_backboneClickTimeout); _backboneClickTimeout = null; }
+    bgMap.off('click', _onMapClickWhileBackbone);
+    document.getElementById('mapBackboneBtn')?.classList.remove('active');
+    document.getElementById('backboneSummaryPanel')?.classList.remove('visible');
   }
   closeDetail();
   closeHighlightsOverlay();
@@ -5406,15 +5869,18 @@ function drillIntoRegion(cluster) {
   if (!bgMap) return;
   mapDrillRegion = cluster.region;
 
-  // Hide support button when drilling into a region
+  // Hide support + backbone buttons when drilling into a region
   document.getElementById('mapSupportBtn')?.classList.remove('visible');
+  document.getElementById('mapBackboneBtn')?.classList.remove('visible');
+  // Dismiss backbone overlay if active
+  if (backboneVisible) hideBackboneOverlay();
 
   // Clear cluster markers and available location markers
   clearMapMarkers();
   clearAvailableLocationMarkers();
 
   // Zoom into the region
-  bgMap.flyTo(cluster.coords, cluster.zoom + 2, { duration: 0.8 });
+  bgMap.flyTo(cluster.coords, cluster.zoom + 3, { duration: 0.8 });
 
   // Show back button
   document.getElementById('mapBackBtn').classList.add('visible');
@@ -5426,6 +5892,16 @@ function drillIntoRegion(cluster) {
     // Spread VDCs in a circle around the center
     const spreadRadius = 0.008 * Math.max(1.5, vdcs.length * 0.6);
 
+    // Detect AZs present in this region
+    const azSet = new Set();
+    vdcs.forEach(v => {
+      const parts = (v.location || '').split('/');
+      if (parts.length >= 3) azSet.add(parts[2]);
+    });
+    const multiAZ = azSet.size > 1;
+
+    const vdcPositions = new Map(); // vdcId → [lat, lon] for PCC lines
+
     vdcs.forEach((v, i) => {
       let lat, lon;
       if (vdcs.length === 1) {
@@ -5435,13 +5911,32 @@ function drillIntoRegion(cluster) {
         lat = cLat + spreadRadius * Math.sin(angle);
         lon = cLon + spreadRadius * Math.cos(angle) * 1.5; // wider horizontally
       }
+      vdcPositions.set(v.id, [lat, lon]);
 
-      const w = 84, h = 52;
+      // Extract AZ number from location (e.g., de/fra/2 → "2")
+      const locParts = (v.location || '').split('/');
+      const az = locParts.length >= 3 ? locParts[2] : '';
+      const azBadge = multiAZ && az ? `<span class="vdc-az-badge">AZ ${az}</span>` : '';
+      const azAttr = az ? ` data-az="${az}"` : '';
+
+      // Build tooltip with available info
+      const billing = _billingByVdc.get(v.id);
+      let tooltipHtml = `<div class="mvt-name">${escapeHtml(v.name)}</div>`;
+      tooltipHtml += `<div class="mvt-row"><span class="mvt-label">Location</span><span class="mvt-value">${escapeHtml(v.location)}</span></div>`;
+      if (billing) {
+        tooltipHtml += `<div class="mvt-sep"></div>`;
+        tooltipHtml += `<div class="mvt-row"><span class="mvt-label">↓ In</span><span class="mvt-value">${fmtTrafficBytes(billing.totalIn)}</span></div>`;
+        tooltipHtml += `<div class="mvt-row"><span class="mvt-label">↑ Out</span><span class="mvt-value">${fmtTrafficBytes(billing.totalOut)}</span></div>`;
+      }
+
+      const w = 90, h = multiAZ ? 62 : 52;
       const icon = L.divIcon({
         className: '',
-        html: `<div class="map-vdc-marker" style="width:${w}px;height:${h}px;" onclick="selectVdcFromMap('${v.id}')">
+        html: `<div class="map-vdc-marker"${azAttr} style="width:${w}px;height:${h}px;" onclick="selectVdcFromMap('${v.id}')">
+          <div class="map-vdc-tooltip">${tooltipHtml}</div>
           <span class="map-cluster-flag">${cluster.flag}</span>
           <span class="map-cluster-name">${escapeHtml(v.name)}</span>
+          ${azBadge}
         </div>`,
         iconSize: [w, h],
         iconAnchor: [w / 2, h / 2],
@@ -5450,6 +5945,9 @@ function drillIntoRegion(cluster) {
       const marker = L.marker([lat, lon], { icon }).addTo(bgMap);
       mapMarkers.push(marker);
     });
+
+    // Draw PCC cross-connect lines between VDCs that share a PCC
+    drawPCCLines(vdcPositions);
 
     // Show billing panel with per-VDC breakdown for this region
     updateMapBillingPanel(cluster.region);
@@ -5480,6 +5978,8 @@ function hideMapOverview() {
     supportContactsVisible = false;
   }
   document.getElementById('mapSupportBtn')?.classList.remove('visible', 'active');
+  document.getElementById('mapBackboneBtn')?.classList.remove('visible', 'active');
+  if (backboneVisible) hideBackboneOverlay();
   mapDrillRegion = null;
   document.getElementById('mapBackBtn').classList.remove('visible');
   bgMap.closePopup();
@@ -8438,7 +8938,7 @@ function updateMapBillingPanel(drillRegion) {
 
   if (!region) {
     // ── Overview: show per-region summary ──
-    html += `<h4>Data Transfer</h4>`;
+    html += `<h4>Data Transfer (Billable)</h4>`;
     html += `<table class="mbp-table"><thead><tr><th>Region</th><th>\u2193 In</th><th>\u2191 Out</th></tr></thead><tbody>`;
     let grandIn = 0, grandOut = 0;
     clusters.forEach(c => {
@@ -8641,9 +9141,10 @@ function loadAndShowBillingChart(serverId) {
 
   container.classList.add('metrics-chart');
 
-  const maxVal = Math.max(1, d3.max(daily, d => Math.max(d.inGB, d.outGB)));
+  const rawMax = d3.max(daily, d => Math.max(d.inGB, d.outGB)) || 0;
+  const maxVal = rawMax < 0.01 ? 0.1 : rawMax;
   const xScale = d3.scaleBand().domain(daily.map(d => d.date)).range([0, w]).padding(0.2);
-  const yScale = d3.scaleLinear().domain([0, maxVal * 1.1]).range([h, 0]);
+  const yScale = d3.scaleLinear().domain([0, maxVal * 1.15]).nice().range([h, 0]);
 
   const svg = d3.select(container).append('svg')
     .attr('width', W).attr('height', H)
@@ -8659,9 +9160,12 @@ function loadAndShowBillingChart(serverId) {
       return parts.length >= 3 ? `${parts[1]}/${parts[2]}` : d;
     }));
 
-  // Y axis
+  // Y axis — adaptive units
+  const yFmt = maxVal < 0.5
+    ? d => (d * 1024).toFixed(0) + ' MB'
+    : d => d.toFixed(1) + ' GB';
   svg.append('g').attr('class', 'axis y-axis grid')
-    .call(d3.axisLeft(yScale).ticks(3).tickFormat(d => d.toFixed(1) + ' GB'))
+    .call(d3.axisLeft(yScale).ticks(4).tickFormat(yFmt))
     .call(g => g.selectAll('.tick line').clone().attr('x2', w).attr('class', 'grid-line'));
 
   const barW = xScale.bandwidth() / 2;
@@ -8694,7 +9198,7 @@ function loadAndShowBillingChart(serverId) {
 
 // ============================== MAIN FLOWS ==============================
 async function connect(isSwitching = false) {
-  apiToken = document.getElementById('tokenInput').value.trim();
+  apiToken = document.getElementById('tokenInput').value.trim().replace(/[^\x20-\x7E]/g, '');
   if (!apiToken) { toast(t('toast.enterToken'), 'error'); return; }
 
   const btn = document.getElementById('connectBtn');
@@ -8794,6 +9298,7 @@ async function connect(isSwitching = false) {
     loadBillingData();
     loadDynamicLocations();
     loadIPBlocks();
+    loadPCCData();
 
     // User info: decode JWT + fetch user details (non-blocking — updates UI when ready)
     (async () => {
@@ -8874,17 +9379,26 @@ function disconnect() {
   _billingUtilization = null;
   _billingByServer = new Map();
   _billingByVdc = new Map();
+  _pccList = [];
   _k8sManagedIds = new Map();
   _draftMode = false; _draftGraphData = null; _realGraphData = null;
   document.getElementById('draftBanner')?.remove();
   document.getElementById('draftActions')?.remove();
   _idleScanResults = null;
   _idleScanRunning = false;
+  _userLocationIds = new Set();
+
+  // Stop voice input if active
+  if (_speechListening && _speechRecognition) {
+    _speechListening = false; _speechRecognition.abort();
+    document.getElementById('aiMicBtn')?.classList.remove('listening');
+  }
 
   // Clear pending timers
   if (searchTimeout) { clearTimeout(searchTimeout); searchTimeout = null; }
   if (tableFilterTimeout) { clearTimeout(tableFilterTimeout); tableFilterTimeout = null; }
   if (_supportClickTimeout) { clearTimeout(_supportClickTimeout); _supportClickTimeout = null; }
+  if (_backboneClickTimeout) { clearTimeout(_backboneClickTimeout); _backboneClickTimeout = null; }
 
   // Stop D3 simulation and clean up handlers
   if (simulation) { simulation.stop(); simulation.on('tick', null).on('end', null); simulation = null; }
@@ -9589,8 +10103,9 @@ document.getElementById('tokenInput').addEventListener('keydown', (e) => {
   bgMap.setMaxBounds([[15, -140], [72, 45]]);
   bgMap.setMinZoom(2);
 
-  // Show support contacts button on pre-login map too
+  // Show support contacts + backbone buttons on pre-login map too
   document.getElementById('mapSupportBtn')?.classList.add('visible');
+  document.getElementById('mapBackboneBtn')?.classList.add('visible');
 })();
 
 // ============================== FEATURE CAROUSEL ==============================
@@ -12374,7 +12889,7 @@ function buildAiContext() {
 
   // ── Billing / data transfer ──
   if (_billingByVdc.size > 0) {
-    parts.push('\n[Contract-wide] Data Transfer by VDC (billing period):');
+    parts.push('\n[Contract-wide] Billable Data Transfer by VDC (billing period):');
     _billingByVdc.forEach((v, id) => {
       parts.push(`  ${sanitizeName(v.name) || id} — In: ${v.totalIn.toFixed(2)} GB, Out: ${v.totalOut.toFixed(2)} GB`);
     });
@@ -12385,7 +12900,7 @@ function buildAiContext() {
       .sort((a, b) => b.total - a.total)
       .slice(0, 10);
     if (topTransfer.length > 0) {
-      parts.push('\nTop Servers by Data Transfer:');
+      parts.push('\nTop Servers by Billable Data Transfer:');
       topTransfer.forEach(s => {
         const node = graphData?.nodes?.find(n => n.id === `srv-${s.id}` || n.id === `cube-${s.id}`);
         const name = sanitizeName(node?.name) || s.id;
@@ -12461,7 +12976,107 @@ function buildAiContext() {
   return parts.join('\n');
 }
 
+// ============================== VOICE INPUT (Web Speech API) ==============================
+let _speechRecognition = null;
+let _speechListening = false;
+
+function initVoiceInput() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const micBtn = document.getElementById('aiMicBtn');
+  if (!SpeechRecognition || !micBtn) {
+    if (micBtn) micBtn.classList.add('unsupported');
+    return;
+  }
+  _speechRecognition = new SpeechRecognition();
+  _speechRecognition.continuous = false;
+  _speechRecognition.interimResults = true;
+  _speechRecognition.lang = ({en:'en-US',de:'de-DE',es:'es-ES',fr:'fr-FR'})[currentLocale] || 'en-US';
+
+  _speechRecognition.onresult = (event) => {
+    const input = document.getElementById('aiInput');
+    if (!input) return;
+    let final = '', interim = '';
+    for (let i = 0; i < event.results.length; i++) {
+      const r = event.results[i];
+      if (r.isFinal) final += r[0].transcript;
+      else interim += r[0].transcript;
+    }
+    // Show interim in the textarea with a subtle indicator
+    input.value = final + (interim ? interim : '');
+    // Auto-resize textarea if needed
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+  };
+
+  _speechRecognition.onend = () => {
+    const wasListening = _speechListening; // true = ended naturally; false = aborted by send/toggle
+    _speechListening = false;
+    const micBtn = document.getElementById('aiMicBtn');
+    if (micBtn) micBtn.classList.remove('listening');
+    // Auto-send only if recognition ended naturally (not aborted by sendAiMessage or toggle)
+    if (wasListening) {
+      const input = document.getElementById('aiInput');
+      if (input && input.value.trim()) {
+        sendAiMessage();
+      }
+    }
+  };
+
+  _speechRecognition.onerror = (event) => {
+    _speechListening = false;
+    const micBtn = document.getElementById('aiMicBtn');
+    if (micBtn) micBtn.classList.remove('listening');
+    if (event.error === 'not-allowed') {
+      toast('Microphone access denied. Please allow microphone permission.', 'error');
+    } else if (event.error !== 'aborted' && event.error !== 'no-speech') {
+      toast(`Voice input error: ${event.error}`, 'error');
+    }
+  };
+}
+
+function toggleVoiceInput() {
+  if (!_speechRecognition) {
+    initVoiceInput();
+    if (!_speechRecognition) {
+      toast('Voice input is not supported in this browser.', 'error');
+      return;
+    }
+  }
+  const micBtn = document.getElementById('aiMicBtn');
+  if (_speechListening) {
+    _speechRecognition.abort();
+    _speechListening = false;
+    if (micBtn) micBtn.classList.remove('listening');
+  } else {
+    // Update language to match current locale
+    _speechRecognition.lang = ({en:'en-US',de:'de-DE',es:'es-ES',fr:'fr-FR'})[currentLocale] || 'en-US';
+    _speechRecognition.start();
+    _speechListening = true;
+    if (micBtn) micBtn.classList.add('listening');
+    // Clear any previous text so voice starts fresh
+    const input = document.getElementById('aiInput');
+    if (input) input.value = '';
+  }
+}
+
+// Init voice input on load (lazy — just checks support and hides button if unsupported)
+document.addEventListener('DOMContentLoaded', () => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    const micBtn = document.getElementById('aiMicBtn');
+    if (micBtn) micBtn.classList.add('unsupported');
+  }
+});
+
 async function sendAiMessage(presetPrompt) {
+  // Stop voice recognition if active (prevent onend from re-triggering send)
+  if (_speechListening && _speechRecognition) {
+    _speechListening = false;
+    _speechRecognition.abort();
+    const micBtn = document.getElementById('aiMicBtn');
+    if (micBtn) micBtn.classList.remove('listening');
+  }
+
   const input = document.getElementById('aiInput');
   const sendBtn = document.getElementById('aiSendBtn');
   const userMsg = presetPrompt || (input ? input.value.trim() : '');
@@ -12674,7 +13289,7 @@ function clearAiConversation() {
 // Show AI button when flow logs are loaded
 function updateAiButtonVisibility() {
   const btn = document.getElementById('aiToggleBtn');
-  if (btn) btn.style.display = (graphData.nodes.length > 0 || flAllRecords.length > 0) ? '' : 'none';
+  if (btn) btn.style.display = (graphData?.nodes?.length > 0 || flAllRecords.length > 0) ? '' : 'none';
 }
 
 // ============================== GLOBAL KEYBOARD SHORTCUTS ==============================
