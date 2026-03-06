@@ -1476,13 +1476,18 @@
   }
   .security-panel {
     background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 14px;
-    padding: 20px 24px; width: 520px; max-width: 92vw; max-height: 90vh; overflow-y: auto;
+    padding: 20px 24px; width: 780px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
     box-shadow: 0 8px 32px rgba(0,0,0,0.4);
   }
   .security-panel h2 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
-  .security-metrics { display: flex; flex-direction: column; gap: 8px; }
+  .security-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; align-items: start; }
+  .security-col { display: flex; flex-direction: column; gap: 6px; }
+  @media (max-width: 640px) {
+    .security-panel { width: 520px; }
+    .security-metrics { grid-template-columns: 1fr; }
+  }
   .security-metric {
-    background: var(--bg-tertiary); border-radius: 8px; padding: 10px 14px;
+    background: var(--bg-tertiary); border-radius: 8px; padding: 8px 12px;
     border-left: 4px solid var(--text-muted); cursor: pointer; transition: background 0.15s;
   }
   .security-metric:hover { background: var(--bg-hover); }
@@ -1963,7 +1968,7 @@
     <div class="highlight-checkbox">
       <input type="checkbox" id="hlFirewall" onchange="applyHighlights()">
       <span class="hl-dot hl-dot-firewall"></span>
-      <span data-i18n="highlights.firewall">Firewall Active</span>
+      <span data-i18n="highlights.firewall">NIC-based Firewall</span>
     </div>
     <div class="highlight-checkbox">
       <input type="checkbox" id="hlFlowLogs" onchange="applyHighlights()">
@@ -2195,12 +2200,21 @@
   </div>
 
   <div class="toolbar" id="toolbar" style="display:none;">
+    <!-- Navigation / View -->
     <button onclick="zoomIn()" aria-label="Zoom in" data-tip="Zoom in (+)" data-i18n-tip="toolbar.zoomIn">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M8 11h6M11 8v6"/></svg>
     </button>
     <button onclick="zoomOut()" aria-label="Zoom out" data-tip="Zoom out (-)" data-i18n-tip="toolbar.zoomOut">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M8 11h6"/></svg>
     </button>
+    <button onclick="resetView()" aria-label="Reset view" data-tip="Reset & fit view (R)" data-i18n-tip="toolbar.resetView">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+    </button>
+    <button onclick="setViewMode('map')" aria-label="Global map view" data-tip="Global map (G)" data-i18n-tip="toolbar.globalMap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10A15.3 15.3 0 0112 2z"/></svg>
+    </button>
+    <span class="toolbar-divider"></span>
+    <!-- Data Overlays -->
     <button onclick="toggleLabels()" aria-label="Toggle labels" data-tip="Toggle labels (L)" data-i18n-tip="toolbar.labels">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
     </button>
@@ -2213,17 +2227,10 @@
     <button onclick="toggleHighlightsOverlay()" id="hlOverlayBtn" aria-label="Toggle highlights" data-tip="Highlights (H)" data-i18n-tip="toolbar.highlights">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
     </button>
-    <button onclick="toggleMapBackground()" id="mapToggleBtn" class="active" aria-label="Toggle map background" data-tip="Map background (M)" data-i18n-tip="toolbar.mapBg">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-    </button>
+    <span class="toolbar-divider"></span>
+    <!-- Analysis -->
     <button onclick="openSecurityOverlay()" id="securityBtn" aria-label="VDC Health" data-tip="VDC Health (S)" data-i18n-tip="toolbar.security">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-    </button>
-    <button onclick="openTableView()" id="tableViewBtn" aria-label="Table view" data-tip="Table view (T)" data-i18n-tip="toolbar.tableView">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
-    </button>
-    <button onclick="toggleAiPanel()" id="aiToggleBtn" aria-label="AI Assistant" data-tip="AI Cloud Assistant (A)" style="display:none;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.09 6.26L20 10.27l-4.91 3.82L16.18 22 12 18.27 7.82 22l1.09-7.91L4 10.27l5.91-2.01L12 2z"/></svg>
     </button>
     <div class="flowlog-dropdown-wrapper">
       <button onclick="toggleFlowLogMenu()" id="flowlogMenuBtn" aria-label="Flow Logs" data-tip="Flow Logs" data-i18n-tip="toolbar.flowlogsMenu">
@@ -2243,7 +2250,14 @@
     <button onclick="setHeatmapMode('billing'); if(!heatmapActive) toggleHeatmap(); else applyHeatmap();" id="billingHeatmapBtn" aria-label="Data Transfer Heatmap (Billable)" data-tip="Data Transfer Heatmap (Billable) (B)" data-i18n-tip="shortcuts.billingHeatmap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
     </button>
+    <button onclick="toggleAiPanel()" id="aiToggleBtn" aria-label="AI Assistant" data-tip="AI Cloud Assistant (A)" style="display:none;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.09 6.26L20 10.27l-4.91 3.82L16.18 22 12 18.27 7.82 22l1.09-7.91L4 10.27l5.91-2.01L12 2z"/></svg>
+    </button>
     <span class="toolbar-divider"></span>
+    <!-- Output -->
+    <button onclick="openTableView()" id="tableViewBtn" aria-label="Table view" data-tip="Table view (T)" data-i18n-tip="toolbar.tableView">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+    </button>
     <div class="export-dropdown-wrapper">
       <button onclick="toggleExportMenu()" id="exportMenuBtn" aria-label="Export" data-tip="Export" data-i18n-tip="toolbar.export">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
@@ -2262,14 +2276,6 @@
         <button onclick="exportPDF()" data-i18n="export.pdf">PDF Report</button>
       </div>
     </div>
-    <span class="toolbar-divider"></span>
-    <button onclick="resetView()" aria-label="Reset view" data-tip="Reset & fit view (R)" data-i18n-tip="toolbar.resetView">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
-    </button>
-    <span class="toolbar-divider"></span>
-    <button onclick="setViewMode('map')" aria-label="Global map view" data-tip="Global map (G)" data-i18n-tip="toolbar.globalMap">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10A15.3 15.3 0 0112 2z"/></svg>
-    </button>
   </div>
 </div>
 
@@ -2382,7 +2388,6 @@
       <tr><th>I</th><td data-i18n="shortcuts.ipView">Toggle IP view</td></tr>
       <tr><th>C</th><td data-i18n="shortcuts.computeView">Toggle compute view</td></tr>
       <tr><th>H</th><td data-i18n="shortcuts.highlights">Toggle highlights</td></tr>
-      <tr><th>M</th><td data-i18n="shortcuts.mapBg">Toggle map background</td></tr>
       <tr><th>G</th><td data-i18n="shortcuts.globalMap">Global map view</td></tr>
       <tr><th>T</th><td data-i18n="shortcuts.tableView">Resource table view</td></tr>
       <tr><th>F / R</th><td data-i18n="shortcuts.resetView">Reset & fit to view</td></tr>
@@ -2582,11 +2587,11 @@ let _complianceHighlightTimer = null;    // timer ID for auto-restore
 const COMPLIANCE_PROMPT = `Perform a comprehensive compliance audit of my VDC infrastructure. Evaluate EVERY rule below and produce a structured report.
 
 COMPLIANCE RULES (evaluate each one):
-1. [NET-01] Firewall Coverage — Every server NIC must have a firewall enabled.
+1. [NET-01] Network Security Coverage — Every server must have at least one network security mechanism: NIC-based firewall OR security group (either at VM or NIC level). Having both is ideal, but one is sufficient. FAIL only if a server has NEITHER.
 2. [NET-02] Flow Log Monitoring — Every server NIC should have flow logs enabled for traffic visibility.
 3. [NET-03] Private LAN Isolation — Databases and backend services should be on private (non-public) LANs.
 4. [NET-04] NAT Gateway for Outbound — Private LANs with servers should have a NAT gateway for controlled internet egress.
-5. [ACC-01] Security Groups — Every server should be assigned to at least one security group.
+5. [ACC-01] Security Group Preference — Servers using only NIC-based firewall (without security groups) should consider migrating to security groups for centralized management. WARN if firewall-only, PASS if security groups are used.
 6. [ACC-02] NIC Multi-Queue — Servers with ≥2 vCPUs should enable NIC multi-queue for performance.
 7. [AUD-01] Idle VM Detection — Flag any server that is SHUTOFF but still in AVAILABLE state (billable).
 8. [AUD-02] Resource Labeling — Check if resources have descriptive names (not UUIDs or generic names).
@@ -2750,7 +2755,6 @@ const TRANSLATIONS = {
     'toolbar.ipView': 'IP view (I)',
     'toolbar.computeView': 'Compute view (C)',
     'toolbar.highlights': 'Highlights (H)',
-    'toolbar.mapBg': 'Map background (M)',
     'toolbar.tableView': 'Table view (T)',
     'toolbar.export': 'Export',
     'toolbar.resetView': 'Reset & fit view (R)',
@@ -2775,7 +2779,6 @@ const TRANSLATIONS = {
     'shortcuts.ipView': 'Toggle IP view',
     'shortcuts.computeView': 'Toggle compute view',
     'shortcuts.highlights': 'Toggle highlights',
-    'shortcuts.mapBg': 'Toggle map background',
     'shortcuts.globalMap': 'Global map view',
     'shortcuts.tableView': 'Resource table view',
     'shortcuts.resetView': 'Reset & fit to view',
@@ -2790,10 +2793,14 @@ const TRANSLATIONS = {
     // Security
     'toolbar.security': 'VDC Health (S)',
     'security.title': 'VDC Health',
-    'security.firewall': 'Firewall Coverage',
+    'security.firewall': 'NIC-based Firewall',
     'security.firewallGood': 'Excellent — most servers have active firewall rules',
     'security.firewallWarn': 'Moderate — consider enabling firewalls on more servers',
     'security.firewallBad': 'Low — many servers lack firewall protection',
+    'security.netSecurity': 'Network Security',
+    'security.netSecurityGood': 'Excellent — most servers are protected by firewall or security groups',
+    'security.netSecurityWarn': 'Moderate — some servers lack network security protection',
+    'security.netSecurityBad': 'Low — many servers have neither firewall nor security groups',
     'security.flowlogs': 'Flow Logs',
     'security.flowlogsGood': 'Good flow log coverage for traffic monitoring',
     'security.flowlogsWarn': 'Limited flow log coverage — consider enabling for visibility',
@@ -2814,7 +2821,7 @@ const TRANSLATIONS = {
     // Highlights
     'highlights.title': 'Highlights',
     'highlights.security': 'Security',
-    'highlights.firewall': 'Firewall Active',
+    'highlights.firewall': 'NIC-based Firewall',
     'highlights.flowLogs': 'Flow Logs',
     'highlights.secGroups': 'Security Groups',
     'highlights.network': 'Network',
@@ -2979,7 +2986,6 @@ const TRANSLATIONS = {
     'toolbar.ipView': 'IP-Ansicht (I)',
     'toolbar.computeView': 'Compute-Ansicht (C)',
     'toolbar.highlights': 'Hervorhebungen (H)',
-    'toolbar.mapBg': 'Kartenhintergrund (M)',
     'toolbar.tableView': 'Tabellenansicht (T)',
     'toolbar.export': 'Exportieren',
     'toolbar.resetView': 'Zur\u00fccksetzen & Einpassen (R)',
@@ -3002,7 +3008,6 @@ const TRANSLATIONS = {
     'shortcuts.ipView': 'IP-Ansicht umschalten',
     'shortcuts.computeView': 'Compute-Ansicht umschalten',
     'shortcuts.highlights': 'Hervorhebungen umschalten',
-    'shortcuts.mapBg': 'Kartenhintergrund umschalten',
     'shortcuts.globalMap': 'Weltkarte',
     'shortcuts.tableView': 'Ressourcentabelle',
     'shortcuts.resetView': 'Zur\u00fccksetzen & Einpassen',
@@ -3017,10 +3022,14 @@ const TRANSLATIONS = {
     // Security
     'toolbar.security': 'VDC-Zustand (S)',
     'security.title': 'VDC-Zustand',
-    'security.firewall': 'Firewall-Abdeckung',
+    'security.firewall': 'NIC-basierte Firewall',
     'security.firewallGood': 'Ausgezeichnet — die meisten Server haben aktive Firewall-Regeln',
     'security.firewallWarn': 'Mäßig — erwägen Sie Firewalls auf mehr Servern zu aktivieren',
     'security.firewallBad': 'Niedrig — vielen Servern fehlt Firewall-Schutz',
+    'security.netSecurity': 'Netzwerksicherheit',
+    'security.netSecurityGood': 'Ausgezeichnet — die meisten Server sind durch Firewall oder Sicherheitsgruppen geschützt',
+    'security.netSecurityWarn': 'Mäßig — einigen Servern fehlt Netzwerksicherheit',
+    'security.netSecurityBad': 'Niedrig — vielen Servern fehlt sowohl Firewall als auch Sicherheitsgruppen',
     'security.flowlogs': 'Flow Logs',
     'security.flowlogsGood': 'Gute Flow-Log-Abdeckung für Verkehrsüberwachung',
     'security.flowlogsWarn': 'Begrenzte Flow-Log-Abdeckung — erwägen Sie die Aktivierung',
@@ -3040,7 +3049,7 @@ const TRANSLATIONS = {
     'toast.noVdcLoaded': 'Laden Sie zuerst ein VDC, um den Sicherheitsstatus anzuzeigen',
     'highlights.title': 'Hervorhebungen',
     'highlights.security': 'Sicherheit',
-    'highlights.firewall': 'Firewall aktiv',
+    'highlights.firewall': 'NIC-basierte Firewall',
     'highlights.flowLogs': 'Flow Logs',
     'highlights.secGroups': 'Sicherheitsgruppen',
     'highlights.network': 'Netzwerk',
@@ -3197,7 +3206,6 @@ const TRANSLATIONS = {
     'toolbar.ipView': 'Vista IP (I)',
     'toolbar.computeView': 'Vista de c\u00f3mputo (C)',
     'toolbar.highlights': 'Resaltados (H)',
-    'toolbar.mapBg': 'Fondo de mapa (M)',
     'toolbar.tableView': 'Vista de tabla (T)',
     'toolbar.export': 'Exportar',
     'toolbar.resetView': 'Restablecer y ajustar (R)',
@@ -3220,7 +3228,6 @@ const TRANSLATIONS = {
     'shortcuts.ipView': 'Alternar vista IP',
     'shortcuts.computeView': 'Alternar vista de c\u00f3mputo',
     'shortcuts.highlights': 'Alternar resaltados',
-    'shortcuts.mapBg': 'Alternar fondo de mapa',
     'shortcuts.globalMap': 'Vista de mapa global',
     'shortcuts.tableView': 'Tabla de recursos',
     'shortcuts.resetView': 'Restablecer y ajustar vista',
@@ -3235,10 +3242,14 @@ const TRANSLATIONS = {
     // Security
     'toolbar.security': 'Estado del VDC (S)',
     'security.title': 'Estado del VDC',
-    'security.firewall': 'Cobertura de Firewall',
+    'security.firewall': 'Firewall basado en NIC',
     'security.firewallGood': 'Excelente — la mayoría de los servidores tienen reglas de firewall activas',
     'security.firewallWarn': 'Moderada — considere activar firewalls en más servidores',
     'security.firewallBad': 'Baja — muchos servidores carecen de protección de firewall',
+    'security.netSecurity': 'Seguridad de Red',
+    'security.netSecurityGood': 'Excelente — la mayoría de los servidores están protegidos por firewall o grupos de seguridad',
+    'security.netSecurityWarn': 'Moderada — algunos servidores carecen de protección de seguridad de red',
+    'security.netSecurityBad': 'Baja — muchos servidores no tienen ni firewall ni grupos de seguridad',
     'security.flowlogs': 'Flow Logs',
     'security.flowlogsGood': 'Buena cobertura de flow logs para monitoreo de tráfico',
     'security.flowlogsWarn': 'Cobertura limitada de flow logs — considere habilitarlos',
@@ -3258,7 +3269,7 @@ const TRANSLATIONS = {
     'toast.noVdcLoaded': 'Cargue primero un VDC para ver la postura de seguridad',
     'highlights.title': 'Resaltados',
     'highlights.security': 'Seguridad',
-    'highlights.firewall': 'Firewall activo',
+    'highlights.firewall': 'Firewall basado en NIC',
     'highlights.flowLogs': 'Flow Logs',
     'highlights.secGroups': 'Grupos de seguridad',
     'highlights.network': 'Red',
@@ -3415,7 +3426,6 @@ const TRANSLATIONS = {
     'toolbar.ipView': 'Vue IP (I)',
     'toolbar.computeView': 'Vue calcul (C)',
     'toolbar.highlights': 'Mises en \u00e9vidence (H)',
-    'toolbar.mapBg': 'Fond de carte (M)',
     'toolbar.tableView': 'Vue tableau (T)',
     'toolbar.export': 'Exporter',
     'toolbar.resetView': 'R\u00e9initialiser et ajuster (R)',
@@ -3438,7 +3448,6 @@ const TRANSLATIONS = {
     'shortcuts.ipView': 'Basculer vue IP',
     'shortcuts.computeView': 'Basculer vue calcul',
     'shortcuts.highlights': 'Basculer mises en \u00e9vidence',
-    'shortcuts.mapBg': 'Basculer fond de carte',
     'shortcuts.globalMap': 'Vue carte mondiale',
     'shortcuts.tableView': 'Tableau des ressources',
     'shortcuts.resetView': 'R\u00e9initialiser et ajuster la vue',
@@ -3453,10 +3462,14 @@ const TRANSLATIONS = {
     // Security
     'toolbar.security': 'Santé du VDC (S)',
     'security.title': 'Santé du VDC',
-    'security.firewall': 'Couverture Pare-feu',
+    'security.firewall': 'Pare-feu NIC',
     'security.firewallGood': 'Excellent — la plupart des serveurs ont des règles pare-feu actives',
     'security.firewallWarn': 'Modérée — envisagez d\'activer les pare-feux sur plus de serveurs',
     'security.firewallBad': 'Faible — de nombreux serveurs manquent de protection pare-feu',
+    'security.netSecurity': 'Sécurité Réseau',
+    'security.netSecurityGood': 'Excellent — la plupart des serveurs sont protégés par un pare-feu ou des groupes de sécurité',
+    'security.netSecurityWarn': 'Modérée — certains serveurs manquent de sécurité réseau',
+    'security.netSecurityBad': 'Faible — de nombreux serveurs n\'ont ni pare-feu ni groupes de sécurité',
     'security.flowlogs': 'Flow Logs',
     'security.flowlogsGood': 'Bonne couverture flow logs pour la surveillance du trafic',
     'security.flowlogsWarn': 'Couverture flow logs limitée — envisagez l\'activation',
@@ -3476,7 +3489,7 @@ const TRANSLATIONS = {
     'toast.noVdcLoaded': 'Chargez d\'abord un VDC pour voir la posture de sécurité',
     'highlights.title': 'Mises en \u00e9vidence',
     'highlights.security': 'Sécurité',
-    'highlights.firewall': 'Pare-feu actif',
+    'highlights.firewall': 'Pare-feu NIC',
     'highlights.flowLogs': 'Flow Logs',
     'highlights.secGroups': 'Groupes de sécurité',
     'highlights.network': 'Réseau',
@@ -3795,7 +3808,7 @@ function getSecurityPosture() {
   const servers = graphData.nodes.filter(n => n.type === 'server' || n.type === 'cube' || n.type === 'vcpu');
   const lans = graphData.nodes.filter(n => n.type === 'lan');
 
-  let fwActive = 0, flowLogsActive = 0, sgActive = 0, multiQActive = 0;
+  let fwActive = 0, flowLogsActive = 0, sgActive = 0, netSecActive = 0, multiQActive = 0;
   let multiQEligible = 0;  // servers with ≥2 threads (eligible for MultiQ)
   servers.forEach(s => {
     let hasFw = false, hasFL = false, hasSG = false;
@@ -3810,6 +3823,7 @@ function getSecurityPosture() {
     if (hasFw) fwActive++;
     if (hasFL) flowLogsActive++;
     if (hasSG) sgActive++;
+    if (hasFw || hasSG) netSecActive++;  // combined: has either firewall or security group
     // MultiQ eligible: any server with ≥2 cores (≥2 threads)
     const cores = s.data?.cores || 0;
     if (cores >= 2) multiQEligible++;
@@ -3828,6 +3842,7 @@ function getSecurityPosture() {
     firewall: { count: fwActive, total: servers.length },
     flowLogs: { count: flowLogsActive, total: servers.length },
     secGroups: { count: sgActive, total: servers.length },
+    netSecurity: { count: netSecActive, total: servers.length, fwCount: fwActive, sgCount: sgActive },
     privateLans: { count: privateLans, total: lans.length, natCount: natGateways.length },
     ipv6: { count: ipv6Lans, total: lans.length },
     multiQueue: { count: multiQActive, total: servers.length, eligible: multiQEligible },
@@ -3947,9 +3962,8 @@ function renderSecurityPosture() {
 
   const categories = [
     { title: 'Security', metrics: [
-      { key: 'firewall', label: t('security.firewall'), count: data.firewall.count, total: data.firewall.total, highlight: 'hlFirewall' },
+      { key: 'netSecurity', label: t('security.netSecurity'), count: data.netSecurity.count, total: data.netSecurity.total, fwCount: data.netSecurity.fwCount, sgCount: data.netSecurity.sgCount },
       { key: 'flowLogs', label: t('security.flowlogs'), count: data.flowLogs.count, total: data.flowLogs.total, highlight: 'hlFlowLogs' },
-      { key: 'secGroups', label: t('security.secgroups'), count: data.secGroups.count, total: data.secGroups.total, highlight: 'hlSecGroups' },
     ]},
     { title: 'Network', metrics: [
       { key: 'privateLans', label: t('security.privateLans'), count: data.privateLans.count, total: data.privateLans.total, invert: false, natCount: data.privateLans.natCount },
@@ -3961,13 +3975,17 @@ function renderSecurityPosture() {
   ];
 
   container.innerHTML = '';
+
+  // ── Left column: core health metrics ──
+  const leftCol = document.createElement('div');
+  leftCol.className = 'security-col';
+
   categories.forEach(cat => {
-    // Category header
     const header = document.createElement('div');
     header.style.cssText = 'font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin:6px 0 2px;padding-left:2px;';
     if (cat === categories[0]) header.style.marginTop = '0';
     header.textContent = cat.title;
-    container.appendChild(header);
+    leftCol.appendChild(header);
 
     cat.metrics.forEach(m => {
       const pct = m.total > 0 ? Math.round((m.count / m.total) * 100) : 0;
@@ -3981,36 +3999,48 @@ function renderSecurityPosture() {
         '</div>' +
         '<div class="metric-bar-container"><div class="metric-bar ' + level + '" style="width:' + pct + '%"></div></div>' +
         '<div class="metric-desc">' + getMetricDesc(m.key, pct, level, m) + '</div>';
-      if (m.highlight) {
+      if (m.highlight || m.key === 'netSecurity') {
         card.style.cursor = 'pointer';
         card.onclick = function() {
-          const cb = document.getElementById(m.highlight);
-          if (cb) { cb.checked = true; applyHighlights(); }
+          if (m.key === 'netSecurity') {
+            const fwCb = document.getElementById('hlFirewall');
+            const sgCb = document.getElementById('hlSecGroups');
+            if (fwCb) fwCb.checked = true;
+            if (sgCb) sgCb.checked = true;
+            applyHighlights();
+          } else {
+            const cb = document.getElementById(m.highlight);
+            if (cb) { cb.checked = true; applyHighlights(); }
+          }
           closeSecurityOverlay();
           toast(t('security.highlightEnabled', { name: m.label }), 'info');
         };
       }
-      container.appendChild(card);
+      leftCol.appendChild(card);
     });
   });
+  container.appendChild(leftCol);
 
-  // ── Cost Optimization: On-demand Idle VM Scan ──
+  // ── Right column: Cost Optimization + AI Compliance ──
+  const rightCol = document.createElement('div');
+  rightCol.className = 'security-col';
+
   if (graphData?.nodes?.some(n => n.type === 'server' || n.type === 'cube')) {
     const header = document.createElement('div');
-    header.style.cssText = 'font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin:6px 0 2px;padding-left:2px;';
+    header.style.cssText = 'font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin:0 0 2px;padding-left:2px;';
     header.textContent = 'Cost Optimization';
-    container.appendChild(header);
+    rightCol.appendChild(header);
 
-    // Results container (shows previous results or placeholder)
     const resultsDiv = document.createElement('div');
     resultsDiv.id = 'idleScanResults';
-    container.appendChild(resultsDiv);
+    rightCol.appendChild(resultsDiv);
 
-    // Render previous scan results if available, otherwise show scan button
     renderIdleScanUI(resultsDiv);
   }
 
-  // ── AI Compliance Audit section (Phase 3) ──
+  container.appendChild(rightCol);
+
+  // ── AI Compliance Audit section (appended to right column) ──
   renderComplianceInHealthPanel();
 }
 
@@ -4141,9 +4171,13 @@ async function startIdleScan() {
 }
 
 function getMetricDesc(key, pct, level, metric) {
-  if (key === 'firewall') return level === 'good' ? t('security.firewallGood') : level === 'warning' ? t('security.firewallWarn') : t('security.firewallBad');
+  if (key === 'netSecurity') {
+    let desc = level === 'good' ? t('security.netSecurityGood') : level === 'warning' ? t('security.netSecurityWarn') : t('security.netSecurityBad');
+    const fw = metric?.fwCount || 0, sg = metric?.sgCount || 0;
+    desc += `<br><span style="font-size:10px;color:var(--text-muted);">NIC Firewall: ${fw}/${metric?.total || 0} &middot; Security Groups: ${sg}/${metric?.total || 0}</span>`;
+    return desc;
+  }
   if (key === 'flowLogs') return level === 'good' ? t('security.flowlogsGood') : t('security.flowlogsWarn');
-  if (key === 'secGroups') return level === 'good' ? t('security.secgroupsGood') : level === 'warning' ? t('security.secgroupsWarn') : t('security.secgroupsBad');
   if (key === 'privateLans') {
     let desc = t('security.privateLansDesc');
     const natCount = metric && metric.natCount != null ? metric.natCount : 0;
@@ -5400,7 +5434,7 @@ function initSvg() {
 // ---- Map Background (Leaflet) ----
 let bgMap = null;
 let bgTileLayer = null;
-let mapVisible = true;
+// Map background is always visible in single VDC view (no toggle needed)
 
 function getMapTileUrl() {
   const style = currentTheme === 'light' ? 'light_all' : 'dark_all';
@@ -5447,16 +5481,11 @@ function updateMapBackground(location) {
   }
   bgMap.invalidateSize({ animate: false });
   bgMap.setView([coords[0], coords[1]], coords[2], { animate: false });
-  if (mapVisible) document.getElementById('mapBackground').classList.add('visible');
+  document.getElementById('mapBackground').classList.add('visible');
 }
 
 function toggleMapBackground() {
-  mapVisible = !mapVisible;
-  const el = document.getElementById('mapBackground');
-  // Don't toggle passive visibility while in overview mode
-  if (el.classList.contains('overview-mode')) return;
-  el.classList.toggle('visible', mapVisible);
-  document.getElementById('mapToggleBtn')?.classList.toggle('active', mapVisible);
+  // Map background is always visible — retained as no-op for compatibility
 }
 
 // ---- Support Contacts Map Overlay ----
@@ -6435,7 +6464,7 @@ function hideMapOverview() {
 
   // Switch back to passive background
   el.classList.remove('overview-mode');
-  if (mapVisible) el.classList.add('visible');
+  el.classList.add('visible');
 
   // Show topology SVG and restore toolbar if a graph exists
   document.getElementById('graphSvg').classList.remove('hidden-for-map');
@@ -13224,13 +13253,15 @@ function buildAiContext() {
         const d = s.data || {};
         const nics = d.nics || [];
         const ips = nics.flatMap(n => n.ips || []);
-        const fwCount = nics.filter(n => n.firewall).length;
+        const hasFW = nics.some(n => n.firewall);
         const flCount = nics.filter(n => n.flowLogsEnabled).length;
         const hasSG = (d.securityGroupCount || 0) > 0 || nics.some(n => (n.securityGroupCount || 0) > 0);
         const hasMQ = s.data?.nicMultiQueue === true;
+        // Combined network security: show which mechanisms are active
+        const netSec = hasFW && hasSG ? 'NetSec: FW+SG' : hasFW ? 'NetSec: FW' : hasSG ? 'NetSec: SG' : 'NetSec: NONE';
         const rawId = s.id.replace(/^(srv|cube)-/, '');
         const k8sTag = s._k8sManaged ? ', K8s-managed' : '';
-        parts.push(`  ${sanitizeName(s.name)} [${rawId}] — ${d.cores || '?'}C/${((d.ram || 0) / 1024).toFixed(0)}GB, ${d.vmState || '?'}, ${ips.length} IPs${fwCount > 0 ? ', FW on' : ', FW off'}${flCount > 0 ? ', FL on' : ''}${hasSG ? ', SG on' : ''}${hasMQ ? ', MultiQ on' : ''}${k8sTag}`);
+        parts.push(`  ${sanitizeName(s.name)} [${rawId}] — ${d.cores || '?'}C/${((d.ram || 0) / 1024).toFixed(0)}GB, ${d.vmState || '?'}, ${ips.length} IPs, ${netSec}${flCount > 0 ? ', FL on' : ''}${hasMQ ? ', MultiQ on' : ''}${k8sTag}`);
       });
       if (servers.length > 15) parts.push(`  ...and ${servers.length - 15} more`);
     }
@@ -13308,7 +13339,14 @@ function buildAiContext() {
           if (sgNames.length) sgDetails.push(`${sanitizeName(s.name)}: ${sgNames.map(n => sanitizeName(n)).join(', ')}`);
         }
       });
-      parts.push(`\n[${loadedVdcName}] Security Posture: ${fwEnabled}/${servers.length} servers with firewall, ${flEnabled}/${servers.length} with flow logs, ${sgEnabled}/${servers.length} with security groups`);
+      const netSecEnabled = servers.filter(s => {
+        const nics = s.data?.nics || [];
+        const hasFW = nics.some(n => n.firewall);
+        const hasSrvSG = (s.data?.securityGroupCount || 0) > 0;
+        const hasNicSG = nics.some(n => (n.securityGroupCount || 0) > 0);
+        return hasFW || hasSrvSG || hasNicSG;
+      }).length;
+      parts.push(`\n[${loadedVdcName}] Security Posture: Network Security ${netSecEnabled}/${servers.length} servers protected (NIC Firewall: ${fwEnabled}, Security Groups: ${sgEnabled}), Flow Logs: ${flEnabled}/${servers.length}`);
       if (sgDetails.length > 0) {
         parts.push('Security Group Assignments:');
         sgDetails.forEach(d => parts.push(`  ${d}`));
@@ -14097,6 +14135,9 @@ function renderComplianceInHealthPanel() {
   const container = document.getElementById('securityMetrics');
   if (!container) return;
 
+  // Append to right column if it exists, else fall back to container
+  const rightCol = container.querySelector('.security-col:last-child') || container;
+
   // Remove existing compliance section
   document.getElementById('complianceHealthSection')?.remove();
 
@@ -14154,7 +14195,7 @@ function renderComplianceInHealthPanel() {
   btnWrap.appendChild(btn);
   section.appendChild(btnWrap);
 
-  container.appendChild(section);
+  rightCol.appendChild(section);
 }
 
 function clearAiConversation() {
@@ -14213,7 +14254,6 @@ document.addEventListener('keydown', (e) => {
   else if (e.key === 'i' || e.key === 'I') toggleIPView();
   else if (e.key === 'c' || e.key === 'C') toggleComputeView();
   else if (e.key === 'h' || e.key === 'H') toggleHighlightsOverlay();
-  else if (e.key === 'm' || e.key === 'M') toggleMapBackground();
   else if (e.key === 'g' || e.key === 'G') setViewMode('map');
   else if (e.key === 't' || e.key === 'T') openTableView();
   else if (e.key === 'S' && e.shiftKey) { if (graphData?.nodes?.length > 0) sendAiMessage(COMPLIANCE_PROMPT); }

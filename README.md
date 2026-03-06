@@ -69,7 +69,7 @@ The assistant has three modes, accessible via tabs and suggestion chips:
 | | | |
 |:--|:--|:--|
 | 📜 **Flow Log Explorer** — Drag-and-drop flow log files to analyze traffic. Filter by IP, port, protocol, action. Click any row to trace the path on the topology. `W` | 🔥 **Traffic Heatmap** — Color-coded halos — toggle volume (bytes), security (rejected ratio), or billing (transfer) modes. Cool blue to hot red. `X` / `B` | 💰 **Idle VM Scanner** — Queries Prometheus telemetry to find stopped-but-billed VMs and near-zero traffic servers. Results feed into the AI for cost tips. |
-| 🛡️ **Security Posture** — VDC security summary with progress bars: firewall, flow logs, security groups, private LANs, IPv6. Click any metric to highlight nodes. `S` | 📊 **Live Metrics** — 1-hour throughput and packet charts for any selected server. Data from the IONOS Telemetry API, refreshed per selection. | 📈 **Data Transfer (Billable)** — Per-VDC and per-server billable transfer from the Billing API. Adaptive daily chart with auto-scaling Y-axis, region breakdown on the global map. |
+| 🛡️ **VDC Health** — Two-column security & health dashboard: Network Security (combined firewall + security groups), flow logs, private LANs, IPv6, NIC Multi-Queue, Idle VM scanner, and AI Compliance Audit. Click any metric to highlight nodes. `S` | 📊 **Live Metrics** — 1-hour throughput and packet charts for any selected server. Data from the IONOS Telemetry API, refreshed per selection. | 📈 **Data Transfer (Billable)** — Per-VDC and per-server billable transfer from the Billing API. Adaptive daily chart with auto-scaling Y-axis, region breakdown on the global map. |
 
 ### AI & Export
 
@@ -241,7 +241,6 @@ Your API token never leaves your machine.
 | `H` | Toggle highlights overlay |
 | `S` | VDC Health overlay |
 | `Shift+S` | AI Compliance Audit |
-| `M` | Toggle map background |
 | `T` | Resource table view |
 | `W` | Flow Log Explorer |
 | `X` | Traffic Heatmap |

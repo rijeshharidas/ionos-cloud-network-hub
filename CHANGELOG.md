@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.16.0] - 2026-03-06
+
+### Added (1.16.0)
+
+- **Combined "Network Security" Metric** — VDC Health panel now shows a single "Network Security" row combining NIC-based firewall and security group coverage. A server is considered protected if it has either mechanism. The metric description shows the individual breakdown (NIC Firewall: X/Y · Security Groups: X/Y). Clicking the metric enables both firewall and security group highlights simultaneously.
+- **VDC Health Two-Column Layout** — VDC Health panel redesigned as a two-column grid: left column shows core health metrics (Security, Network, Performance), right column shows Cost Optimization and AI Compliance Audit. Eliminates scrolling on most screens. Falls back to single column on viewports below 640px.
+
+### Changed (1.16.0)
+
+- **"Firewall Active" → "NIC-based Firewall"** — Renamed the highlight label in all 4 languages (EN, DE, ES, FR) to clarify this refers specifically to the NIC-level firewall mechanism, distinct from security groups.
+- **Compliance Rule Restructure** — NET-01 now checks combined network security (FAIL only if a server has neither firewall nor security groups). ACC-01 repurposed as "Security Group Preference" (WARN if firewall-only, encouraging migration to security groups for centralized management).
+- **AI Context: Combined Network Security** — Server summary lines in the AI context builder now show `NetSec: FW+SG`, `NetSec: FW`, `NetSec: SG`, or `NetSec: NONE`. Security posture summary shows combined protection count with individual FW/SG breakdown.
+- **Toolbar Reorganization** — Toolbar buttons regrouped into logical sections separated by dividers: Navigation/View (Zoom, Reset, Global Map), Data Overlays (Labels, IP, Compute, Highlights), Analysis (VDC Health, Flow Logs, Billing Heatmap, AI), Output (Table, Export).
+- **Map Background Always Visible** — The geographic map background is now always shown in Single VDC view. Removed the map toggle button (M) from the toolbar and the `M` keyboard shortcut.
+
+### Removed (1.16.0)
+
+- **Map Background Toggle** — Removed the toolbar button, `M` keyboard shortcut, shortcuts help table row, and all 4 language i18n strings for `toolbar.mapBg` / `shortcuts.mapBg`. The map is now always visible as a backdrop.
+- **Separate Firewall / Security Groups Health Rows** — Replaced by the combined "Network Security" metric in VDC Health.
+- **Dead `getMetricDesc` Handlers** — Removed unused metric description handlers for the old `firewall` and `secGroups` keys.
+
 ## [1.15.0] - 2026-03-06
 
 ### Added (1.15.0)
