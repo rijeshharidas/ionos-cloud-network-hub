@@ -43,15 +43,17 @@
 
 ## AI Cloud Assistant
 
-> *"Which servers have no firewall enabled?"* · *"Design a 3-tier web app"* · *"Export my VDC as Terraform"*
+> *"Which servers have no firewall enabled?"* · *"Design a 3-tier web app"* · *"Export my VDC as Terraform"* · *"Run a compliance audit"*
 
 The built-in AI Cloud Assistant connects to the **IONOS AI Model Hub** and understands your full cloud context — topology, servers, LANs, databases, security posture, billing, and flow logs. Choose from **Llama 3.1 8B**, **Mistral Small 24B**, or **Llama 3.3 70B**. Press `A` to open.
 
-The assistant has two modes, accessible via tabs:
+The assistant has three modes, accessible via tabs and suggestion chips:
 
 **Assist** — Analyze your existing infrastructure. Ask about security posture, cost optimization, traffic patterns, resource inventory, or generate Terraform. Toggle the **Docs** button to ground answers in the official IONOS Cloud documentation via MCP.
 
 **Design** — Build new architectures from natural language. Describe what you need, and the AI generates a visual draft topology on the canvas. Iterate via chat until satisfied, then export as Terraform. Quick-start templates are available for common patterns like 3-tier web apps, Kubernetes clusters, microservices, CI/CD pipelines, and more.
+
+**Compliance Audit** — Automated 12-rule compliance checker across five categories (Network, Access, Audit, Cost, Data). Evaluates firewall coverage, flow logs, private LAN isolation, security groups, idle VMs, right-sizing, and more. Results render as an interactive report card with per-category scores, expand/collapse findings, and clickable resource links that zoom to the affected node on the canvas. Auto-switches to Llama 3.3 70B for best results. Trigger via the suggestion chip, `Shift+S`, or the button in VDC Health.
 
 ## Key Capabilities
 
@@ -74,6 +76,7 @@ The assistant has two modes, accessible via tabs:
 | | | |
 |:--|:--|:--|
 | 🤖 **AI Assist** — Ask about security, costs, traffic, or resources — the AI sees your full topology. Generate Terraform, toggle Docs for IONOS documentation via MCP. Voice input supported. | ✏️ **AI Design** — Describe an architecture in plain English, get a visual draft on the canvas. Iterate via chat, export as Terraform. Quick-start templates included. | 📤 **Export** — PNG, SVG, JSON, CSV, XLSX workbook, and PDF report with topology diagram and resource inventory — all from one dropdown. |
+| ✅ **AI Compliance Audit** — 12-rule automated compliance checker across Network, Access, Audit, Cost, and Data categories. Interactive report card with scores, expandable findings, and clickable resource links. `Shift+S` | | |
 
 ### Customization
 
@@ -236,7 +239,8 @@ Your API token never leaves your machine.
 | `I` | Toggle IP view |
 | `C` | Toggle compute view |
 | `H` | Toggle highlights overlay |
-| `S` | Security posture overlay |
+| `S` | VDC Health overlay |
+| `Shift+S` | AI Compliance Audit |
 | `M` | Toggle map background |
 | `T` | Resource table view |
 | `W` | Flow Log Explorer |

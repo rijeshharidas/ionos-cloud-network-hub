@@ -384,12 +384,13 @@
 
   .map-vdc-tooltip {
     position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
-    background: rgba(10,14,26,0.95); border: 1px solid rgba(17,199,230,0.35);
+    background: rgba(10,14,26,0.97); border: 1px solid rgba(17,199,230,0.35);
     border-radius: 10px; padding: 8px 10px; min-width: 160px; max-width: 220px;
     pointer-events: none; opacity: 0; transition: opacity 0.2s;
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     box-shadow: 0 4px 16px rgba(0,0,0,0.6);
     font-size: 10px; color: #ccc; line-height: 1.5; white-space: nowrap;
+    z-index: 700;
   }
   .map-vdc-marker:hover .map-vdc-tooltip { opacity: 1; }
   .map-vdc-tooltip .mvt-name { font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 4px; white-space: normal; }
@@ -1019,6 +1020,73 @@
   .ai-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
   .ai-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
   @keyframes aiDot { 0%,80%,100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+
+  /* ── Compliance Report Card ── */
+  .compliance-card {
+    background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px;
+    margin: 8px 12px; padding: 16px; font-size: 12px;
+  }
+  .compliance-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+  }
+  .compliance-header h3 { margin: 0; font-size: 14px; font-weight: 600; color: var(--text-primary); }
+  .compliance-score-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 48px; height: 48px; border-radius: 50%; font-size: 16px; font-weight: 700;
+    border: 3px solid; flex-shrink: 0;
+  }
+  .compliance-score-badge.score-good { color: #22c55e; border-color: #22c55e; background: rgba(34,197,94,0.08); }
+  .compliance-score-badge.score-warning { color: #f59e0b; border-color: #f59e0b; background: rgba(245,158,11,0.08); }
+  .compliance-score-badge.score-danger { color: #ef4444; border-color: #ef4444; background: rgba(239,68,68,0.08); }
+  .compliance-categories { display: flex; flex-direction: column; gap: 8px; }
+  .compliance-cat {
+    background: var(--bg-tertiary); border-radius: 8px; padding: 10px 12px;
+  }
+  .compliance-cat-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;
+    cursor: pointer; user-select: none;
+  }
+  .compliance-cat-header:hover { opacity: 0.85; }
+  .compliance-cat-header .cat-toggle { font-size: 10px; color: var(--text-muted); margin-right: 6px; transition: transform 0.2s; }
+  .compliance-cat.expanded .cat-toggle { transform: rotate(90deg); }
+  .compliance-cat-findings { display: none; }
+  .compliance-cat.expanded .compliance-cat-findings { display: block; }
+  .compliance-cat-name { font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.3px; color: var(--text-secondary); }
+  .compliance-cat-score { font-weight: 700; font-size: 12px; }
+  .compliance-cat-score.good { color: #22c55e; }
+  .compliance-cat-score.warning { color: #f59e0b; }
+  .compliance-cat-score.danger { color: #ef4444; }
+  .compliance-cat-bar { height: 4px; border-radius: 2px; background: var(--bg-hover); overflow: hidden; margin-bottom: 8px; }
+  .compliance-cat-bar-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+  .compliance-cat-bar-fill.good { background: #22c55e; }
+  .compliance-cat-bar-fill.warning { background: #f59e0b; }
+  .compliance-cat-bar-fill.danger { background: #ef4444; }
+  .compliance-finding {
+    font-size: 11px; color: var(--text-secondary); padding: 3px 0; line-height: 1.4;
+    display: flex; align-items: flex-start; gap: 6px;
+  }
+  .compliance-finding .cf-icon { flex-shrink: 0; font-size: 10px; margin-top: 2px; }
+  .compliance-finding .cf-icon.pass { color: #22c55e; }
+  .compliance-finding .cf-icon.fail { color: #ef4444; }
+  .compliance-finding .cf-icon.warn { color: #f59e0b; }
+  .compliance-finding .cf-resource {
+    color: var(--accent); cursor: pointer; text-decoration: underline; text-decoration-style: dotted;
+  }
+  .compliance-finding .cf-resource:hover { text-decoration-style: solid; }
+  .compliance-actions {
+    display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end;
+  }
+  .compliance-actions button {
+    padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 500;
+    cursor: pointer; font-family: inherit; border: 1px solid var(--border); transition: all 0.15s;
+  }
+  .compliance-actions .btn-download { background: var(--accent); color: white; border-color: var(--accent); }
+  .compliance-actions .btn-download:hover { opacity: 0.85; }
+  .compliance-actions .btn-rerun { background: transparent; color: var(--text-secondary); }
+  .compliance-actions .btn-rerun:hover { background: var(--bg-hover); color: var(--text-primary); }
+  @keyframes compliancePulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .compliance-scanning { animation: compliancePulse 1.5s ease-in-out infinite; }
+
   .ai-suggestions {
     padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 6px; border-top: 1px solid var(--border);
     flex-shrink: 0;
@@ -2318,7 +2386,8 @@
       <tr><th>G</th><td data-i18n="shortcuts.globalMap">Global map view</td></tr>
       <tr><th>T</th><td data-i18n="shortcuts.tableView">Resource table view</td></tr>
       <tr><th>F / R</th><td data-i18n="shortcuts.resetView">Reset & fit to view</td></tr>
-      <tr><th>S</th><td data-i18n="shortcuts.security">Security posture</td></tr>
+      <tr><th>S</th><td data-i18n="shortcuts.security">VDC Health</td></tr>
+      <tr><th>Shift+S</th><td>AI Compliance Audit</td></tr>
       <tr><th>W</th><td data-i18n="shortcuts.flowlogs">Flow Log Explorer</td></tr>
       <tr><th>X</th><td data-i18n="shortcuts.heatmap">Traffic Heatmap</td></tr>
       <tr><th>B</th><td data-i18n="shortcuts.billingHeatmap">Data Transfer Heatmap (Billable)</td></tr>
@@ -2503,6 +2572,43 @@ let aiDesignMode = false;          // true = "Design" tab active, false = "Assis
 let _prevAiModel = null;           // stash model selection when switching to Design tab
 let mcpSessionId = null;           // MCP session header for GitBook
 let mcpInitialized = false;        // whether MCP session is established
+
+// ── AI Compliance Checker state ──
+let _complianceLastResult = null;  // cached parsed compliance report
+let _complianceRunning = false;    // true while compliance audit is in-flight
+let _complianceHighlightRestore = null;  // view mode to restore after compliance highlight
+let _complianceHighlightTimer = null;    // timer ID for auto-restore
+
+const COMPLIANCE_PROMPT = `Perform a comprehensive compliance audit of my VDC infrastructure. Evaluate EVERY rule below and produce a structured report.
+
+COMPLIANCE RULES (evaluate each one):
+1. [NET-01] Firewall Coverage — Every server NIC must have a firewall enabled.
+2. [NET-02] Flow Log Monitoring — Every server NIC should have flow logs enabled for traffic visibility.
+3. [NET-03] Private LAN Isolation — Databases and backend services should be on private (non-public) LANs.
+4. [NET-04] NAT Gateway for Outbound — Private LANs with servers should have a NAT gateway for controlled internet egress.
+5. [ACC-01] Security Groups — Every server should be assigned to at least one security group.
+6. [ACC-02] NIC Multi-Queue — Servers with ≥2 vCPUs should enable NIC multi-queue for performance.
+7. [AUD-01] Idle VM Detection — Flag any server that is SHUTOFF but still in AVAILABLE state (billable).
+8. [AUD-02] Resource Labeling — Check if resources have descriptive names (not UUIDs or generic names).
+9. [CST-01] Right-Sizing — Flag servers with ≤1 vCPU or ≤1GB RAM that may be undersized for production.
+10. [CST-02] Transfer Optimization — Identify servers with disproportionately high outbound data transfer.
+11. [DAT-01] Database Version Currency — Managed databases should run recent major versions.
+12. [DAT-02] Database HA — Production databases should have >1 instance for high availability.
+
+RESPONSE FORMAT — you MUST follow this EXACTLY:
+Start with: COMPLIANCE_REPORT_START
+Then a summary line: OVERALL_SCORE: <number 0-100>
+
+Then for each category, use this format:
+CATEGORY: <Network|Access|Audit|Cost|Data>
+CATEGORY_SCORE: <number 0-100>
+- [PASS] <rule-id>: <description of what passed>
+- [FAIL] <rule-id>: <description of failure> | Resources: <comma-separated resource names>
+- [WARN] <rule-id>: <description of warning> | Resources: <comma-separated resource names>
+
+End with: COMPLIANCE_REPORT_END
+
+IMPORTANT: Include ALL 12 rules in the output. Mark rules as PASS, FAIL, or WARN. Only reference resources that actually exist in the context. Use the EXACT resource names as shown in the infrastructure context (e.g. the server name like "web-server-01", not UUIDs or generic descriptions). Be specific about which servers/resources fail each rule.`;
 
 // ============================== LOCATION FLAGS ==============================
 const LOCATION_CITIES = {
@@ -2703,7 +2809,7 @@ const TRANSLATIONS = {
     'security.ipv6Good': 'Strong IPv6 adoption across your LANs',
     'security.ipv6Bad': 'Low IPv6 adoption — consider enabling for future-readiness',
     'security.highlightEnabled': '{name} highlight enabled',
-    'shortcuts.security': 'Security posture',
+    'shortcuts.security': 'VDC Health',
     'toast.noVdcLoaded': 'Load a VDC first to view security posture',
     // Highlights
     'highlights.title': 'Highlights',
@@ -3692,12 +3798,12 @@ function getSecurityPosture() {
   let fwActive = 0, flowLogsActive = 0, sgActive = 0, multiQActive = 0;
   let multiQEligible = 0;  // servers with ≥2 threads (eligible for MultiQ)
   servers.forEach(s => {
-    let hasFw = false, hasFL = false, hasSG = false, hasMQ = false;
+    let hasFw = false, hasFL = false, hasSG = false;
+    const hasMQ = s.data?.nicMultiQueue === true;
     if (s.data && s.data.nics) {
       s.data.nics.forEach(nic => {
         if (nic.firewall) hasFw = true;
         if (nic.flowLogsEnabled) hasFL = true;
-        if (nic.multiQueue) hasMQ = true;
       });
     }
     if (s.data && (s.data.securityGroupCount > 0 || (s.data.securityGroups && s.data.securityGroups.length > 0))) hasSG = true;
@@ -3903,6 +4009,9 @@ function renderSecurityPosture() {
     // Render previous scan results if available, otherwise show scan button
     renderIdleScanUI(resultsDiv);
   }
+
+  // ── AI Compliance Audit section (Phase 3) ──
+  renderComplianceInHealthPanel();
 }
 
 /** Render the idle VM scan UI — either a scan button or previous results. */
@@ -4900,6 +5009,7 @@ function buildGraph(dcData, natGWs, albs, nlbs, pgClusters, mongoClusters, mysql
       type: srv.properties?.type,
       state: srv.metadata?.state,
       vmState: srv.properties?.vmState,
+      nicMultiQueue: srv.properties?.nicMultiQueue === true,
       securityGroupCount: srvSecGroups.length,
       securityGroupIds: srvSecGroupIds,
     });
@@ -4918,8 +5028,7 @@ function buildGraph(dcData, natGWs, albs, nlbs, pgClusters, mongoClusters, mysql
       const secGroupItems = nic.entities?.securitygroups?.items || [];
       const securityGroupCount = secGroupItems.length;
       const securityGroupIds = secGroupItems.map(sg => sg.id);
-      const multiQueue = nic.properties?.nicMultiQueue === true;
-      console.log(`[VDC-Viz]   NIC "${nicName}" -> LAN ${nicLanId}, IPs: ${ips.join(',')}, flowLogs: ${flowLogsEnabled}, secGroups: ${securityGroupCount}, multiQ: ${multiQueue}`);
+      console.log(`[VDC-Viz]   NIC "${nicName}" -> LAN ${nicLanId}, IPs: ${ips.join(',')}, flowLogs: ${flowLogsEnabled}, secGroups: ${securityGroupCount}`);
       const lanNodeId = lanLookup(lanMap, nicLanId);
       if (lanNodeId) {
         const ipLabel = ips.length > 0 ? ips[0] : '';
@@ -4928,7 +5037,7 @@ function buildGraph(dcData, natGWs, albs, nlbs, pgClusters, mongoClusters, mysql
           nicId: nic.id, nicName, ips, ipv6, mac,
           dhcp: nic.properties?.dhcp,
           firewall: nic.properties?.firewallActive,
-          flowLogsEnabled, securityGroupCount, securityGroupIds, multiQueue,
+          flowLogsEnabled, securityGroupCount, securityGroupIds,
           linkType: 'nic',
         });
       } else {
@@ -4936,7 +5045,7 @@ function buildGraph(dcData, natGWs, albs, nlbs, pgClusters, mongoClusters, mysql
       }
       // Store NIC info on server node
       if (!srvNode.data.nics) srvNode.data.nics = [];
-      srvNode.data.nics.push({ nicId: nic.id, name: nicName, lanId: nicLanId, ips, ipv6, mac, dhcp: nic.properties?.dhcp, firewall: nic.properties?.firewallActive, flowLogsEnabled, securityGroupCount, securityGroupIds, multiQueue });
+      srvNode.data.nics.push({ nicId: nic.id, name: nicName, lanId: nicLanId, ips, ipv6, mac, dhcp: nic.properties?.dhcp, firewall: nic.properties?.firewallActive, flowLogsEnabled, securityGroupCount, securityGroupIds });
     });
   });
 
@@ -5944,7 +6053,7 @@ function drawPCCLines(vdcPositions) {
   // Create SVG overlay
   const container = bgMap.getContainer();
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:650;pointer-events:none;';
+  svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;z-index:450;pointer-events:none;';
   svg.setAttribute('width', container.clientWidth);
   svg.setAttribute('height', container.clientHeight);
 
@@ -7135,7 +7244,7 @@ function renderGraph(data) {
   });
 
   // Click background to deselect
-  svg.on('click', () => { clearHighlight(); closeDetail(); clearFlowHighlight(); if (heatmapActive) clearHeatmap(); });
+  svg.on('click', () => { clearHighlight(); closeDetail(); clearFlowHighlight(); if (heatmapActive) clearHeatmap(); if (_complianceHighlightRestore) _clearComplianceHighlight(); });
 
   updateStats(data);
   updateLegend(data);
@@ -7275,7 +7384,7 @@ function showDetail(d) {
       if (nic.firewall) badges.push('<span style="color:#10b981;">&#x25cf; Firewall</span>');
       if (nic.flowLogsEnabled) badges.push('<span style="color:#11C7E6;">&#x25cf; FlowLogs</span>');
       if (nic.securityGroupCount > 0) badges.push(`<span style="color:#FFAA00;">&#x25cf; ${nic.securityGroupCount} SecGroup(s)</span>`);
-      if (nic.multiQueue) badges.push('<span style="color:#8b5cf6;">&#x25cf; MultiQ</span>');
+      if (d.data?.nicMultiQueue) badges.push('<span style="color:#8b5cf6;">&#x25cf; MultiQ</span>');
       html += `
         <div style="background:var(--bg-tertiary);border-radius:6px;padding:8px 10px;margin-bottom:6px;font-size:12px;">
           <div style="font-weight:600;color:var(--text-primary);margin-bottom:4px;">${escapeHtml(nic.name || `NIC ${i+1}`)}</div>
@@ -7816,7 +7925,7 @@ function applyHighlights() {
       const nics = d.data?.nics || [];
       if (checks.firewall && nics.some(n => n.firewall)) matched.push('firewall');
       if (checks.flowlogs && nics.some(n => n.flowLogsEnabled)) matched.push('flowlogs');
-      if (checks.multiq && nics.some(n => n.multiQueue)) matched.push('multiq');
+      if (checks.multiq && d.data?.nicMultiQueue) matched.push('multiq');
       // Check both server-level and NIC-level security groups
       const hasSrvSG = (d.data?.securityGroupCount || 0) > 0;
       const hasNicSG = nics.some(n => n.securityGroupCount > 0);
@@ -9616,8 +9725,6 @@ async function connect(isSwitching = false) {
     completeConnectLoadingStep('datacenters');
     setConnectLoadingStep('map');
 
-    toast(t('toast.foundDcs', {count: datacenters.length}), 'success');
-
     // Initialize map and show global overview (remove pre-login dimming)
     document.getElementById('mapBackground').classList.remove('pre-login');
     initMapBackground();
@@ -9721,6 +9828,8 @@ function disconnect() {
   document.getElementById('draftActions')?.remove();
   _idleScanResults = null;
   _idleScanRunning = false;
+  _complianceLastResult = null;
+  _complianceRunning = false;
   _userLocationIds = new Set();
 
   // Stop voice input if active
@@ -9839,6 +9948,8 @@ async function loadVDC() {
   // it is fetched once at connect-time for ALL datacenters and remains valid across VDC switches.
   _idleScanResults = null;
   _idleScanRunning = false;
+  _complianceLastResult = null;
+  _complianceRunning = false;
   // Clear draft mode if active
   _draftMode = false; _draftGraphData = null; _realGraphData = null;
   document.getElementById('draftBanner')?.remove();
@@ -12814,13 +12925,14 @@ function updateAiSuggestions() {
     }
 
     if (hasTopology) {
+      suggestions.push({ label: 'Compliance audit', prompt: COMPLIANCE_PROMPT, isCompliance: true });
       suggestions.push({ label: 'Export as Terraform', prompt: 'Generate complete Terraform code (HCL) for my current VDC infrastructure. Include every resource visible in the topology — servers, LANs, NICs, load balancers, databases, NAT gateways, VPNs, Kubernetes, and any other services. Make it production-ready with proper resource references and locals.' });
     }
   }
 
   // Design mode: show first 4 as chips + "More" dropdown for the rest
   // Assist mode: show up to 5 chips (no dropdown)
-  const visibleCount = aiDesignMode ? 4 : 5;
+  const visibleCount = aiDesignMode ? 4 : 6;
   const visible = suggestions.slice(0, visibleCount);
   const overflow = aiDesignMode ? suggestions.slice(visibleCount) : [];
 
@@ -13043,6 +13155,9 @@ function buildAiSystemPrompt(contextStr) {
     // ── Assist mode: Terraform generation instructions (Phase 1) ──
     if (hasTopology) prompt += '\n\nTERRAFORM CODE GENERATION: When asked to generate Terraform code, produce HCL using the ionos-cloud/ionoscloud provider wrapped in ```hcl fences. IMPORTANT — keep it concise to avoid timeouts: use compact formatting (no blank lines between attributes), omit comments unless essential, use locals{} for datacenter_id/location, and use variable{} for sensitive data. Include only resources present in the context: ionoscloud_datacenter, ionoscloud_lan, ionoscloud_server (inline volume{}/nic{}), ionoscloud_natgateway, ionoscloud_applicationloadbalancer/ionoscloud_networkloadbalancer, ionoscloud_pg_cluster/ionoscloud_mongo_cluster/ionoscloud_mariadb_cluster (with connections{}), ionoscloud_k8s_cluster + ionoscloud_k8s_node_pool, ionoscloud_nfs_cluster, ionoscloud_kafka_cluster, ionoscloud_vpn_wireguard_gateway/ionoscloud_vpn_ipsec_gateway, ionoscloud_private_cross_connect, ionoscloud_ipblock. If the VDC has many servers (>6), generate Terraform for the first 6 in detail and add a comment "# Repeat pattern for remaining N servers" to stay within token limits. Reference resources via resource.type.name.id.';
 
+    // ── Compliance audit instructions ──
+    prompt += '\n\nCOMPLIANCE AUDIT: When asked to perform a compliance audit, analyze the infrastructure context below against all specified rules. Use the EXACT structured format requested (COMPLIANCE_REPORT_START/END, CATEGORY/CATEGORY_SCORE, [PASS]/[FAIL]/[WARN] markers). Be thorough — evaluate every rule for every applicable resource. When marking [FAIL] or [WARN], always list the specific resource names after "Resources:".';
+
     // ── Architecture design instructions (fallback for Assist tab) ──
     prompt += '\n\nARCHITECTURE DESIGN: When asked to design, architect, or build NEW infrastructure (not describe existing), respond with: (1) A natural language explanation of the proposed architecture — design rationale, tiers, security, scalability — in 2-3 paragraphs. (2) A JSON topology block embedded as: ```json\n{"_ai_graph":{"nodes":[...],"links":[...]}}\n``` Node schema: {"id":"draft-xxx","type":"<type>","name":"Display Name","data":{...properties...}}. Link schema: {"source":"node-id","target":"node-id","label":"optional","linkType":"<type>"}. Allowed node types: internet, lan, server, cube, postgres, mongodb, mysql, mariadb, nfs, vpn_wg, vpn_ipsec, nat, alb, nlb, k8s_np, kafka, pcc. Allowed link types: nic, cross-connect, managed, gateway, public. Use sensible defaults — LANs with 10.x.x.x CIDRs, servers with 2-8 cores and 4-32GB RAM, databases with version and instance count. CRITICAL CONNECTIVITY RULES: (a) EVERY node must have at least one link — no orphan/disconnected nodes. (b) Every server/cube MUST connect to at least one LAN via a "nic" link. (c) Every LAN MUST connect to at least one server, database, NAT, LB, or K8s node — never create empty LANs. (d) Databases connect to a private LAN via "nic". (e) NAT gateways connect to a LAN via "gateway". (f) ALB/NLB connect to a LAN via "nic". (g) Public LANs must have an "internet" node linked via "public". (h) A typical 3-tier architecture uses ONE public LAN for web tier + internet, ONE private LAN connecting web servers to app servers and load balancers, and ONE private LAN for app-to-database traffic. Do NOT create separate LANs unless they connect different resource groups. When the user iterates (adds/removes/changes resources), re-emit the FULL updated _ai_graph JSON with ALL nodes and links, not just the diff.';
   }
@@ -13112,7 +13227,7 @@ function buildAiContext() {
         const fwCount = nics.filter(n => n.firewall).length;
         const flCount = nics.filter(n => n.flowLogsEnabled).length;
         const hasSG = (d.securityGroupCount || 0) > 0 || nics.some(n => (n.securityGroupCount || 0) > 0);
-        const hasMQ = nics.some(n => n.multiQueue);
+        const hasMQ = s.data?.nicMultiQueue === true;
         const rawId = s.id.replace(/^(srv|cube)-/, '');
         const k8sTag = s._k8sManaged ? ', K8s-managed' : '';
         parts.push(`  ${sanitizeName(s.name)} [${rawId}] — ${d.cores || '?'}C/${((d.ram || 0) / 1024).toFixed(0)}GB, ${d.vmState || '?'}, ${ips.length} IPs${fwCount > 0 ? ', FW on' : ', FW off'}${flCount > 0 ? ', FL on' : ''}${hasSG ? ', SG on' : ''}${hasMQ ? ', MultiQ on' : ''}${k8sTag}`);
@@ -13175,7 +13290,7 @@ function buildAiContext() {
         const nics = s.data?.nics || [];
         if (nics.some(n => n.firewall)) fwEnabled++;
         if (nics.some(n => n.flowLogsEnabled)) flEnabled++;
-        const hasMQ = nics.some(n => n.multiQueue);
+        const hasMQ = s.data?.nicMultiQueue === true;
         if (hasMQ) mqEnabled++;
         const cores = s.data?.cores || 0;
         if (cores >= 2) { mqEligible++; if (!hasMQ) mqMissing.push(sanitizeName(s.name)); }
@@ -13452,11 +13567,26 @@ async function sendAiMessage(presetPrompt) {
     aiAbortController = null;
   }
 
-  addAiMessage(userMsg, 'user');
+  // ── Compliance audit: auto-switch to 70B model for structured output ──
+  const isComplianceAudit = userMsg.includes('COMPLIANCE_REPORT_START') || userMsg.includes('[NET-01]');
+  let _complianceModelStash = null;
+  if (isComplianceAudit) {
+    const bestModel = AI_MODELS.find(m => m.id.includes('70B'));
+    if (bestModel && aiSelectedModel !== bestModel.id) {
+      _complianceModelStash = aiSelectedModel;
+      aiSelectedModel = bestModel.id;
+      const sel = document.getElementById('aiModelSelect');
+      if (sel) sel.value = bestModel.id;
+    }
+    _complianceRunning = true;
+  }
+
+  addAiMessage(userMsg === COMPLIANCE_PROMPT ? 'Run compliance audit on my infrastructure.' : userMsg, 'user');
   if (sendBtn) sendBtn.disabled = true;
   aiLastRequestTime = now;
 
   const typing = addAiTypingIndicator();
+  if (isComplianceAudit && typing) typing.innerHTML = '<span class="ai-typing-dots compliance-scanning"><span></span><span></span><span></span></span> Running compliance audit...';
 
   // Build infra context and search docs in parallel
   let context = buildAiContext();
@@ -13520,7 +13650,7 @@ async function sendAiMessage(presetPrompt) {
         model: aiSelectedModel,
         messages: msgArray,
         temperature: 0.3,
-        max_tokens: (aiDesignMode || /terraform|architect|design.*infra/i.test(userMsg)) ? 8192 : 4096,
+        max_tokens: (isComplianceAudit || aiDesignMode || /terraform|architect|design.*infra/i.test(userMsg)) ? 8192 : 4096,
       }),
     });
 
@@ -13535,30 +13665,53 @@ async function sendAiMessage(presetPrompt) {
     const reply = data.choices?.[0]?.message?.content || 'No response received.';
     if (typing) typing.remove();
 
-    // ── Phase 2: Check for embedded topology JSON ──
-    const aiTopo = parseAiTopology(reply);
-    if (aiTopo) {
-      // Extract text explanation (everything before the ```json block)
-      const textPart = reply.replace(/```json[\s\S]*?```/g, '').trim();
-      if (textPart) addAiMessage(textPart, 'assistant');
-      const draftData = buildDraftGraphData(aiTopo);
-      if (draftData) {
-        renderDraftTopology(draftData);
-        addAiMessage('**Draft topology rendered on canvas.** Review the layout and ask me to refine it, or click **Generate Terraform** when ready.', 'assistant');
+    // ── Compliance audit: check for structured report ──
+    if (isComplianceAudit && reply.includes('COMPLIANCE_REPORT_START')) {
+      const parsed = parseComplianceReport(reply);
+      if (parsed) {
+        _complianceLastResult = parsed;
+        _complianceRunning = false;
+        renderComplianceCard(parsed);
+        // Restore model if auto-switched
+        if (_complianceModelStash) {
+          aiSelectedModel = _complianceModelStash;
+          const sel = document.getElementById('aiModelSelect');
+          if (sel) sel.value = _complianceModelStash;
+        }
+        // Update VDC Health if open
+        renderComplianceInHealthPanel();
       } else {
         addAiMessage(reply, 'assistant');
       }
-    } else {
-      addAiMessage(reply, 'assistant');
-      // ── Phase 1: Check for Terraform code block — offer download ──
-      if (/resource\s+"ionoscloud_/.test(reply)) {
-        const dlBtn = document.createElement('div');
-        dlBtn.style.cssText = 'padding: 6px 12px; margin: -4px 0 8px 48px;';
-        dlBtn.innerHTML = '<button onclick="downloadTerraformFromResponse(aiConversationHistory[aiConversationHistory.length-1]?.content || \'\')" style="background: var(--accent); color: white; border: none; border-radius: 6px; padding: 6px 14px; font-size: 12px; cursor: pointer; font-family: inherit;">Download .tf</button>';
-        document.getElementById('aiMessages')?.appendChild(dlBtn);
-        document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
+    }
+    // ── Check for embedded topology JSON ──
+    else {
+      const aiTopo = parseAiTopology(reply);
+      if (aiTopo) {
+        const textPart = reply.replace(/```json[\s\S]*?```/g, '').trim();
+        if (textPart) addAiMessage(textPart, 'assistant');
+        const draftData = buildDraftGraphData(aiTopo);
+        if (draftData) {
+          renderDraftTopology(draftData);
+          addAiMessage('**Draft topology rendered on canvas.** Review the layout and ask me to refine it, or click **Generate Terraform** when ready.', 'assistant');
+        } else {
+          addAiMessage(reply, 'assistant');
+        }
+      } else {
+        addAiMessage(reply, 'assistant');
+        // ── Check for Terraform code block — offer download ──
+        if (/resource\s+"ionoscloud_/.test(reply)) {
+          const dlBtn = document.createElement('div');
+          dlBtn.style.cssText = 'padding: 6px 12px; margin: -4px 0 8px 48px;';
+          dlBtn.innerHTML = '<button onclick="downloadTerraformFromResponse(aiConversationHistory[aiConversationHistory.length-1]?.content || \'\')" style="background: var(--accent); color: white; border: none; border-radius: 6px; padding: 6px 14px; font-size: 12px; cursor: pointer; font-family: inherit;">Download .tf</button>';
+          document.getElementById('aiMessages')?.appendChild(dlBtn);
+          document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
+        }
       }
     }
+
+    // ── Restore compliance state ──
+    if (isComplianceAudit) _complianceRunning = false;
 
     // Track conversation for multi-turn context (keep last 6 turns)
     aiConversationHistory.push({ role: 'user', content: userMsg });
@@ -13567,6 +13720,7 @@ async function sendAiMessage(presetPrompt) {
 
   } catch (e) {
     if (typing) typing.remove();
+    if (isComplianceAudit) { _complianceRunning = false; if (_complianceModelStash) { aiSelectedModel = _complianceModelStash; const sel = document.getElementById('aiModelSelect'); if (sel) sel.value = _complianceModelStash; } }
     if (e.name === 'AbortError') {
       addAiMessage('Request timed out or was cancelled. Please try again.', 'error');
     } else {
@@ -13608,6 +13762,399 @@ function downloadTerraformFromResponse(responseText) {
   document.body.removeChild(a);
   URL.revokeObjectURL(a.href);
   toast(`Downloaded ${filename}`, 'success');
+}
+
+// ── Compliance Report Parser (Phase 2) ──
+function parseComplianceReport(text) {
+  try {
+    const start = text.indexOf('COMPLIANCE_REPORT_START');
+    const end = text.indexOf('COMPLIANCE_REPORT_END');
+    if (start === -1) return null;
+    const block = text.substring(start, end !== -1 ? end : undefined);
+
+    // Overall score
+    const scoreMatch = block.match(/OVERALL_SCORE:\s*(\d+)/);
+    const overallScore = scoreMatch ? parseInt(scoreMatch[1], 10) : 0;
+
+    // Parse categories
+    const categories = [];
+    const catBlocks = block.split(/CATEGORY:\s*/g).slice(1);
+    for (const cb of catBlocks) {
+      const lines = cb.trim().split('\n');
+      const catName = lines[0].trim();
+      const catScoreMatch = cb.match(/CATEGORY_SCORE:\s*(\d+)/);
+      const catScore = catScoreMatch ? parseInt(catScoreMatch[1], 10) : 0;
+
+      const findings = [];
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        // Try multiple patterns to match AI output variations
+        let findingMatch = null;
+        // Pattern 1: "- [PASS] NET-01: desc" or "* [FAIL] NET-02: desc" (with optional markdown bold)
+        findingMatch = trimmed.match(/^[-*•]\s*\*{0,2}\[?(PASS|FAIL|WARN)\]?\*{0,2}\s*\*{0,2}\[?(\w+-\d+)\]?\*{0,2}[:\s]+\s*(.*)/i);
+        // Pattern 2: "[PASS] NET-01: desc" (no leading dash)
+        if (!findingMatch) findingMatch = trimmed.match(/^\*{0,2}\[?(PASS|FAIL|WARN)\]?\*{0,2}\s*\*{0,2}\[?(\w+-\d+)\]?\*{0,2}[:\s]+\s*(.*)/i);
+        // Pattern 3: "NET-01: [PASS] desc" (rule ID before status)
+        if (!findingMatch) {
+          const altMatch = trimmed.match(/^[-*•]?\s*\*{0,2}\[?(\w+-\d+)\]?\*{0,2}[:\s]+\s*\*{0,2}\[?(PASS|FAIL|WARN)\]?\*{0,2}[:\s]+\s*(.*)/i);
+          if (altMatch) findingMatch = [null, altMatch[2], altMatch[1], altMatch[3]];
+        }
+        // Pattern 4: "✓ NET-01: desc" or "✗ NET-02: desc" (unicode check/cross)
+        if (!findingMatch) {
+          const uniMatch = trimmed.match(/^[✓✔☑]\s*\[?(\w+-\d+)\]?[:\s]+\s*(.*)/i);
+          if (uniMatch) findingMatch = [null, 'PASS', uniMatch[1], uniMatch[2]];
+        }
+        if (!findingMatch) {
+          const uniMatch = trimmed.match(/^[✗✘☒✕]\s*\[?(\w+-\d+)\]?[:\s]+\s*(.*)/i);
+          if (uniMatch) findingMatch = [null, 'FAIL', uniMatch[1], uniMatch[2]];
+        }
+        if (!findingMatch) {
+          const uniMatch = trimmed.match(/^[⚠⚡]\s*\[?(\w+-\d+)\]?[:\s]+\s*(.*)/i);
+          if (uniMatch) findingMatch = [null, 'WARN', uniMatch[1], uniMatch[2]];
+        }
+
+        if (findingMatch) {
+          const status = findingMatch[1].toLowerCase();
+          const ruleId = findingMatch[2].replace(/[\[\]]/g, '');
+          let description = findingMatch[3];
+          let resources = [];
+          const resPart = description.match(/\|?\s*Resources?:\s*(.*)/i);
+          if (resPart) {
+            description = description.replace(/\|?\s*Resources?:.*/i, '').trim();
+            resources = resPart[1].split(',').map(r => r.trim()).filter(Boolean);
+          }
+          findings.push({ status, ruleId, description, resources });
+        }
+      }
+      if (catName && !catName.startsWith('CATEGORY_SCORE')) {
+        // Fallback: if no findings parsed but score < 100, extract raw lines as findings
+        if (findings.length === 0 && catScore < 100) {
+          for (const line of lines) {
+            const t = line.trim();
+            // Skip category header, score line, and blank lines
+            if (!t || /^CATEGORY/i.test(t) || t === catName) continue;
+            // Try to infer status from content
+            let status = 'warn';
+            if (/pass|✓|✔|enabled|active|good|compliant/i.test(t)) status = 'pass';
+            else if (/fail|✗|✘|missing|disabled|not |no |none|violation/i.test(t)) status = 'fail';
+            // Extract rule ID if present
+            const ruleMatch = t.match(/(\w+-\d+)/);
+            const ruleId = ruleMatch ? ruleMatch[1] : '';
+            const desc = t.replace(/^[-*•]\s*/, '').replace(/\*{1,2}/g, '').replace(/\[|\]/g, '');
+            if (desc.length > 5) findings.push({ status, ruleId, description: desc, resources: [] });
+          }
+        }
+        categories.push({ name: catName, score: catScore, findings });
+      }
+    }
+
+    console.log('[Compliance] Parsed:', overallScore, 'categories:', categories.map(c => `${c.name}(${c.score}%, ${c.findings.length} findings)`).join(', '));
+    if (categories.length > 0 && categories.every(c => c.findings.length === 0)) {
+      console.warn('[Compliance] No findings parsed — raw block sample:', block.substring(0, 1000));
+    }
+    return { overallScore, categories, raw: text, timestamp: new Date() };
+  } catch (e) {
+    console.warn('[Compliance] Parse error:', e);
+    return null;
+  }
+}
+
+// ── Compliance Card Renderer (Phase 2) ──
+function renderComplianceCard(report) {
+  const container = document.getElementById('aiMessages');
+  if (!container) return;
+
+  const scoreLevel = report.overallScore >= 80 ? 'good' : report.overallScore >= 50 ? 'warning' : 'danger';
+  const vdcName = currentDC?.properties?.name || 'VDC';
+
+  const card = document.createElement('div');
+  card.className = 'compliance-card';
+
+  // Header
+  let html = `<div class="compliance-header">
+    <div><h3>Compliance Report</h3><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${escapeHtml(vdcName)} — ${report.timestamp.toLocaleString()}</div></div>
+    <div class="compliance-score-badge score-${scoreLevel}">${report.overallScore}</div>
+  </div>`;
+
+  // Categories
+  html += '<div class="compliance-categories">';
+  for (let ci = 0; ci < report.categories.length; ci++) {
+    const cat = report.categories[ci];
+    const catLevel = cat.score >= 80 ? 'good' : cat.score >= 50 ? 'warning' : 'danger';
+    const failCount = cat.findings.filter(f => f.status === 'fail').length;
+    const warnCount = cat.findings.filter(f => f.status === 'warn').length;
+    const summary = failCount > 0 ? `${failCount} fail` + (warnCount > 0 ? `, ${warnCount} warn` : '') : (warnCount > 0 ? `${warnCount} warn` : 'all pass');
+    html += `<div class="compliance-cat" data-cat-idx="${ci}">
+      <div class="compliance-cat-header">
+        <span style="display:flex;align-items:center;gap:4px;"><span class="cat-toggle">▶</span><span class="compliance-cat-name">${escapeHtml(cat.name)}</span></span>
+        <span style="display:flex;align-items:center;gap:8px;"><span style="font-size:10px;color:var(--text-muted);">${summary}</span><span class="compliance-cat-score ${catLevel}">${cat.score}%</span></span>
+      </div>
+      <div class="compliance-cat-bar"><div class="compliance-cat-bar-fill ${catLevel}" style="width:${cat.score}%"></div></div>
+      <div class="compliance-cat-findings">`;
+
+    if (cat.findings.length === 0) {
+      html += `<div class="compliance-finding"><span style="color:var(--text-muted);font-style:italic;">No detailed findings parsed for this category.</span></div>`;
+    }
+    for (const f of cat.findings) {
+      const icon = f.status === 'pass' ? '✓' : f.status === 'fail' ? '✗' : '⚠';
+      const iconCls = f.status;
+      const resHtml = f.resources.length > 0 ? ' — ' + f.resources.map(r =>
+        `<span class="cf-resource" data-resource="${escapeHtml(r)}">${escapeHtml(r)}</span>`
+      ).join(', ') : '';
+      html += `<div class="compliance-finding">
+        <span class="cf-icon ${iconCls}">${icon}</span>
+        <span><strong>${escapeHtml(f.ruleId)}</strong>: ${escapeHtml(f.description)}${resHtml}</span></div>`;
+    }
+    html += '</div></div>';
+  }
+  html += '</div>';
+
+  // Actions
+  html += `<div class="compliance-actions">
+    <button class="btn-rerun">Re-run audit</button>
+    <button class="btn-download">Download Report</button>
+  </div>`;
+
+  card.innerHTML = html;
+  container.appendChild(card);
+
+  // ── Single delegated event listener on the card for all interactions ──
+  console.log('[Compliance] Attaching delegated click handler. Resource links found:', card.querySelectorAll('.cf-resource').length);
+  card.addEventListener('click', (e) => {
+    const target = e.target;
+
+    // 1. Resource link click — highlight on canvas
+    const resEl = target.closest('.cf-resource');
+    if (resEl) {
+      e.preventDefault();
+      e.stopPropagation();
+      const resourceName = resEl.getAttribute('data-resource') || resEl.textContent;
+      console.log('[Compliance] Resource link clicked:', resourceName);
+      highlightComplianceResource(resourceName);
+      return;
+    }
+
+    // 2. Re-run button
+    if (target.closest('.btn-rerun')) {
+      e.stopPropagation();
+      sendAiMessage(COMPLIANCE_PROMPT);
+      return;
+    }
+
+    // 3. Download button
+    if (target.closest('.btn-download')) {
+      e.stopPropagation();
+      downloadComplianceReport();
+      return;
+    }
+
+    // 4. Category expand/collapse — toggle if click is within .compliance-cat but not on actions
+    const catEl = target.closest('.compliance-cat');
+    if (catEl && !target.closest('.compliance-actions')) {
+      catEl.classList.toggle('expanded');
+    }
+  });
+
+  container.scrollTop = container.scrollHeight;
+}
+
+// ── Highlight resource on canvas from compliance finding ──
+function highlightComplianceResource(resourceName) {
+  if (!graphData?.nodes) return;
+  const raw = resourceName.trim();
+  const lower = raw.toLowerCase();
+  // Strip common wrappers: backticks, quotes, parenthesized UUIDs, trailing UUIDs, punctuation
+  const cleaned = lower
+    .replace(/^[`'"]+|[`'"]+$/g, '')
+    .replace(/\s*\([0-9a-f-]{36}\)/g, '')
+    .replace(/\s+[0-9a-f-]{36}$/g, '')
+    .trim();
+  // Extract UUID if present (AI may reference by ID)
+  const uuidMatch = raw.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+
+  const nodeNames = graphData.nodes.map(n => n.name?.toLowerCase()).filter(Boolean);
+  console.log('[Compliance] highlightResource:', JSON.stringify(raw), '=> cleaned:', JSON.stringify(cleaned), '| graph nodes:', nodeNames.slice(0, 20).join(', '));
+
+  // Strategy 1: Exact name match
+  let node = graphData.nodes.find(n => n.name?.toLowerCase() === cleaned);
+  // Strategy 2: Name contains search or search contains name
+  if (!node) node = graphData.nodes.find(n =>
+    n.name && (n.name.toLowerCase().includes(cleaned) || cleaned.includes(n.name.toLowerCase()))
+  );
+  // Strategy 3: UUID match in node ID
+  if (!node && uuidMatch) {
+    const uuid = uuidMatch[0].toLowerCase();
+    node = graphData.nodes.find(n => n.id?.toLowerCase().includes(uuid));
+  }
+  // Strategy 4: Fuzzy — any word (3+ chars) from the resource name matches a node name
+  if (!node) {
+    const words = cleaned.replace(/[^a-z0-9\s-]/g, '').split(/[\s,_-]+/).filter(w => w.length >= 3 && !/^(the|and|for|with|lan|nic|all|every|server|should|have)$/.test(w));
+    console.log('[Compliance] Fuzzy words:', words.join(', '));
+    if (words.length > 0) {
+      // Score each node by how many words match
+      let bestNode = null, bestScore = 0;
+      for (const n of graphData.nodes) {
+        const nName = n.name?.toLowerCase() || '';
+        const nId = n.id?.toLowerCase() || '';
+        let score = 0;
+        for (const w of words) {
+          if (nName.includes(w)) score += 2;
+          else if (nId.includes(w)) score += 1;
+        }
+        if (score > bestScore) { bestScore = score; bestNode = n; }
+      }
+      if (bestScore > 0) node = bestNode;
+    }
+  }
+  // Strategy 5: Check if resource name matches any NIC name or LAN name on a server
+  if (!node) {
+    node = graphData.nodes.find(n => {
+      if (n.type !== 'server' && n.type !== 'cube') return false;
+      const nics = n.data?.nics || [];
+      return nics.some(nic => nic.name?.toLowerCase().includes(cleaned) || cleaned.includes(nic.name?.toLowerCase() || ''));
+    });
+  }
+
+  console.log('[Compliance] Match result:', node ? `${node.name} (${node.id})` : 'NOT FOUND');
+
+  if (node) {
+    // Clear any previous compliance highlight timer
+    if (_complianceHighlightTimer) { clearTimeout(_complianceHighlightTimer); _complianceHighlightTimer = null; }
+    // Remember current view to restore later
+    const prevView = getViewMode();
+    _complianceHighlightRestore = prevView !== 'single' ? prevView : null;
+    // Close AI panel so user can see the graph canvas
+    closeAiPanel();
+    // Switch to single VDC view if currently on global map
+    if (prevView !== 'single') setViewMode('single');
+    // Delay to let panel close and view switch animations finish
+    setTimeout(() => {
+      focusNode(node.id);
+      toast(`Highlighting: ${node.name || resourceName}`, 'info');
+      // Auto-restore previous view and clear highlight after 6 seconds
+      _complianceHighlightTimer = setTimeout(() => {
+        _clearComplianceHighlight();
+      }, 6000);
+    }, prevView !== 'single' ? 600 : 350);
+  } else {
+    toast(`Resource "${resourceName}" not found on canvas`, 'info');
+  }
+}
+
+// ── Clear compliance resource highlight and restore view ──
+function _clearComplianceHighlight() {
+  if (_complianceHighlightTimer) { clearTimeout(_complianceHighlightTimer); _complianceHighlightTimer = null; }
+  clearHighlight();
+  closeDetail();
+  if (_complianceHighlightRestore) {
+    // Switching back to global map or location view — Leaflet handles its own zoom
+    setViewMode(_complianceHighlightRestore);
+    _complianceHighlightRestore = null;
+  } else {
+    // Staying in single VDC view — fit all nodes back into view
+    zoomFit();
+  }
+}
+
+// ── Download compliance report as text file ──
+function downloadComplianceReport() {
+  if (!_complianceLastResult) { toast('No compliance report available.', 'error'); return; }
+  const r = _complianceLastResult;
+  const vdcName = (currentDC?.properties?.name || 'vdc').replace(/[^a-zA-Z0-9_-]/g, '-').toLowerCase();
+
+  let report = `IONOS Cloud Compliance Report\n`;
+  report += `VDC: ${currentDC?.properties?.name || 'Unknown'}\n`;
+  report += `Date: ${r.timestamp.toLocaleString()}\n`;
+  report += `Overall Score: ${r.overallScore}/100\n`;
+  report += `${'='.repeat(60)}\n\n`;
+
+  for (const cat of r.categories) {
+    report += `${cat.name.toUpperCase()} (${cat.score}%)\n`;
+    report += `${'-'.repeat(40)}\n`;
+    for (const f of cat.findings) {
+      const icon = f.status === 'pass' ? 'PASS' : f.status === 'fail' ? 'FAIL' : 'WARN';
+      report += `  [${icon}] ${f.ruleId}: ${f.description}`;
+      if (f.resources.length > 0) report += ` | Resources: ${f.resources.join(', ')}`;
+      report += '\n';
+    }
+    report += '\n';
+  }
+
+  const blob = new Blob([report], { type: 'text/plain; charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `compliance-${vdcName}-${new Date().toISOString().substring(0, 10)}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  toast('Compliance report downloaded', 'success');
+}
+
+// ── Phase 3: Render compliance summary in VDC Health panel ──
+function renderComplianceInHealthPanel() {
+  const container = document.getElementById('securityMetrics');
+  if (!container) return;
+
+  // Remove existing compliance section
+  document.getElementById('complianceHealthSection')?.remove();
+
+  const section = document.createElement('div');
+  section.id = 'complianceHealthSection';
+
+  // Category header
+  const header = document.createElement('div');
+  header.style.cssText = 'font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted);margin:10px 0 2px;padding-left:2px;';
+  header.textContent = 'AI Compliance Audit';
+  section.appendChild(header);
+
+  if (_complianceRunning) {
+    const running = document.createElement('div');
+    running.className = 'security-metric';
+    running.innerHTML = '<div class="metric-header"><span class="metric-label compliance-scanning">Audit in progress...</span></div>';
+    section.appendChild(running);
+  } else if (_complianceLastResult) {
+    const r = _complianceLastResult;
+    const level = r.overallScore >= 80 ? 'good' : r.overallScore >= 50 ? 'warning' : 'danger';
+    const card = document.createElement('div');
+    card.className = 'security-metric metric-' + level;
+    card.style.cursor = 'pointer';
+    card.innerHTML = `<div class="metric-header">
+      <span class="metric-label">Compliance Score</span>
+      <span class="metric-value ${level}">${r.overallScore} / 100</span>
+    </div>
+    <div class="metric-bar-container"><div class="metric-bar ${level}" style="width:${r.overallScore}%"></div></div>
+    <div class="metric-desc" style="font-size:10px;color:var(--text-muted);">
+      ${r.categories.map(c => `${c.name}: ${c.score}%`).join(' · ')}
+      <br><span style="font-size:9px;">${r.timestamp.toLocaleString()}</span>
+    </div>`;
+    card.onclick = () => {
+      closeSecurityOverlay();
+      openAiPanel();
+      // Re-render the card in AI panel if not visible
+      if (!document.querySelector('.compliance-card')) renderComplianceCard(r);
+    };
+    section.appendChild(card);
+  }
+
+  // "Run Compliance Audit" button
+  const btnWrap = document.createElement('div');
+  btnWrap.style.cssText = 'margin-top:6px;';
+  const btn = document.createElement('button');
+  btn.style.cssText = 'width:100%;padding:7px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;border:1px solid var(--accent);background:transparent;color:var(--accent);transition:all 0.15s;';
+  btn.textContent = _complianceRunning ? 'Audit running...' : (_complianceLastResult ? 'Re-run Compliance Audit' : 'Run Compliance Audit');
+  btn.disabled = _complianceRunning;
+  btn.onmouseenter = () => { if (!_complianceRunning) { btn.style.background = 'var(--accent)'; btn.style.color = 'white'; } };
+  btn.onmouseleave = () => { btn.style.background = 'transparent'; btn.style.color = 'var(--accent)'; };
+  btn.onclick = () => {
+    closeSecurityOverlay();
+    sendAiMessage(COMPLIANCE_PROMPT);
+  };
+  btnWrap.appendChild(btn);
+  section.appendChild(btnWrap);
+
+  container.appendChild(section);
 }
 
 function clearAiConversation() {
@@ -13669,7 +14216,8 @@ document.addEventListener('keydown', (e) => {
   else if (e.key === 'm' || e.key === 'M') toggleMapBackground();
   else if (e.key === 'g' || e.key === 'G') setViewMode('map');
   else if (e.key === 't' || e.key === 'T') openTableView();
-  else if (e.key === 's' || e.key === 'S') openSecurityOverlay();
+  else if (e.key === 'S' && e.shiftKey) { if (graphData?.nodes?.length > 0) sendAiMessage(COMPLIANCE_PROMPT); }
+  else if (e.key === 's') openSecurityOverlay();
   else if (e.key === 'w' || e.key === 'W') openFlowLogExplorer();
   else if (e.key === 'x' || e.key === 'X') toggleHeatmap();
   else if (e.key === 'b' || e.key === 'B') { setHeatmapMode('billing'); if (!heatmapActive) toggleHeatmap(); else applyHeatmap(); }

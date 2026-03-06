@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.15.0] - 2026-03-06
+
+### Added (1.15.0)
+
+- **AI Compliance Checker** — New 12-rule compliance audit engine that evaluates VDC infrastructure across five categories: Network (firewall coverage, flow logs, private LAN isolation, NAT gateway), Access (security groups, NIC multi-queue), Audit (idle VMs, resource labeling), Cost (right-sizing, transfer optimization), and Data (database versioning, HA). Triggered via the "Compliance audit" suggestion chip, `Shift+S` keyboard shortcut, or the "Run Compliance Audit" button in VDC Health panel.
+- **Compliance Report Card** — Structured report rendered inline in the AI chat panel with an overall score badge (0–100), per-category progress bars with expand/collapse, individual PASS/FAIL/WARN findings, and clickable resource links that zoom to the matching node on the canvas.
+- **Compliance Resource Highlighting** — Clicking a resource name in a compliance finding closes the AI panel, switches to Single VDC view, pans the camera to the node, highlights it with connected links, and auto-restores the previous view after 6 seconds or on background click.
+- **Compliance Report Download** — Export the compliance audit as a timestamped `.txt` file with scores and findings per category.
+- **Auto-Model Switch for Compliance** — Compliance audits automatically switch to Llama 3.3 70B for better structured output quality, and restore the previous model selection after the audit completes.
+- **VDC Health Panel Integration** — The VDC Health (Security Posture) panel now includes an "AI Compliance Audit" section showing the cached compliance score with a metric bar and a "Run Compliance Audit" button.
+
+### Changed (1.15.0)
+
+- **NIC Multi-Queue Property Source** — Fixed `nicMultiQueue` to read from `server.properties.nicMultiQueue` (server-level) instead of the non-existent `nic.properties.nicMultiQueue` (NIC-level). Updated across: highlight check, security posture calculation, AI context builder, and NIC detail panel badge.
+- **"Security Posture" → "VDC Health"** — Renamed the keyboard shortcut label from "Security posture" to "VDC Health" for consistency with the panel title.
+- **PCC Cross-Connect Z-Index** — Lowered PCC SVG overlay from `z-index: 650` to `450` so it no longer overlaps VDC hover tooltips on the global map.
+- **VDC Tooltip Z-Index** — Added `z-index: 700` and increased background opacity to `0.97` for clearer tooltip rendering above PCC lines.
+
+### Removed (1.15.0)
+
+- **"VDC Found" Toast** — Removed the redundant green success toast shown on login ("X VDC found") since the VDC list is already visible in the sidebar.
+
+### Fixed (1.15.0)
+
+- **NIC Multi-Queue Highlight Ring** — VMs with multi-queue enabled now correctly show the highlight ring. Previously the highlight checked the NIC-level property (always undefined) instead of the server-level property.
+- **Compliance Parser Flexibility** — The compliance report parser now handles multiple AI output formats: dash-prefixed (`- [PASS]`), no-prefix (`[PASS]`), markdown bold (`**[FAIL]**`), reversed order (`NET-01: [PASS]`), and unicode symbols (`✓`, `✗`, `⚠`). Includes a fallback that infers findings from raw text when regex patterns don't match.
+
 ## [1.14.0] - 2026-03-06
 
 ### Added (1.14.0)
