@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/ionos-cloud-banner.svg" alt="IONOS Cloud Network Visualizer" width="800">
+  <img src="docs/ionos-cloud-banner.svg" alt="IONOS Cloud Network Hub" width="800">
 </p>
 
 <p align="center">
@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/D3.js-v7-F9A03C?logo=d3dotjs&logoColor=white" alt="D3.js v7">
   <img src="https://img.shields.io/badge/Leaflet-1.9.4-199900?logo=leaflet&logoColor=white" alt="Leaflet 1.9.4">
   <img src="https://img.shields.io/badge/Zero%20Build%20Step-brightgreen" alt="Zero Build Step">
-  <img src="https://img.shields.io/badge/IONOS%20Cloud-Visualizer-003D8F" alt="IONOS Cloud">
+  <img src="https://img.shields.io/badge/IONOS%20Cloud-Network%20Hub-003D8F" alt="IONOS Cloud">
 </p>
 
 <p align="center">
@@ -45,11 +45,11 @@
 
 > *"Which servers have no firewall enabled?"* · *"Design a 3-tier web app"* · *"Export my VDC as Terraform"* · *"Run a compliance audit"*
 
-The built-in AI Cloud Assistant connects to the **IONOS AI Model Hub** and understands your full cloud context — topology, servers, LANs, databases, security posture, billing, and flow logs. Choose from **Llama 3.1 8B**, **Mistral Small 24B**, or **Llama 3.3 70B**. Press `A` to open.
+The built-in AI Cloud Assistant connects to the **IONOS AI Model Hub** and understands your full cloud context — topology, servers, LANs, databases, security posture, billing, and flow logs. Choose from **Llama 3.3 70B** (default), **Llama 3.1 405B**, **Mistral Small 24B**, or **Llama 3.1 8B (Fast)**. Press `A` to open.
 
 The assistant has three modes, accessible via tabs and suggestion chips:
 
-**Assist** — Analyze your existing infrastructure. Ask about security posture, cost optimization, traffic patterns, resource inventory, or generate Terraform. Toggle the **Docs** button to ground answers in the official IONOS Cloud documentation via MCP.
+**Assist** — Analyze your existing infrastructure. Ask about security posture, cost optimization, traffic patterns, resource inventory, pricing, or generate Terraform. Toggle the **Docs** button to ground answers in the official IONOS Cloud documentation via MCP (searches three GitBook spaces: Cloud Docs, Support/Pricing, and Tutorials). Pricing queries auto-link to the [IONOS Price List](https://docs.ionos.com/cloud/support/general-information/price-list/ionos-cloud-se-en) and [Cloud Price Calculator](https://cloud.ionos.com/prices).
 
 **Design** — Build new architectures from natural language. Describe what you need, and the AI generates a visual draft topology on the canvas. Iterate via chat until satisfied, then export as Terraform. Quick-start templates are available for common patterns like 3-tier web apps, Kubernetes clusters, microservices, CI/CD pipelines, and more.
 
@@ -88,8 +88,8 @@ The assistant has three modes, accessible via tabs and suggestion chips:
 ## Quick Start
 
 ```bash
-git clone https://github.com/rijeshharidas/ionos-cloud-network-visualizer.git
-cd ionos-cloud-network-visualizer
+git clone https://github.com/rijeshharidas/ionos-cloud-network-hub.git
+cd ionos-cloud-network-hub
 python3 serve.py
 ```
 
@@ -103,8 +103,8 @@ python3 serve.py
 <summary><strong>Docker</strong></summary>
 
 ```bash
-docker build -t ionos-cloud-visualizer .
-docker run -p 8080:8080 ionos-cloud-visualizer
+docker build -t ionos-cloud-network-hub .
+docker run -p 8080:8080 ionos-cloud-network-hub
 ```
 
 Then open `http://localhost:8080` in your browser. No Python installation needed — just Docker.
@@ -188,7 +188,7 @@ Two files, zero build process:
 
 | File | Role |
 |------|------|
-| **`ionos-cloud-network-visualizer.html`** | Self-contained frontend — D3.js v7 for topology, Leaflet.js v1.9.4 for maps, all CSS/JS inline |
+| **`ionos-cloud-network-hub.html`** | Self-contained frontend — D3.js v7 for topology, Leaflet.js v1.9.4 for maps, all CSS/JS inline |
 | **`serve.py`** | Lightweight localhost CORS proxy (Python stdlib only) bridging browser requests to IONOS Cloud APIs |
 
 ```text
@@ -223,6 +223,8 @@ Your API token never leaves your machine.
 | AI Model Hub | `openai.inference.de-txl.ionos.com/v1` | Centralized |
 | Labels | `/cloudapi/v6/labels` | Centralized |
 | IONOS Cloud Docs (MCP) | `docs.ionos.com/cloud/~gitbook/mcp` | Centralized |
+| IONOS Support/Pricing (MCP) | `docs.ionos.com/cloud/support/~gitbook/mcp` | Centralized |
+| IONOS Tutorials (MCP) | `docs.ionos.com/cloud/tutorials/~gitbook/mcp` | Centralized |
 
 </details>
 
@@ -264,7 +266,7 @@ We welcome contributions! Please refer to [CONTRIBUTING.md](CONTRIBUTING.md) for
 
 ## License
 
-IONOS Cloud Network Visualizer is licensed under the [Apache License 2.0](LICENSE).
+IONOS Cloud Network Hub is licensed under the [Apache License 2.0](LICENSE).
 
 ## Links
 
@@ -272,7 +274,7 @@ IONOS Cloud Network Visualizer is licensed under the [Apache License 2.0](LICENS
 |---|---|
 | **IONOS Cloud Platform** | <https://cloud.ionos.com> |
 | **API Documentation** | <https://api.ionos.com/docs/cloud/v6/> |
-| **GitHub Issues** | <https://github.com/rijeshharidas/ionos-cloud-network-visualizer/issues> |
+| **GitHub Issues** | <https://github.com/rijeshharidas/ionos-cloud-network-hub/issues> |
 | **IONOS Cloud Status** | <https://status.ionos.com> |
 
 ---

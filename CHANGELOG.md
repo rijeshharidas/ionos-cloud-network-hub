@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.0] - 2026-03-13
+
+### Changed (1.17.0)
+
+- **Project Rename** — Renamed from "IONOS Cloud Network Visualizer" to **IONOS Cloud Network Hub** across all project files, reflecting the tool's evolution beyond visualization into an integrated infrastructure management hub with AI assistance, compliance auditing, architecture design, and documentation search.
+- **File Rename** — `ionos-cloud-network-visualizer.html` → `ionos-cloud-network-hub.html`; updated `serve.py`, `README.md`, `CONTRIBUTING.md`, and all documentation references accordingly.
+- **Default AI Model** — Changed default model from Llama 3.1 8B to **Llama 3.3 70B** for significantly better instruction following, context handling, and reasoning quality in infrastructure analysis and pricing queries.
+- **AI Pricing Queries** — Fixed AI assistant's inability to answer pricing questions. GitBook's JS-rendered price list page now detected as navigation chrome and replaced with structured pricing reference fallback including product categories, pricing models, and links to the official price list and Cloud Price Calculator.
+- **AI Response Links** — Added `__bold__` markdown parsing, auto-linking of known IONOS URLs (Price List, Cloud Price Calculator, docs.ionos.com paths) so pricing and documentation references are always clickable.
+- **Multi-space MCP** — Added support for three GitBook documentation spaces (Cloud Docs, Support/Pricing, Tutorials) with independent session management and intelligent query routing.
+
 ## [1.16.1] - 2026-03-07
 
 ### Changed (1.16.1)

@@ -23,7 +23,7 @@ jobs:
         run: python -m py_compile serve.py
 
       - name: Check HTML file exists
-        run: test -f ionos-cloud-network-visualizer.html
+        run: test -f ionos-cloud-network-hub.html
 
       - name: Validate HTML structure
         run: |
@@ -40,7 +40,7 @@ jobs:
                   if self.tags and self.tags[-1] == tag:
                       self.tags.pop()
           v = Validator()
-          with open('ionos-cloud-network-visualizer.html') as f:
+          with open('ionos-cloud-network-hub.html') as f:
               v.feed(f.read())
           print('HTML structure OK')
           "

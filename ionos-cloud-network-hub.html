@@ -1006,9 +1006,13 @@
     border-bottom-left-radius: 4px; white-space: pre-wrap; line-height: 1.6;
   }
   .ai-msg-assistant strong, .ai-msg-assistant b {
-    display: inline-block; color: var(--accent); font-weight: 700; font-size: 12px;
+    display: inline-block; color: var(--text-primary); font-weight: 700; font-size: 12px;
     letter-spacing: 0.2px; margin-top: 6px;
   }
+  .ai-msg-assistant a {
+    color: var(--accent); text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+  }
+  .ai-msg-assistant a:hover { opacity: 0.8; }
   .ai-msg-error {
     align-self: flex-start; background: rgba(239,68,68,0.1); color: #f87171;
     border-bottom-left-radius: 4px; font-size: 12px;
@@ -2240,10 +2244,7 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
     </button>
     <span class="toolbar-divider"></span>
-    <!-- Analysis -->
-    <button onclick="openSecurityOverlay()" id="securityBtn" aria-label="VDC Health" data-tip="VDC Health (S)" data-i18n-tip="toolbar.security">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-    </button>
+    <!-- Analysis: Data Sources -->
     <div class="flowlog-dropdown-wrapper">
       <button onclick="toggleFlowLogMenu()" id="flowlogMenuBtn" aria-label="Flow Logs" data-tip="Flow Logs" data-i18n-tip="toolbar.flowlogsMenu">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
@@ -2261,6 +2262,10 @@
     </div>
     <button onclick="setHeatmapMode('billing'); if(!heatmapActive) toggleHeatmap(); else applyHeatmap();" id="billingHeatmapBtn" aria-label="Data Transfer Heatmap (Billable)" data-tip="Data Transfer Heatmap (Billable) (B)" data-i18n-tip="shortcuts.billingHeatmap">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+    </button>
+    <!-- Analysis: Intelligence -->
+    <button onclick="openSecurityOverlay()" id="securityBtn" aria-label="VDC Health" data-tip="VDC Health (S)" data-i18n-tip="toolbar.security">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
     </button>
     <button onclick="toggleAiPanel()" id="aiToggleBtn" aria-label="AI Assistant" data-tip="AI Cloud Assistant (A)" style="display:none;">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.09 6.26L20 10.27l-4.91 3.82L16.18 22 12 18.27 7.82 22l1.09-7.91L4 10.27l5.91-2.01L12 2z"/></svg>
@@ -2571,10 +2576,10 @@ const API_BASES = {
 
 // ============================== AI MODEL HUB ==============================
 const AI_MODELS = [
-  { id: 'meta-llama/Meta-Llama-3.1-8B-Instruct', label: 'Llama 3.1 8B' },
-  { id: 'mistralai/Mistral-Small-24B-Instruct', label: 'Mistral Small 24B' },
   { id: 'meta-llama/Llama-3.3-70B-Instruct', label: 'Llama 3.3 70B' },
   { id: 'meta-llama/Meta-Llama-3.1-405B-Instruct-FP8', label: 'Llama 3.1 405B' },
+  { id: 'mistralai/Mistral-Small-24B-Instruct', label: 'Mistral Small 24B' },
+  { id: 'meta-llama/Meta-Llama-3.1-8B-Instruct', label: 'Llama 3.1 8B (Fast)' },
 ];
 let aiSelectedModel = AI_MODELS[0].id;
 let aiConversationHistory = [];
@@ -9893,6 +9898,7 @@ function disconnect() {
   mcpSessionId = null;
   mcpInitialized = false;
   _mcpSearchToolName = null;
+  MCP_SPACES.forEach(s => { s.sessionId = null; s.initialized = false; s.toolName = null; });
   closeAiPanel();
   clearAiConversation();
   updateAiButtonVisibility();
@@ -13031,10 +13037,34 @@ function addAiMessage(text, role) {
   const el = document.createElement('div');
   el.className = `ai-msg ai-msg-${role}`;
   if (role === 'assistant') {
-    // Basic markdown-like formatting: **bold**, `code`, newlines
+    // Basic markdown-like formatting: [links](url), **bold**, __bold__, `code`
+    // Links parsed FIRST so bold wrapping around links doesn't break them
     let html = escapeHtml(text)
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/__(.*?)__/g, '<strong>$1</strong>')
       .replace(/`([^`]+)`/g, '<code style="background:var(--bg-hover);padding:1px 4px;border-radius:3px;font-size:12px;">$1</code>');
+    // Auto-link known IONOS URLs when AI mentions them as text (not already in <a> tags)
+    const autoLinks = [
+      [/(?<!href=")(?:IONOS(?:\s+Cloud)?\s+)?Price\s+List/gi, 'https://docs.ionos.com/cloud/support/general-information/price-list/ionos-cloud-se-en'],
+      [/Cloud\s+Price\s+Calculator/gi, 'https://cloud.ionos.com/prices'],
+      [/docs\.ionos\.com\/cloud[^\s<"]*/g, null], // bare URLs
+    ];
+    for (const [pattern, url] of autoLinks) {
+      if (url) {
+        // Replace text mentions with links (but not if already inside an <a> tag)
+        html = html.replace(pattern, (match) => {
+          return `<a href="${url}" target="_blank" rel="noopener">${match}</a>`;
+        });
+      } else {
+        // Bare URLs — wrap in <a> tags if not already linked
+        html = html.replace(pattern, (match) => {
+          return `<a href="https://${match}" target="_blank" rel="noopener">${match}</a>`;
+        });
+      }
+    }
+    // Clean up double-wrapped links (e.g. <a><strong><a>...</a></strong></a>)
+    html = html.replace(/<a [^>]+><strong><a ([^>]+)>(.*?)<\/a><\/strong><\/a>/g, '<a $1><strong>$2</strong></a>');
     el.innerHTML = html;
   } else {
     el.textContent = text;
@@ -13058,15 +13088,22 @@ function addAiTypingIndicator() {
 // Build dynamic system prompt based on what data is loaded
 // ── MCP Docs Search (IONOS GitBook documentation) ──────────────
 let _mcpRequestId = 0;
-let _mcpSearchToolName = null;  // discovered via tools/list
 
-async function mcpRequest(method, params) {
+// ── Multi-space MCP: each GitBook space has its own session & tool name ──
+const MCP_SPACES = [
+  { key: 'cloud',     route: '/mcp-docs',           label: 'Cloud Docs',  sessionId: null, initialized: false, toolName: null },
+  { key: 'support',   route: '/mcp-docs-support',   label: 'Support/Pricing', sessionId: null, initialized: false, toolName: null },
+  { key: 'tutorials', route: '/mcp-docs-tutorials', label: 'Tutorials',   sessionId: null, initialized: false, toolName: null },
+];
+
+async function mcpRequest(method, params, space) {
+  space = space || MCP_SPACES[0]; // default to cloud
   _mcpRequestId++;
   const body = { jsonrpc: '2.0', id: _mcpRequestId, method, params: params || {} };
   const headers = { 'Content-Type': 'application/json' };
-  if (mcpSessionId) headers['Mcp-Session-Id'] = mcpSessionId;
+  if (space.sessionId) headers['Mcp-Session-Id'] = space.sessionId;
 
-  const resp = await fetch('/mcp-docs', {
+  const resp = await fetch(space.route, {
     method: 'POST',
     headers,
     body: JSON.stringify(body),
@@ -13074,102 +13111,208 @@ async function mcpRequest(method, params) {
 
   // Capture session ID from response
   const sid = resp.headers.get('Mcp-Session-Id');
-  if (sid) mcpSessionId = sid;
+  if (sid) space.sessionId = sid;
 
   if (!resp.ok) {
     const errText = await resp.text().catch(() => '');
     throw new Error(`MCP ${resp.status}: ${errText.substring(0, 200)}`);
   }
   const json = await resp.json();
-  // Check for JSON-RPC error
   if (json.error) {
     throw new Error(`MCP-RPC: ${json.error.message || JSON.stringify(json.error)}`);
   }
   return json;
 }
 
-async function initMcpSession() {
-  if (mcpInitialized) return;
+async function initMcpSpace(space) {
+  if (space.initialized) return;
   try {
     const initResult = await mcpRequest('initialize', {
       protocolVersion: '2025-03-26',
       capabilities: {},
       clientInfo: { name: 'IONOS-Cloud-Visualizer', version: '1.9' },
-    });
-    console.log('[AI] MCP init response:', JSON.stringify(initResult).substring(0, 500));
-    mcpInitialized = true;
+    }, space);
+    console.log(`[AI] MCP ${space.label} init OK`);
+    space.initialized = true;
 
     // Send initialized notification (fire-and-forget)
-    mcpRequest('notifications/initialized', {}).catch(() => {});
+    mcpRequest('notifications/initialized', {}, space).catch(() => {});
 
     // Discover available tools
     try {
-      const toolsResult = await mcpRequest('tools/list', {});
+      const toolsResult = await mcpRequest('tools/list', {}, space);
       const tools = toolsResult?.result?.tools || [];
-      console.log('[AI] MCP available tools:', tools.map(t => t.name).join(', '));
-      // Find a search-like tool (GitBook typically exposes one)
+      console.log(`[AI] MCP ${space.label} tools:`, JSON.stringify(tools.map(t => ({ name: t.name, desc: t.description?.substring(0, 80) }))));
       const searchTool = tools.find(t =>
         /search/i.test(t.name) || /query/i.test(t.name) || /find/i.test(t.name)
       );
-      if (searchTool) {
-        _mcpSearchToolName = searchTool.name;
-        console.log('[AI] MCP search tool found:', _mcpSearchToolName);
-      } else if (tools.length > 0) {
-        // If no obvious search tool, use the first tool as fallback
-        _mcpSearchToolName = tools[0].name;
-        console.log('[AI] MCP using first available tool:', _mcpSearchToolName);
-      }
+      // Also look for a page-fetch tool (e.g. get_page, fetch_page, lookup)
+      const fetchTool = tools.find(t =>
+        /get.?page|fetch.?page|lookup|get.?content/i.test(t.name)
+      );
+      space.toolName = searchTool ? searchTool.name : (tools.length > 0 ? tools[0].name : 'search');
+      space.fetchToolName = fetchTool ? fetchTool.name : null;
+      if (fetchTool) console.log(`[AI] MCP ${space.label} also has page-fetch tool:`, fetchTool.name);
     } catch (e) {
-      console.warn('[AI] MCP tools/list failed:', e.message);
-      // Fallback tool names to try
-      _mcpSearchToolName = 'search';
+      console.warn(`[AI] MCP ${space.label} tools/list failed:`, e.message);
+      space.toolName = 'search';
     }
-
-    console.log('[AI] MCP docs session initialized, search tool:', _mcpSearchToolName);
   } catch (e) {
-    console.warn('[AI] MCP docs init failed:', e.message);
+    console.warn(`[AI] MCP ${space.label} init failed:`, e.message);
+  }
+}
+
+// Legacy wrappers for backward compatibility
+async function initMcpSession() {
+  await initMcpSpace(MCP_SPACES[0]);
+  mcpSessionId = MCP_SPACES[0].sessionId;
+  mcpInitialized = MCP_SPACES[0].initialized;
+  _mcpSearchToolName = MCP_SPACES[0].toolName;
+}
+let _mcpSearchToolName = null;
+
+/** Search a single MCP space, returns extracted text array */
+async function _searchSpace(space, query) {
+  await initMcpSpace(space);
+  if (!space.initialized || !space.toolName) return [];
+  const result = await mcpRequest('tools/call', { name: space.toolName, arguments: { query } }, space);
+  const content = result?.result?.content || result?.content;
+  if (!content) return [];
+  // Log raw result structure for debugging
+  console.log(`[AI] MCP ${space.label} raw result preview:`, JSON.stringify(content).substring(0, 600));
+  if (Array.isArray(content)) {
+    return content.filter(c => c.type === 'text' && c.text).map(c => c.text.substring(0, 2500)).slice(0, 4);
+  } else if (typeof content === 'string') {
+    return [content.substring(0, 6000)];
+  }
+  return [];
+}
+
+/** Fetch the IONOS price list page (server-side cached, 1hr TTL) */
+async function _fetchPriceList() {
+  try {
+    const resp = await fetch('/price-list');
+    if (!resp.ok) return '';
+    const data = await resp.json();
+    const txt = data.text || '';
+    console.log('[AI] Price list fetched:', txt.length, 'chars', data.cached ? '(cached)' : '(fresh)');
+    // Show preview to help debug content quality
+    if (txt.length > 0) {
+      const hasNumbers = /\d+[.,]\d+/.test(txt);
+      const hasEuro = /€/.test(txt);
+      console.log('[AI] Price list content check — has numbers:', hasNumbers, ', has €:', hasEuro);
+      console.log('[AI] Price list preview (first 400 chars):', txt.substring(0, 400));
+    }
+    return txt;
+  } catch (e) {
+    console.warn('[AI] Price list fetch failed:', e.message);
+    return '';
   }
 }
 
 async function searchIonosDocs(query) {
   if (!aiDocsSearchEnabled) return '';
   try {
-    await initMcpSession();
-    if (!mcpInitialized || !_mcpSearchToolName) return '';
+    const isPricing = /\b(price|pricing|cost|how much|rate|charge|billing rate|per hour|per month|€|EUR)\b/i.test(query);
+    const isTutorial = /\b(tutorial|guide|how to|step.by.step|walkthrough|example|getting started)\b/i.test(query);
 
-    console.log('[AI] Searching IONOS docs for:', query, 'using tool:', _mcpSearchToolName);
-    const result = await mcpRequest('tools/call', {
-      name: _mcpSearchToolName,
-      arguments: { query },
+    // Determine which spaces to search (always search cloud, add others by context)
+    const spacesToSearch = [MCP_SPACES[0]]; // always cloud docs
+    if (isPricing)  spacesToSearch.push(MCP_SPACES[1]); // support/pricing
+    if (isTutorial) spacesToSearch.push(MCP_SPACES[2]); // tutorials
+
+    const searchQuery = isPricing ? query + ' price list' : query;
+    console.log('[AI] Searching IONOS docs for:', searchQuery, 'in spaces:', spacesToSearch.map(s => s.label).join(', '));
+
+    // Search all relevant spaces in parallel; for pricing, also fetch the full price list page
+    // Use cache-bust param to ensure we get fresh data after server restart
+    const searchPromises = spacesToSearch.map(space => _searchSpace(space, searchQuery));
+    if (isPricing) searchPromises.push(_fetchPriceList().then(t => t ? [t] : []));
+
+    const results = await Promise.allSettled(searchPromises);
+
+    // Merge results from all sources
+    const allTexts = [];
+    results.forEach((r, i) => {
+      if (r.status === 'fulfilled' && r.value.length > 0) {
+        const label = i < spacesToSearch.length ? spacesToSearch[i].label : 'Price List Page';
+        console.log(`[AI] MCP ${label}: ${typeof r.value === 'string' ? r.value.length + ' chars' : r.value.length + ' result(s)'}`);
+        allTexts.push(...(Array.isArray(r.value) ? r.value : [r.value]));
+      }
     });
-    console.log('[AI] MCP search result keys:', JSON.stringify(Object.keys(result || {})));
-    console.log('[AI] MCP search result preview:', JSON.stringify(result).substring(0, 800));
 
-    // MCP tools/call result is at result.result.content (JSON-RPC wraps it)
-    // But depending on the response, it could also be directly at result.content
-    const content = result?.result?.content || result?.content;
-    if (!content) {
-      console.warn('[AI] MCP search: no content in result');
-      return '';
+    if (allTexts.length === 0 && !isPricing) return '';
+
+    // For pricing queries, check if we actually got USEFUL pricing data (not just nav chrome)
+    if (isPricing) {
+      // The price list page is a JS-rendered SPA — the HTML fetch typically returns
+      // navigation chrome (menus, chatbot UI) instead of actual pricing tables.
+      // We need a STRICT check to detect real pricing data vs garbage.
+      const pricePatterns = [
+        /€\s*\d+\.\d{2,}/,                           // €0.0238 or €12.50
+        /\d+\.\d{4}\s*€/,                             // 0.0238 €
+        /per\s+(hour|month|GB|core|vCPU|instance)/i,  // pricing unit
+        /vCPU.*€|€.*vCPU/i,                           // CPU pricing
+        /per\s+1\s*GB/i,                              // storage pricing
+      ];
+
+      // Check if any large text block is actually nav chrome (not real content)
+      const priceListResult = allTexts.find(t => t.length > 5000);
+      const isNavChrome = priceListResult &&
+        /^IONOS\s+SE\s*\||Ask Home Log In|Working\.\.\.\s*Thinking|What should I read next/i.test(
+          priceListResult.substring(0, 500)
+        );
+
+      // Count how many price patterns match (need >=2 in non-chrome content)
+      const nonChromeTexts = allTexts.filter(t => t !== priceListResult || !isNavChrome);
+      const joinedClean = nonChromeTexts.join('\n');
+      const matchCount = pricePatterns.filter(p => p.test(joinedClean)).length;
+      const hasPriceData = matchCount >= 2;
+
+      console.log('[AI] Pricing quality — pattern matches:', matchCount,
+        ', nav chrome detected:', !!isNavChrome,
+        ', verdict:', hasPriceData ? 'GOOD' : 'FALLBACK');
+
+      // Remove nav chrome garbage if detected
+      if (isNavChrome && priceListResult) {
+        const idx = allTexts.indexOf(priceListResult);
+        if (idx >= 0) {
+          allTexts.splice(idx, 1);
+          console.log('[AI] Removed nav chrome (' + priceListResult.length + ' chars of garbage)');
+        }
+      }
+
+      if (!hasPriceData) {
+        // No real pricing data available — add structured reference so AI can still help
+        console.warn('[AI] Adding structured pricing reference fallback.');
+        const pricingFallback = `
+[IONOS Cloud Pricing Reference]
+The IONOS Cloud SE price list is available at: https://docs.ionos.com/cloud/support/general-information/price-list/ionos-cloud-se-en
+The interactive Cloud Price Calculator is at: https://cloud.ionos.com/prices
+
+Key IONOS Cloud product categories with pricing:
+- Compute: Dedicated Core Servers, vCPU Servers, Cubes (S/M/L/XL)
+- Storage: HDD, SSD, SSD Premium block storage; S3 Object Storage
+- Networking: IPv4 addresses, NAT Gateway, Application Load Balancer, Network Load Balancer, Cross Connect
+- Managed Databases: PostgreSQL, MongoDB, MySQL, MariaDB (per instance-hour, varies by cores/RAM)
+- Kubernetes: K8s management is free, pay for underlying node pool servers
+- VPN: WireGuard Gateway, IPSec Gateway
+- NFS: Network File Storage
+- CDN: Content Delivery Network (per GB transferred)
+- DNS: DNS-as-a-Service
+- AI Model Hub: Inference API (per token)
+
+Note: For exact current prices, refer to the price list URL above or the Cloud Price Calculator.
+Pricing is typically per hour for compute/databases and per GB for storage/transfer.
+Data transfer between same-location IONOS data centers is free.
+`;
+        allTexts.push(pricingFallback);
+      }
     }
 
-    // Handle both array and string content
-    let texts = [];
-    if (Array.isArray(content)) {
-      texts = content
-        .filter(c => c.type === 'text' && c.text)
-        .map(c => c.text.substring(0, 1500))
-        .slice(0, 3);
-    } else if (typeof content === 'string') {
-      texts = [content.substring(0, 4500)];
-    }
-
-    if (texts.length === 0) {
-      console.warn('[AI] MCP search: content array empty or no text items');
-      return '';
-    }
-    console.log('[AI] MCP docs context length:', texts.join('').length, 'chars');
-    return '\n\n[IONOS Documentation Reference]\n' + texts.join('\n---\n');
+    if (allTexts.length === 0) return '';
+    console.log('[AI] MCP total docs context length:', allTexts.join('').length, 'chars');
+    return '\n\n[IONOS Documentation Reference]\n' + allTexts.join('\n---\n');
   } catch (e) {
     console.warn('[AI] Docs search failed:', e.message);
     return '';
@@ -13186,7 +13329,9 @@ function buildAiSystemPrompt(contextStr) {
   if (hasTopology) prompt += ' You have full visibility into the currently loaded VDC\'s topology — servers, LANs, databases, load balancers, VPNs, NAT gateways, and Kubernetes clusters.';
   if (hasFlowLogs) prompt += ' You can analyze network flow logs for traffic patterns, security threats, and anomalies. When mentioning IPs, include their resource names if known.';
   if (hasBilling) prompt += ' You have access to contract-wide billing and data transfer metrics across all VDCs. Provide cost-aware recommendations and identify high-traffic resources.';
-  if (ctx.includes('[IONOS Documentation Reference]')) prompt += ' You also have excerpts from the official IONOS Cloud documentation. Use these to provide accurate how-to guidance, API references, and service details. Cite the documentation when relevant.';
+  if (ctx.includes('[IONOS Documentation Reference]')) prompt += ' You also have excerpts from the official IONOS Cloud documentation. Use these to provide accurate how-to guidance, API references, and service details. When citing documentation, use markdown links like [VPN Gateway Pricing](https://docs.ionos.com/cloud/network-services/vpn-gateway) so users can click through to the source. Base URL for docs: https://docs.ionos.com/cloud/.';
+  // Always provide the price list reference for pricing queries
+  prompt += ' For any pricing or cost questions: (1) If the context contains specific prices, quote them. (2) Always include this link: [IONOS Cloud Price List](https://docs.ionos.com/cloud/support/general-information/price-list/ionos-cloud-se-en). (3) Also mention the interactive [Cloud Price Calculator](https://cloud.ionos.com/prices) for detailed estimates. (4) Pricing is typically per-hour for compute/databases and per-GB for storage/transfer. Data transfer between IONOS DCs in the same location is free.';
 
   if (aiDesignMode) {
     // ── Design mode: architecture-first system prompt ──
@@ -13656,11 +13801,24 @@ async function sendAiMessage(presetPrompt) {
     docsContext = await searchIonosDocs(userMsg);
   } catch (_) { /* docs search failure is non-fatal */ }
 
-  // Append docs to context if found
-  if (docsContext) context += docsContext;
-
-  if (context.length > AI_MAX_CONTEXT_CHARS) {
-    context = context.substring(0, AI_MAX_CONTEXT_CHARS) + '\n\n[Context truncated — showing most important data]';
+  // Append docs to context — give docs a guaranteed budget so they don't get truncated
+  if (docsContext) {
+    const DOCS_BUDGET = 14000;  // reserved chars for documentation content
+    const INFRA_BUDGET = AI_MAX_CONTEXT_CHARS; // infra context budget
+    // Truncate infra and docs independently
+    if (context.length > INFRA_BUDGET) {
+      context = context.substring(0, INFRA_BUDGET) + '\n\n[Infrastructure context truncated]';
+    }
+    if (docsContext.length > DOCS_BUDGET) {
+      docsContext = docsContext.substring(0, DOCS_BUDGET) + '\n\n[Documentation truncated — see full docs at docs.ionos.com/cloud]';
+    }
+    context += docsContext;
+    console.log('[AI] Final context: infra=' + (context.length - docsContext.length) + ' + docs=' + docsContext.length + ' = ' + context.length + ' chars');
+  } else {
+    if (context.length > AI_MAX_CONTEXT_CHARS) {
+      context = context.substring(0, AI_MAX_CONTEXT_CHARS) + '\n\n[Context truncated — showing most important data]';
+    }
+    console.log('[AI] Final context (no docs):', context.length, 'chars');
   }
   const systemPrompt = buildAiSystemPrompt(context);
 

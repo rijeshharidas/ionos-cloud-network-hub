@@ -1,13 +1,13 @@
 FROM python:3.12-slim
 
 LABEL maintainer="rijesh.haridas@ionos.com"
-LABEL description="IONOS Cloud Network Visualizer - Interactive topology visualizer"
-LABEL org.opencontainers.image.source="https://github.com/rijeshharidas/ionos-cloud-network-visualizer"
+LABEL description="IONOS Cloud Network Hub - Interactive cloud infrastructure management"
+LABEL org.opencontainers.image.source="https://github.com/rijeshharidas/ionos-cloud-network-hub"
 LABEL org.opencontainers.image.license="Apache-2.0"
 
 WORKDIR /app
 
-COPY serve.py ionos-cloud-network-visualizer.html ./
+COPY serve.py ionos-cloud-network-hub.html ./
 
 EXPOSE 8080
 
