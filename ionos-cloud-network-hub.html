@@ -7,7 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23003D8F'/%3E%3Ccircle cx='10' cy='12' r='2.5' fill='%2311C7E6'/%3E%3Ccircle cx='22' cy='12' r='2.5' fill='%2311C7E6'/%3E%3Ccircle cx='16' cy='22' r='2.5' fill='%2311C7E6'/%3E%3Ccircle cx='16' cy='7' r='1.5' fill='%2311C7E6' opacity='.6'/%3E%3Cline x1='10' y1='12' x2='22' y2='12' stroke='%2311C7E6' stroke-width='1.2' opacity='.7'/%3E%3Cline x1='10' y1='12' x2='16' y2='22' stroke='%2311C7E6' stroke-width='1.2' opacity='.7'/%3E%3Cline x1='22' y1='12' x2='16' y2='22' stroke='%2311C7E6' stroke-width='1.2' opacity='.7'/%3E%3Cline x1='10' y1='12' x2='16' y2='7' stroke='%2311C7E6' stroke-width='1' opacity='.4'/%3E%3Cline x1='22' y1='12' x2='16' y2='7' stroke='%2311C7E6' stroke-width='1' opacity='.4'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Overpass:wght@400;600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -49,32 +49,111 @@
     --danger: #ef4444;
     --sidebar-width: 300px;
     --detail-width: 380px;
+    /* ── IONOS DCD brand tokens ── */
+    --ionos-blue: #002450;
+    --ionos-horizon: #3196d6;
+    --ionos-dark-blue: #0b2a63;
+    --ionos-blue-black: #02102b;
+    --ionos-blue-b1: #dbedf8;
+    /* ── Font families (Phase 2: DCD typography) ── */
+    --font-heading: 'Overpass', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-body: 'Open Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   html[data-theme="light"] {
     --bg-primary: #ffffff;
     --bg-primary-rgb: 255, 255, 255;
-    --bg-secondary: #f8f9fa;
+    --bg-secondary: #f8fafc;
     --bg-tertiary: #e8ecf1;
     --bg-hover: #e0e8f0;
     --text-primary: #0f172a;
     --text-secondary: #1e293b;
     --text-muted: #64748b;
-    --border: #cbd5e1;
-    --accent: #0284c7;
-    --accent-hover: #0369a1;
-    --accent-glow: rgba(2, 132, 199, 0.12);
+    --border: #e2e8f0;
+    --accent: #3196d6;
+    --accent-hover: #2078b4;
+    --accent-glow: rgba(49, 150, 214, 0.12);
   }
   html[data-theme="light"] #mapBackground .leaflet-tile-pane { filter: grayscale(0.05) brightness(1.02) contrast(1.05); }
   html[data-theme="light"] #mapBackground.overview-mode.pre-login .leaflet-tile-pane { filter: brightness(0.95) contrast(1.05); }
   html[data-theme="light"] #mapBackground.overview-mode.pre-login { opacity: 0.75; }
-  html[data-theme="light"] .map-cluster-bubble { box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+  html[data-theme="light"] .map-cluster-bubble { background: rgba(255,255,255,0.94); border-color: var(--ionos-horizon); box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
+  html[data-theme="light"] .map-cluster-bubble:hover { background: rgba(255,255,255,0.98); border-color: var(--ionos-horizon); box-shadow: 0 4px 20px rgba(49,150,214,0.2); }
+  html[data-theme="light"] .map-cluster-name { color: var(--ionos-blue); }
+  html[data-theme="light"] .map-cluster-count { background: rgba(49,150,214,0.1); color: var(--ionos-horizon); border-color: rgba(49,150,214,0.25); }
+  html[data-theme="light"] .map-vdc-marker { background: rgba(255,255,255,0.94); border-color: var(--ionos-horizon); box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
+  html[data-theme="light"] .map-vdc-marker:hover { background: rgba(255,255,255,0.98); box-shadow: 0 4px 20px rgba(49,150,214,0.2); }
+  html[data-theme="light"] .map-vdc-marker .map-cluster-name { color: var(--ionos-blue); }
+  html[data-theme="light"] .map-vdc-marker[data-az="1"] { border-color: rgba(16,185,129,0.7); }
+  html[data-theme="light"] .map-vdc-marker[data-az="2"] { border-color: rgba(245,158,11,0.7); }
+  html[data-theme="light"] .map-vdc-marker[data-az="3"] { border-color: rgba(168,85,247,0.7); }
+  html[data-theme="light"] .map-vdc-marker .vdc-az-badge { color: #334155; background: rgba(0,0,0,0.06); }
+  html[data-theme="light"] .map-vdc-marker[data-az="1"] .vdc-az-badge { background: rgba(16,185,129,0.12); color: #047857; }
+  html[data-theme="light"] .map-vdc-marker[data-az="2"] .vdc-az-badge { background: rgba(245,158,11,0.12); color: #b45309; }
+  html[data-theme="light"] .map-vdc-marker[data-az="3"] .vdc-az-badge { background: rgba(168,85,247,0.12); color: #7c3aed; }
   html[data-theme="light"] .toast { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  /* ── Light theme: map overlay buttons ── */
+  html[data-theme="light"] .map-s3-btn,
+  html[data-theme="light"] .map-backbone-btn,
+  html[data-theme="light"] .map-support-btn { background: rgba(255,255,255,0.92); border-color: var(--border); color: var(--ionos-blue); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  html[data-theme="light"] .map-s3-btn:hover,
+  html[data-theme="light"] .map-backbone-btn:hover,
+  html[data-theme="light"] .map-support-btn:hover { background: #ffffff; border-color: var(--ionos-horizon); color: var(--ionos-horizon); box-shadow: 0 4px 16px rgba(49,150,214,0.15); }
+  html[data-theme="light"] .map-s3-btn.active { background: var(--ionos-horizon); color: #ffffff; border-color: var(--ionos-horizon); }
+  html[data-theme="light"] .map-backbone-btn.active { background: #6366f1; color: #ffffff; border-color: #6366f1; }
+  html[data-theme="light"] .map-support-btn.active { background: var(--success); color: #ffffff; border-color: var(--success); }
+  /* ── Light theme: map billing panel ── */
+  html[data-theme="light"] .map-billing-panel { background: rgba(255,255,255,0.96); box-shadow: 0 2px 16px rgba(0,0,0,0.1); }
+  /* ── Light theme: AI edge tab ── */
+  html[data-theme="light"] .ai-edge-tab,
+  html[data-theme="light"] .ai-edge-tab-close { background: linear-gradient(135deg, rgba(168,85,247,0.08) 0%, #ffffff 100%); box-shadow: -2px 0 12px rgba(168,85,247,0.1); }
+  /* ── Light theme: summary panels + back btn softer shadows ── */
+  html[data-theme="light"] .s3-summary-panel,
+  html[data-theme="light"] .backbone-summary-panel { background: rgba(255,255,255,0.96); box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+  html[data-theme="light"] .map-back-btn { box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+
+  /* ── Phase 3: Light theme DCD card frames ── */
+  html[data-theme="light"] .sidebar { background: #f8fafc; }
+  html[data-theme="light"] .sidebar-header { background: linear-gradient(180deg, rgba(49,150,214,0.06) 0%, transparent 100%); }
+  html[data-theme="light"] .sidebar-section { background: #ffffff; border: 1px solid var(--border); border-radius: 12px; margin: 8px 10px; border-bottom: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  html[data-theme="light"] .detail-panel { background: #f8fafc; }
+  html[data-theme="light"] .detail-panel .detail-section { background: #ffffff; border: 1px solid var(--border); border-radius: 12px; margin: 8px 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  html[data-theme="light"] .ai-panel { background: #f8fafc; }
+  html[data-theme="light"] .ai-messages { background: #f1f5f9; }
+  html[data-theme="light"] .ai-msg-assistant { background: #ffffff; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  html[data-theme="light"] .ai-msg-user { background: rgba(49,150,214,0.1); }
+  html[data-theme="light"] .compliance-card { background: #ffffff; border-color: var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  html[data-theme="light"] .compliance-cat { background: #f8fafc; }
+  html[data-theme="light"] .onboarding-step { background: #ffffff; border-color: var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  html[data-theme="light"] .btn-primary { background: var(--ionos-blue); }
+  html[data-theme="light"] .btn-primary:hover { background: var(--ionos-dark-blue); }
+  /* View mode buttons: accent (horizon) for active, not navy */
+  html[data-theme="light"] .view-mode-btn.active { background: var(--accent); border-color: var(--accent); }
+  html[data-theme="light"] .view-mode-btn:not(.active) { background: var(--bg-tertiary); color: var(--text-secondary); border-color: var(--border); }
+
+  /* ── Phase 2: Heading font for all headings ── */
+  h1, h2, h3, h4, .onboarding-appname, .compliance-header h3, .detail-section-title {
+    font-family: var(--font-heading);
+  }
+
+  /* ── Phase 4: DCD hover effects — Horizon-blue ring glow ── */
+  .onboarding-step:hover {
+    border-color: var(--ionos-horizon);
+    box-shadow: 0 0 0 2px var(--ionos-horizon), 0 8px 24px rgba(49,150,214,0.12);
+  }
+  .compliance-card:hover {
+    border-color: var(--ionos-horizon);
+    box-shadow: 0 0 0 2px var(--ionos-horizon), 0 8px 24px rgba(49,150,214,0.12);
+  }
+
+  /* ── Phase 4: Animated progress bars (DCD bar-fill pattern) ── */
+  @keyframes bar-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  .bar-animated { transform-origin: left; animation: bar-fill 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    font-family: var(--font-body);
     background: var(--bg-primary);
     color: var(--text-primary);
     height: 100vh;
@@ -102,7 +181,7 @@
   .sidebar-header {
     padding: 14px 20px 12px;
     border-bottom: 1px solid var(--border);
-    background: linear-gradient(180deg, rgba(17, 199, 230, 0.06) 0%, transparent 100%);
+    background: linear-gradient(180deg, rgba(49, 150, 214, 0.06) 0%, transparent 100%);
   }
 
   .sidebar-header .brand-row {
@@ -127,6 +206,7 @@
   }
 
   .sidebar-header h1 {
+    font-family: var(--font-heading);
     font-size: 15px;
     font-weight: 700;
     color: var(--text-primary);
@@ -698,12 +778,11 @@
   .onboarding-header .onboarding-appname { font-size: 14px; font-weight: 600; color: var(--text-secondary, #8899aa); margin-bottom: 14px; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.85; }
   .onboarding-header p { font-size: 13px; color: var(--text-muted); margin: 0 auto; max-width: none; text-align: center; }
   .onboarding-steps { display: flex; flex-direction: column; gap: 10px; text-align: left; }
-  .onboarding-step { display: flex; gap: 12px; align-items: flex-start; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; transition: border-color 0.2s; }
+  .onboarding-step { display: flex; gap: 12px; align-items: flex-start; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; transition: all 0.2s; }
   .onboarding-step .step-number { margin-top: 2px; }
-  .onboarding-step:hover { border-color: var(--accent); }
   .step-number { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: white; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .step-content { flex: 1; min-width: 0; }
-  .step-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 1px; }
+  .step-title { font-family: var(--font-heading); font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 1px; }
   .step-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.4; }
   .step-desc a { color: var(--accent); text-decoration: none; }
   .step-desc a:hover { text-decoration: underline; }
@@ -1034,7 +1113,7 @@
   /* ── Compliance Report Card ── */
   .compliance-card {
     background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px;
-    margin: 8px 12px; padding: 16px; font-size: 12px;
+    margin: 8px 12px; padding: 16px; font-size: 12px; transition: all 0.2s;
   }
   .compliance-header {
     display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
@@ -1110,7 +1189,7 @@
     border: 1px solid var(--border); background: var(--bg-tertiary); color: var(--text-secondary);
     cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap;
   }
-  .ai-suggest-btn:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--accent); }
+  .ai-suggest-btn:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--ionos-horizon); box-shadow: 0 0 0 1px var(--ionos-horizon), 0 4px 12px rgba(49,150,214,0.1); }
   .ai-suggest-more {
     position: relative; display: inline-flex;
   }
@@ -11540,7 +11619,7 @@ function buildPopoutHTML(theme) {
 <head>
 <meta charset="UTF-8">
 <title>Flow Log Explorer</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Overpass:wght@400;600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-primary: #001B41; --bg-secondary: #00264d; --bg-tertiary: #003366;
@@ -14107,7 +14186,7 @@ function renderComplianceCard(report) {
         <span style="display:flex;align-items:center;gap:4px;"><span class="cat-toggle">▶</span><span class="compliance-cat-name">${escapeHtml(cat.name)}</span></span>
         <span style="display:flex;align-items:center;gap:8px;"><span style="font-size:10px;color:var(--text-muted);">${summary}</span><span class="compliance-cat-score ${catLevel}">${cat.score}%</span></span>
       </div>
-      <div class="compliance-cat-bar"><div class="compliance-cat-bar-fill ${catLevel}" style="width:${cat.score}%"></div></div>
+      <div class="compliance-cat-bar"><div class="compliance-cat-bar-fill bar-animated ${catLevel}" style="width:${cat.score}%"></div></div>
       <div class="compliance-cat-findings">`;
 
     if (cat.findings.length === 0) {
